@@ -1,0 +1,37 @@
+{
+  "name": "ideator",
+  "version": "1.0.0",
+  "description": "Node.js webapp for creativity using Express, React.",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "lint": "eslint /routes"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "morgan": "~1.8.1",
+    "pug": "~2.0.0-beta11",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "serve-favicon": "~2.4.2"
+  },
+  "author": "Hayley Kwan",
+  "keywords": [
+    "node",
+    "heroku",
+    "express",
+    "react",
+    "neo4j"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  }
+}

@@ -1,0 +1,45 @@
+{
+    "graph": [],
+    "links": [
+        {"source": 0, "target": 1},
+        {"source": 0, "target": 2},
+        {"source": 0, "target": 3},
+        {"source": 0, "target": 4}
+    ],
+    "nodes": [
+        {
+            "id": "panda", 
+            "size": 150,
+            "type": "circle",
+            "score": 0
+        },
+        {
+            "id": "china", 
+            "size": 30,
+            "type": "circle",
+            "score": 1
+        },
+        {
+            "id": "chubby", 
+            "size": 30,
+            "type": "circle",
+            "score": 1
+        },
+        {
+            "id": "black", 
+            "size": 60,
+            "type": "circle",
+            "score": 1
+        },
+        {
+            "id": "white", 
+            "size": 60,
+            "type": "circle",
+            "score": 1
+        }
+    ],
+
+      
+    "directed": false,
+    "multigraph": false
+}
