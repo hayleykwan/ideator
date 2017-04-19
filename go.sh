@@ -1,0 +1,2 @@
+DEBUG=ideator:* nodemon start
+
