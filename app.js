@@ -23,7 +23,12 @@ var app = express();
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
+
 
 app.get('/', (req, res) => {
   console.log('HERE-------------');
