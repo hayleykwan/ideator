@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "lint": "eslint /routes"
+    "lint": "eslint /routes",
+    "test": "echo \"Error: No tests specified\" && exit 1"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -30,7 +31,7 @@
     "react",
     "neo4j"
   ],
-  "license": "MIT",
+  "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^6.4.1",

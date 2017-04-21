@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 console.log('at bin www file');
-var app = require('../app');
+var app = require('../app'); //entry point, app.js
 var debug = require('debug')('ideator:server');
 var http = require('http');
 

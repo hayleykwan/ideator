@@ -23,12 +23,10 @@ var app = express();
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
+
+// use virtual path instead for web security
 // app.use(express.static(path.join(__dirname, 'public')));
-
-
 app.use('/static', express.static(path.join(__dirname, 'public')));
-
-
 
 app.get('/', (req, res) => {
   console.log('HERE-------------');
