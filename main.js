@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactApp from './components/ReactApp.jsx';
 import Welcome from './components/Welcome.jsx';
-import Graph from './components/Graph.jsx';
+// import Graph from './components/Graph.jsx';
 
 ReactDOM.render(<ReactApp/>, document.getElementById('app'));
 

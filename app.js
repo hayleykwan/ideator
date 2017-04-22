@@ -1,3 +1,4 @@
+'use strict';
 console.log('begin app.js file');
 var express = require('express');
 var path = require('path');
@@ -5,6 +6,10 @@ var path = require('path');
 // var logger = require('morgan');
 // var cookieParser = require('cookie-parser');
 // var bodyParser = require('body-parser');
+
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const ReactApp = require("./es5-lib/ReactApp").default;
 
 // var index = require('./routes/index');
 // var users = require('./routes/users');
@@ -28,10 +33,41 @@ var app = express();
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
+// app.get('/', (req, res) => {
+//   console.log('HERE-------------');
+//   res.sendFile(__dirname + '/index.html');
+// });
+
+
+// isomorphic javascript
 app.get('/', (req, res) => {
-  console.log('HERE-------------');
- res.sendFile(__dirname + '/index.html');
+  // instantiate the React component
+  const rApp = React.createFactory(ReactApp)({});
+
+  // write out the component to HTML string
+
+  const reactHtml = ReactDOMServer.renderToString(rApp);
+
+  // create final HTML to ship using string templating
+  // by injecting the react HTML into this string
+  const html = `
+    <!DOCTYPE html>
+    <html>
+     <head>
+     <title>DUMMY</title>
+     </head>
+     <body>
+     <div id="app">${reactHtml}</div>
+     <script src="/static/javascripts/react-app.js"></script>
+     </body>
+    </html>
+  `;
+
+  // send to the browser
+  res.send(html);
 });
+
+
 
 // app.use('/', index);
 // app.use('/users', users);
