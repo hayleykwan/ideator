@@ -1,4 +1,5 @@
 // webpack.config.js for Babel 6
+var debug = process.env.NODE_ENV !== "production";
 var path = require('path');
 var webpack = require('webpack');
 module.exports = {
