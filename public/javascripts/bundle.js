@@ -9606,8 +9606,7 @@ var ReactApp = function (_Component) {
           'button',
           { style: styles.button, onClick: this._validate.bind(this) },
           'VALIDATE'
-        ),
-        _react2.default.createElement('img', { src: '/static/images/chocolate2.jpg', height: '500', width: '380' })
+        )
       );
     }
   }]);
@@ -9674,6 +9673,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+{/*
+  Written in ES6,
+  needs babel to transpile into ES5,
+  which is more common in browsers
+   */}
+
 var Welcome = function (_Component) {
   _inherits(Welcome, _Component);
 
@@ -9698,7 +9703,7 @@ var Welcome = function (_Component) {
   return Welcome;
 }(_react.Component);
 
-{/* 
+{/*
   function Welcome(props) {
     return <h1>Welcome, {props.name}</h1>;
   }
@@ -9731,39 +9736,19 @@ var _reactDom = __webpack_require__(83);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _ReactApp = __webpack_require__(81);
-
-var _ReactApp2 = _interopRequireDefault(_ReactApp);
-
 var _Welcome = __webpack_require__(82);
 
 var _Welcome2 = _interopRequireDefault(_Welcome);
 
+var _ReactApp = __webpack_require__(81);
+
+var _ReactApp2 = _interopRequireDefault(_ReactApp);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import Graph from './components/Graph.jsx';
+_reactDom2.default.render(_react2.default.createElement(_Welcome2.default, { name: 'H' }), document.getElementById('hello'));
 
-_reactDom2.default.render(_react2.default.createElement(_ReactApp2.default, null), document.getElementById('app'));
-
-//took a sec to load
-// function tick() {
-//   const element = (
-//     <div>
-//       <h1>Hello, world!</h1>
-//       <h2>It is {new Date().toLocaleTimeString()}.</h2>
-//     </div>
-//   );
-//   ReactDOM.render(
-//     element,
-//     document.getElementById('app')
-//   );
-// }
-// //calls ReactDOM.render() every second from a setInterval() callback
-// setInterval(tick, 1000);
-//
-// //quick
-var element = _react2.default.createElement(_Welcome2.default, { name: 'H' });
-_reactDom2.default.render(element, document.getElementById('welcome'));
+_reactDom2.default.render(_react2.default.createElement(_ReactApp2.default, null), document.getElementById('tut'));
 
 /***/ }),
 /* 85 */

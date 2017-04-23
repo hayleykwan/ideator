@@ -1,4 +1,7 @@
-'use strict';
+/*
+ *  Sets up app to be ready on server
+ */
+
 console.log('begin app.js file');
 var express = require('express');
 var path = require('path');
@@ -9,7 +12,8 @@ var path = require('path');
 
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-const ReactApp = require("./es5-lib/ReactApp").default;
+// const ReactApp = require("./es5-lib/ReactApp").default;
+// const Welcome = require("./es5-lib/Welcome").default;
 
 // var index = require('./routes/index');
 // var users = require('./routes/users');
@@ -30,42 +34,42 @@ var app = express();
 
 
 // use virtual path instead for web security
-// app.use(express.static(path.join(__dirname, 'public')));
-app.use('/static', express.static(path.join(__dirname, 'public')));
+const PATH_PUBLIC = path.resolve(__dirname, '../../public');
+app.use('/static', express.static(PATH_PUBLIC));
 
-// app.get('/', (req, res) => {
-//   console.log('HERE-------------');
-//   res.sendFile(__dirname + '/index.html');
-// });
+app.get('/', (req, res) => {
+  console.log('HERE-------------');
+  res.sendFile(PATH_PUBLIC + '/index.html');
+});
 
 
 // isomorphic javascript
-app.get('/', (req, res) => {
-  // instantiate the React component
-  const rApp = React.createFactory(ReactApp)({});
-
-  // write out the component to HTML string
-
-  const reactHtml = ReactDOMServer.renderToString(rApp);
-
-  // create final HTML to ship using string templating
-  // by injecting the react HTML into this string
-  const html = `
-    <!DOCTYPE html>
-    <html>
-     <head>
-     <title>DUMMY</title>
-     </head>
-     <body>
-     <div id="app">${reactHtml}</div>
-     <script src="/static/javascripts/react-app.js"></script>
-     </body>
-    </html>
-  `;
-
-  // send to the browser
-  res.send(html);
-});
+// app.get('/', (req, res) => {
+//   // instantiate the React component
+//   const rApp = React.createFactory(Welcome)({});
+//
+//   // write out the component to HTML string
+//   const reactHtml = ReactDOMServer.renderToString(rApp);
+//
+//   // create final HTML to ship using string templating
+//   // by injecting the react HTML into this string
+//   const html = `
+//     <!DOCTYPE html>
+//     <html>
+//      <head>
+//      <title>DUMMY</title>
+//      </head>
+//      <body>
+//      <div id="app">${reactHtml}</div>
+//      <!--<script src="/static/javascripts/react-app.js"></script>-->
+//      <img src="/static/images/chocolate2.jpg" height="500" width="380"/>
+//      </body>
+//     </html>
+//   `;
+//
+//   // send to the browser
+//   res.send(html);
+// });
 
 
 

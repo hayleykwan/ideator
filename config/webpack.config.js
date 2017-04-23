@@ -3,9 +3,11 @@ var debug = process.env.NODE_ENV !== "production";
 var path = require('path');
 var webpack = require('webpack');
 
+const PATH_PUBLIC_JS = path.resolve(__dirname, '../public/javascripts');
+
 module.exports = {
- entry: './main.js',
- output: { path: __dirname + '/public/javascripts', filename: 'react-app.js' },
+ entry: '../src/client/test.js',
+ output: { path: PATH_PUBLIC_JS, filename: 'bundle.js' },
  module: {
    loaders: [
    {

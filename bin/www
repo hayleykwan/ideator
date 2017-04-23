@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
+/*
+ *  Sets up server, port etc. 
+ */
+
 /**
  * Module dependencies.
  */
 console.log('at bin www file');
-var app = require('../app'); //entry point, app.js
+var app = require('../src/server/app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 
