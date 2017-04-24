@@ -17,10 +17,12 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
+    "material-ui": "^0.17.4",
     "morgan": "~1.8.1",
     "pug": "~2.0.0-beta11",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-tap-event-plugin": "^2.0.1",
     "serve-favicon": "~2.4.2"
   },
   "author": "Hayley Weng Hei Kwan",
@@ -39,6 +41,8 @@
     "babel-loader": "^6.4.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "babel-register": "^6.24.1",
     "eslint": "^3.19.0",
     "webpack": "^2.4.1"
   }
