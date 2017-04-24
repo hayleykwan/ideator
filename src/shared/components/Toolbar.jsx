@@ -1,59 +1,138 @@
 import React from 'react';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import MenuItem from 'material-ui/MenuItem';
+import TextField from 'material-ui/TextField';
+import {orange500, blue500} from 'material-ui/styles/colors';
+import FlatButton from 'material-ui/FlatButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
-import RaisedButton from 'material-ui/RaisedButton';
+import MenuItem from 'material-ui/MenuItem';
+import Slider from 'material-ui/Slider';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
-export default class ToolbarExamplesSimple extends React.Component {
+const styles = {
+  errorStyle: {
+    color: orange500,
+  },
+  underlineStyle: {
+    borderColor: orange500,
+  },
+  floatingLabelStyle: {
+    color: orange500,
+  },
+  floatingLabelFocusStyle: {
+    color: blue500,
+  },
+  customWidth: {
+    width: 200,
+  },
+};
 
+class DegConnectionSlider extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 3,
+      degConnectionSlider: 0.5
     };
-    this.handleChange = this.handleChange.bind(this);
+    this.handleSlider = this.handleSlider.bind(this);
   }
 
-  // handleChange = (event, index, value) => this.setState({value});
-  handleChange(event, index, value) {
-    this.setState({value})
+  handleSlider(event, value) {
+    this.setState({
+      degConnectionSlider: value
+    });
+
+  }
+
+  render() {
+    return (
+      <div>
+        <p>Degree of Connection</p>
+        <Slider
+          min={0} max={1}
+          step={0.10}
+          defaultValue={0.5}
+          value={this.state.degConnectionSlider}
+          style={{width: 150}}
+          onChange={this.handleSlider}/>
+        <p>
+          <span>{'The value of this slider is: '}</span>
+          <span>{this.state.degConnectionSlider}</span>
+        </p>
+      </div>
+    );
+  }
+}
+
+
+class NumSuggestionSlider extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      numSuggestionSlider: 6
+    };
+        this.handleSlider = this.handleSlider.bind(this);
+  };
+
+  handleSlider(event, value) {
+    this.setState({
+      numSuggestionSlider: value
+    });
   };
 
   render() {
     return (
+      <div>
+        <p>Number of Suggestions</p>
+        <Slider
+          min={1} max={8}
+          step={1}
+          defaultValue={6}
+          value={this.state.numSuggestionSlider}
+          onChange={this.handleSlider}
+          style={{width: 150}}
+        />
+        <p>
+          <span>{'The value of this slider is: '}</span>
+          <span>{this.state.numSuggestionSlider}</span>
+        </p>
+      </div>
+    );
+  }
+}
+
+
+
+export default class IdeaToolBar extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: null,
+    };
+    // this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(event, label, value) {
+    alert('submit button clicked');
+    //send request to
+  }
+
+  render() {
+    return (
       <Toolbar>
-        <ToolbarGroup firstChild={true}>
-          <DropDownMenu value={this.state.value} onChange={this.handleChange}>
-            <MenuItem value={1} primaryText="All Broadcasts" />
-            <MenuItem value={2} primaryText="All Voice" />
-            <MenuItem value={3} primaryText="All Text" />
-            <MenuItem value={4} primaryText="Complete Voice" />
-            <MenuItem value={5} primaryText="Complete Text" />
-            <MenuItem value={6} primaryText="Active Voice" />
-            <MenuItem value={7} primaryText="Active Text" />
-          </DropDownMenu>
+        <ToolbarGroup>
+          <TextField
+            floatingLabelText="E.g. panda"
+            floatingLabelStyle={styles.floatingLabelStyle}
+            floatingLabelFocusStyle={styles.floatingLabelFocusStyle}/>
+          <FlatButton label="Submit" primary={true} onClick={this.handleSubmit}/>
         </ToolbarGroup>
         <ToolbarGroup>
-          <ToolbarTitle text="Options" />
-          <FontIcon className="muidocs-icon-custom-sort" />
-          <ToolbarSeparator />
-          <RaisedButton label="Create Broadcast" primary={true} />
-          <IconMenu
-            iconButtonElement={
-              <IconButton touch={true}>
-                <NavigationExpandMoreIcon />
-              </IconButton>
-            }
-          >
-            <MenuItem primaryText="Download" />
-            <MenuItem primaryText="More Info" />
-          </IconMenu>
+          <DegConnectionSlider/>
+          {/* <ToolbarSeparator/> */}
+          <NumSuggestionSlider/>
+          {/* <SliderExampleControlled/> */}
         </ToolbarGroup>
       </Toolbar>
+
     );
   }
 }
