@@ -15355,9 +15355,6 @@ var styles = {
   },
   floatingLabelFocusStyle: {
     color: _colors.blue500
-  },
-  customWidth: {
-    width: 200
   }
 };
 
@@ -15493,16 +15490,20 @@ var IdeaToolBar = function (_React$Component3) {
     var _this3 = _possibleConstructorReturn(this, (IdeaToolBar.__proto__ || Object.getPrototypeOf(IdeaToolBar)).call(this, props));
 
     _this3.state = {
-      text: null
+      text: null,
+      numSuggestion: 6,
+      degConnection: 1
     };
-    // this.handleSubmit = this.handleSubmit.bind(this);
+    _this3.handleSubmit = _this3.handleSubmit.bind(_this3);
     return _this3;
   }
 
   _createClass(IdeaToolBar, [{
     key: 'handleSubmit',
-    value: function handleSubmit(event, label, value) {
-      alert('submit button clicked');
+    value: function handleSubmit(event) {
+      //pool text, numSuggestion, degConnection
+      //send req to
+      alert('Submit clicked');
       //send request to
     }
   }, {
@@ -15513,16 +15514,16 @@ var IdeaToolBar = function (_React$Component3) {
         null,
         _react2.default.createElement(
           _Toolbar.ToolbarGroup,
-          null,
+          { firstChild: true },
           _react2.default.createElement(_TextField2.default, {
             floatingLabelText: 'E.g. panda',
             floatingLabelStyle: styles.floatingLabelStyle,
             floatingLabelFocusStyle: styles.floatingLabelFocusStyle }),
-          _react2.default.createElement(_FlatButton2.default, { label: 'Submit', primary: true, onClick: this.handleSubmit })
+          _react2.default.createElement(_FlatButton2.default, { label: 'Search', primary: true, onClick: this.handleSubmit })
         ),
         _react2.default.createElement(
           _Toolbar.ToolbarGroup,
-          null,
+          { lastChild: true },
           _react2.default.createElement(DegConnectionSlider, null),
           _react2.default.createElement(NumSuggestionSlider, null)
         )

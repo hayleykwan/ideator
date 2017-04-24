@@ -20,9 +20,6 @@ const styles = {
   floatingLabelFocusStyle: {
     color: blue500,
   },
-  customWidth: {
-    width: 200,
-  },
 };
 
 class DegConnectionSlider extends React.Component {
@@ -106,12 +103,16 @@ export default class IdeaToolBar extends React.Component {
     super(props);
     this.state = {
       text: null,
+      numSuggestion: 6,
+      degConnection: 1
     };
-    // this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(event, label, value) {
-    alert('submit button clicked');
+  handleSubmit(event) {
+    //pool text, numSuggestion, degConnection
+    //send req to
+    alert('Submit clicked');
     //send request to
   }
 
@@ -123,13 +124,11 @@ export default class IdeaToolBar extends React.Component {
             floatingLabelText="E.g. panda"
             floatingLabelStyle={styles.floatingLabelStyle}
             floatingLabelFocusStyle={styles.floatingLabelFocusStyle}/>
-          <FlatButton label="Submit" primary={true} onClick={this.handleSubmit}/>
+          <FlatButton label="Search" primary={true} onClick={this.handleSubmit}/>
         </ToolbarGroup>
         <ToolbarGroup>
           <DegConnectionSlider/>
-          {/* <ToolbarSeparator/> */}
           <NumSuggestionSlider/>
-          {/* <SliderExampleControlled/> */}
         </ToolbarGroup>
       </Toolbar>
 
