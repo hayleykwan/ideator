@@ -4,7 +4,6 @@ import {orange500, blue500} from 'material-ui/styles/colors';
 import FlatButton from 'material-ui/FlatButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
-// import {NumSuggestionSlider, DegConnectionSlider} from './Slider'
 import Slider from 'material-ui/Slider';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
@@ -141,8 +140,6 @@ export default class IdeaToolBar extends React.Component {
             value={this.state.numSuggestion}
             onSliderChange={this.handleNumberSlideChange}
           />
-          {/* <DegConnectionSlider/>
-          <NumSuggestionSlider/> */}
         </ToolbarGroup>
       </Toolbar>
     );

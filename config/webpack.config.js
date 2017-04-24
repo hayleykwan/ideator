@@ -6,7 +6,7 @@ var webpack = require('webpack');
 const PATH_PUBLIC_JS = path.resolve(__dirname, '../public/javascripts');
 
 module.exports = {
- entry: '../src/client/test.js',
+ entry: '../src/client/main.js',
  output: { path: PATH_PUBLIC_JS, filename: 'bundle.js' },
  module: {
    loaders: [
