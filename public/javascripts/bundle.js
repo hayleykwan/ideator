@@ -15342,6 +15342,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+// import {NumSuggestionSlider, DegConnectionSlider} from './Slider'
+
 
 var styles = {
   errorStyle: {
@@ -15358,106 +15360,45 @@ var styles = {
   }
 };
 
-var DegConnectionSlider = function (_React$Component) {
-  _inherits(DegConnectionSlider, _React$Component);
+var sliderNames = {
+  deg: 'Degree of Connection',
+  num: 'Number of Suggestions'
+};
 
-  function DegConnectionSlider(props) {
-    _classCallCheck(this, DegConnectionSlider);
+var CustomSlider = function (_React$Component) {
+  _inherits(CustomSlider, _React$Component);
 
-    var _this = _possibleConstructorReturn(this, (DegConnectionSlider.__proto__ || Object.getPrototypeOf(DegConnectionSlider)).call(this, props));
+  function CustomSlider(props) {
+    _classCallCheck(this, CustomSlider);
 
-    _this.state = {
-      degConnectionSlider: 0.5
-    };
-    _this.handleSlider = _this.handleSlider.bind(_this);
+    var _this = _possibleConstructorReturn(this, (CustomSlider.__proto__ || Object.getPrototypeOf(CustomSlider)).call(this, props));
+
+    _this.handleChange = _this.handleChange.bind(_this);
     return _this;
   }
 
-  _createClass(DegConnectionSlider, [{
-    key: 'handleSlider',
-    value: function handleSlider(event, value) {
-      this.setState({
-        degConnectionSlider: value
-      });
+  _createClass(CustomSlider, [{
+    key: 'handleChange',
+    value: function handleChange(event, value) {
+      this.props.onSliderChange(value);
     }
   }, {
     key: 'render',
     value: function render() {
+      var name = this.props.name;
       return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(
           'p',
           null,
-          'Degree of Connection'
+          sliderNames[name]
         ),
         _react2.default.createElement(_Slider2.default, {
-          min: 0, max: 1,
-          step: 0.10,
-          defaultValue: 0.5,
-          value: this.state.degConnectionSlider,
-          style: { width: 150 },
-          onChange: this.handleSlider }),
-        _react2.default.createElement(
-          'p',
-          null,
-          _react2.default.createElement(
-            'span',
-            null,
-            'The value of this slider is: '
-          ),
-          _react2.default.createElement(
-            'span',
-            null,
-            this.state.degConnectionSlider
-          )
-        )
-      );
-    }
-  }]);
-
-  return DegConnectionSlider;
-}(_react2.default.Component);
-
-var NumSuggestionSlider = function (_React$Component2) {
-  _inherits(NumSuggestionSlider, _React$Component2);
-
-  function NumSuggestionSlider(props) {
-    _classCallCheck(this, NumSuggestionSlider);
-
-    var _this2 = _possibleConstructorReturn(this, (NumSuggestionSlider.__proto__ || Object.getPrototypeOf(NumSuggestionSlider)).call(this, props));
-
-    _this2.state = {
-      numSuggestionSlider: 6
-    };
-    _this2.handleSlider = _this2.handleSlider.bind(_this2);
-    return _this2;
-  }
-
-  _createClass(NumSuggestionSlider, [{
-    key: 'handleSlider',
-    value: function handleSlider(event, value) {
-      this.setState({
-        numSuggestionSlider: value
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'p',
-          null,
-          'Number of Suggestions'
-        ),
-        _react2.default.createElement(_Slider2.default, {
-          min: 1, max: 8,
-          step: 1,
-          defaultValue: 6,
-          value: this.state.numSuggestionSlider,
-          onChange: this.handleSlider,
+          min: this.props.min, max: this.props.max,
+          step: this.props.step,
+          value: this.props.value,
+          onChange: this.handleChange,
           style: { width: 150 }
         }),
         _react2.default.createElement(
@@ -15466,19 +15407,53 @@ var NumSuggestionSlider = function (_React$Component2) {
           _react2.default.createElement(
             'span',
             null,
-            'The value of this slider is: '
+            'Currently: '
           ),
           _react2.default.createElement(
             'span',
             null,
-            this.state.numSuggestionSlider
+            this.props.value
           )
         )
       );
     }
   }]);
 
-  return NumSuggestionSlider;
+  return CustomSlider;
+}(_react2.default.Component);
+
+var InputText = function (_React$Component2) {
+  _inherits(InputText, _React$Component2);
+
+  function InputText(props) {
+    _classCallCheck(this, InputText);
+
+    var _this2 = _possibleConstructorReturn(this, (InputText.__proto__ || Object.getPrototypeOf(InputText)).call(this, props));
+
+    _this2.handleChange = _this2.handleChange.bind(_this2);
+    return _this2;
+  }
+
+  _createClass(InputText, [{
+    key: 'handleChange',
+    value: function handleChange(event) {
+      this.props.onTextChange(event.target.value);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(_TextField2.default, {
+        id: 'text-field-controlled',
+        value: this.props.text,
+        onChange: this.handleChange,
+        floatingLabelText: 'Input text here',
+        floatingLabelStyle: styles.floatingLabelStyle,
+        floatingLabelFocusStyle: styles.floatingLabelFocusStyle
+      });
+    }
+  }]);
+
+  return InputText;
 }(_react2.default.Component);
 
 var IdeaToolBar = function (_React$Component3) {
@@ -15490,21 +15465,37 @@ var IdeaToolBar = function (_React$Component3) {
     var _this3 = _possibleConstructorReturn(this, (IdeaToolBar.__proto__ || Object.getPrototypeOf(IdeaToolBar)).call(this, props));
 
     _this3.state = {
-      text: null,
-      numSuggestion: 6,
-      degConnection: 1
+      text: 'E.g. panda',
+      degConnection: 1,
+      numSuggestion: 6
     };
+    _this3.handleTextChange = _this3.handleTextChange.bind(_this3);
+    _this3.handleDegreeSlideChange = _this3.handleDegreeSlideChange.bind(_this3);
+    _this3.handleNumberSlideChange = _this3.handleNumberSlideChange.bind(_this3);
     _this3.handleSubmit = _this3.handleSubmit.bind(_this3);
     return _this3;
   }
 
   _createClass(IdeaToolBar, [{
+    key: 'handleTextChange',
+    value: function handleTextChange(value) {
+      this.setState({ text: value });
+    }
+  }, {
+    key: 'handleDegreeSlideChange',
+    value: function handleDegreeSlideChange(value) {
+      this.setState({ degConnection: value });
+    }
+  }, {
+    key: 'handleNumberSlideChange',
+    value: function handleNumberSlideChange(value) {
+      this.setState({ numSuggestion: value });
+    }
+  }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
       //pool text, numSuggestion, degConnection
-      //send req to
-      alert('Submit clicked');
-      //send request to
+      alert('Text: ' + this.state.text + '\n' + 'Degree: ' + this.state.degConnection + '\n' + 'Number: ' + this.state.numSuggestion);
     }
   }, {
     key: 'render',
@@ -15514,18 +15505,29 @@ var IdeaToolBar = function (_React$Component3) {
         null,
         _react2.default.createElement(
           _Toolbar.ToolbarGroup,
-          { firstChild: true },
-          _react2.default.createElement(_TextField2.default, {
-            floatingLabelText: 'E.g. panda',
-            floatingLabelStyle: styles.floatingLabelStyle,
-            floatingLabelFocusStyle: styles.floatingLabelFocusStyle }),
+          null,
+          _react2.default.createElement(InputText, {
+            text: this.state.text,
+            onTextChange: this.handleTextChange }),
           _react2.default.createElement(_FlatButton2.default, { label: 'Search', primary: true, onClick: this.handleSubmit })
         ),
         _react2.default.createElement(
           _Toolbar.ToolbarGroup,
-          { lastChild: true },
-          _react2.default.createElement(DegConnectionSlider, null),
-          _react2.default.createElement(NumSuggestionSlider, null)
+          null,
+          _react2.default.createElement(CustomSlider, {
+            name: 'deg',
+            min: 0, max: 1,
+            step: 0.10,
+            value: this.state.degConnection,
+            onSliderChange: this.handleDegreeSlideChange
+          }),
+          _react2.default.createElement(CustomSlider, {
+            name: 'num',
+            min: 1, max: 8,
+            step: 1,
+            value: this.state.numSuggestion,
+            onSliderChange: this.handleNumberSlideChange
+          })
         )
       );
     }
