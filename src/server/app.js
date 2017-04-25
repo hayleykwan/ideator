@@ -6,7 +6,11 @@ console.log('begin app.js file');
 var express = require('express');
 var path = require('path');
 
-// require("babel-register"); //transpiling .es6, .es, .jsx, .js on the fly
+var babelregister = require('babel-register')({
+  // This will override `node_modules` ignoring - you can alternatively pass
+  // an array of strings to be explicitly matched or a regex / glob
+  ignore: false
+}); //transpiling .es6, .es, .jsx, .js on the fly
 
 // var favicon = require('serve-favicon');
 // var logger = require('morgan');
@@ -15,8 +19,6 @@ var path = require('path');
 
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-// const ReactApp = require("./es5-lib/ReactApp").default;
-// const Welcome = require("./es5-lib/Welcome").default;
 
 // var index = require('./routes/index');
 // var users = require('./routes/users');
@@ -95,7 +97,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // res.render(error);
+  res.send(err.status + '\n' + err.stack);
 });
 
 module.exports = app;

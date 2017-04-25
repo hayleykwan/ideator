@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/hayleykwan/ideator.git"
   },
+  "engines": {
+    "node": "6.10.2"
+  },
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -22,6 +25,7 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-tap-event-plugin": "^2.0.1",
+    "babel-register": "^6.24.1",
     "serve-favicon": "~2.4.2"
   },
   "author": "Hayley Weng Hei Kwan",
