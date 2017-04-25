@@ -10,7 +10,7 @@ export default class App extends Component {
       try: 'removing some whitespace!',
       or: 'add valid JSON',
       then: ['then', 'click', 'format'],
-      hi: 'mom!'
+      hi: 'mom!!!'
     };
 
     this.state = {
