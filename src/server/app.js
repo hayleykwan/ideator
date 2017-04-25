@@ -6,7 +6,7 @@ console.log('begin app.js file');
 var express = require('express');
 var path = require('path');
 
-require("babel-register"); //transpiling .es6, .es, .jsx, .js on the fly
+// require("babel-register"); //transpiling .es6, .es, .jsx, .js on the fly
 
 // var favicon = require('serve-favicon');
 // var logger = require('morgan');
