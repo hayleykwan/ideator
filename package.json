@@ -16,7 +16,9 @@
     "test": "echo \"Error: No tests specified\" && exit 1"
   },
   "dependencies": {
+    "babel-register": "^6.24.1",
     "body-parser": "~1.17.1",
+    "datamuse": "^1.0.5",
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "material-ui": "^0.17.4",
@@ -25,8 +27,8 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-tap-event-plugin": "^2.0.1",
-    "babel-register": "^6.24.1",
     "serve-favicon": "~2.4.2"
+
   },
   "author": "Hayley Weng Hei Kwan",
   "keywords": [

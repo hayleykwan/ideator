@@ -86,34 +86,6 @@ class InputText extends React.Component {
 export default class IdeaToolBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      text: 'E.g. panda',
-      degConnection: 1,
-      numSuggestion: 6
-    };
-    this.handleTextChange = this.handleTextChange.bind(this);
-    this.handleDegreeSlideChange = this.handleDegreeSlideChange.bind(this);
-    this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleTextChange(value) {
-    this.setState({text: value})
-  }
-
-  handleDegreeSlideChange(value) {
-    this.setState({degConnection: value})
-  }
-
-  handleNumberSlideChange(value) {
-    this.setState({numSuggestion: value})
-  }
-
-  handleSubmit(event) {
-    //pool text, numSuggestion, degConnection
-    alert('Text: ' + this.state.text + '\n' +
-          'Degree: ' + this.state.degConnection + '\n' +
-          'Number: ' + this.state.numSuggestion);
   }
 
   render() {
@@ -121,24 +93,24 @@ export default class IdeaToolBar extends React.Component {
       <Toolbar>
         <ToolbarGroup>
           <InputText
-            text={this.state.text}
-            onTextChange={this.handleTextChange}/>
-          <FlatButton label="Search" primary={true} onClick={this.handleSubmit}/>
+            text={this.props.request.text}
+            onTextChange={this.props.onTextChange}/>
+          <FlatButton label="Search" primary={true} onClick={this.props.onSubmit}/>
         </ToolbarGroup>
         <ToolbarGroup>
           <CustomSlider
             name="deg"
             min={0} max={1}
             step={0.10}
-            value={this.state.degConnection}
-            onSliderChange={this.handleDegreeSlideChange}
+            value={this.props.request.degConnection}
+            onSliderChange={this.props.onDegreeChange}
           />
           <CustomSlider
             name="num"
             min={1} max={8}
             step={1}
-            value={this.state.numSuggestion}
-            onSliderChange={this.handleNumberSlideChange}
+            value={this.props.request.numSuggestion}
+            onSliderChange={this.props.onNumberChange}
           />
         </ToolbarGroup>
       </Toolbar>
