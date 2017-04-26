@@ -18,6 +18,7 @@
   "dependencies": {
     "babel-register": "^6.24.1",
     "body-parser": "~1.17.1",
+    "d3": "^4.8.0",
     "datamuse": "^1.0.5",
     "debug": "~2.6.3",
     "express": "~4.15.2",
@@ -28,7 +29,6 @@
     "react-dom": "^15.5.4",
     "react-tap-event-plugin": "^2.0.1",
     "serve-favicon": "~2.4.2"
-
   },
   "author": "Hayley Weng Hei Kwan",
   "keywords": [

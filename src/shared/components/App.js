@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import IdeaToolBar from './Toolbar';
+import ForceGraph from './ForceGraph';
 
 const datamuse = require('datamuse');
 
@@ -87,19 +88,16 @@ export default class App extends Component {
   render() {
     return (
         <div id="app" style={styles.container}>
-          <h1 style={styles.header}>JSON</h1>
-          <div>
+          <h1 style={styles.header}>The Ideator</h1>
+          <div style={styles.displayArea}>
             <textarea
               rows="30"   cols="50"
               value={this.state.value}
               style={this.state.txtClass}
               onChange={this.saveText}>
             </textarea>
-            <textarea
-              rows="30"   cols="50"
-              value={'graphical area'}
-              style={this.state.txtClass}>
-            </textarea>
+            <ForceGraph
+              width="400" height="400"/>
           </div>
           <MuiThemeProvider>
             <IdeaToolBar
@@ -127,5 +125,9 @@ const styles = {
   textArea: {
     flex: '0 1 auto',
     fontFamily: 'monospace'
+  },
+  displayArea: {
+    display: 'flex',
+    flexDirection: 'row'
   }
 };
