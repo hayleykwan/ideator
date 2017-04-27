@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import IdeaToolBar from './Toolbar';
 import ForceGraph from './ForceGraph';
+import Json from '../../data/graph.json';
 
 const datamuse = require('datamuse');
 
@@ -16,12 +17,12 @@ export default class App extends Component {
 
     this.state = {
       value: JSON.stringify(placeholder, null, 4),
+      graphjson: Json,
       txtClass: styles.textArea,
       request: {
         numSuggestion: 6,
         degConnection: 1,
-        text: ''},
-      history: {}
+        text: ''}
     };
 
     this.saveText = this.saveText.bind(this);
@@ -60,15 +61,10 @@ export default class App extends Component {
       numSuggestion: this.state.request.numSuggestion
     }
 
-    //add to history
-    this.setState({history: submitted});
-    console.log(this.state.history);
-
     //clear text input
     var req = this.state.request;
     req.text = '';
     this.setState({request: req});
-    console.log(this.state.request);
 
     const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
     var response = new Object(); //var o = {};
@@ -76,13 +72,16 @@ export default class App extends Component {
     datamuse.request(request)
     .then((json) => {
       console.log(json);
-      response = json;
-      this.setState({value: JSON.stringify(response, null, 4)})
+      const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
+      this.setState({value: response});
+      // var graph = createGraphJson(response);  //TODO
+      // this.setState({graphjson: graph});  //TODO
+      console.log(this.state.graphjson);
     });
 
-    alert('User input: ' + submitted['text'] + '; degree: ' + submitted['degConnection'] + '; number: ' + submitted['numSuggestion'] + '\n' +
-          'Submitted request: ' + request + '\n' +
-          'response: '+ response);
+    // alert('User input: ' + submitted['text'] + '; degree: ' + submitted['degConnection'] + '; number: ' + submitted['numSuggestion'] + '\n' +
+    //       'Submitted request: ' + request + '\n' +
+    //       'response: '+ response);
   }
 
   render() {
@@ -97,7 +96,9 @@ export default class App extends Component {
               onChange={this.saveText}>
             </textarea>
             <ForceGraph
-              width="400" height="400"/>
+              width="400" height="400"
+              // data={this.state.graphjson} //TODO
+            />
           </div>
           <MuiThemeProvider>
             <IdeaToolBar

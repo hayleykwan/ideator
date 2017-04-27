@@ -70,6 +70,8 @@ export default class ForceGraph extends React.Component{
 
     simulation.on("tick", ticked);
 
+    console.log(json);
+
   }
 
   render() {
