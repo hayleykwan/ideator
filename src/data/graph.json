@@ -8,38 +8,36 @@
     ],
     "nodes": [
         {
-            "id": "panda", 
+            "id": "panda",
             "size": 150,
             "type": "circle",
             "score": 0
         },
         {
-            "id": "china", 
+            "id": "china",
             "size": 30,
             "type": "circle",
             "score": 1
         },
         {
-            "id": "chubby", 
+            "id": "chubby",
             "size": 30,
             "type": "circle",
             "score": 1
         },
         {
-            "id": "black", 
+            "id": "black",
             "size": 60,
             "type": "circle",
             "score": 1
         },
         {
-            "id": "white", 
+            "id": "white",
             "size": 60,
             "type": "circle",
             "score": 1
         }
-    ],
-
-      
+    ],      
     "directed": false,
     "multigraph": false
 }

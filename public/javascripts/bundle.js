@@ -21027,7 +21027,51 @@ var ForceGraph = function (_React$Component) {
           height = _props.height;
       //no need to parse JSON
 
-      var force = d3.forceSimulation().nodes(_graph2.default.nodes).force("link", d3.forceLink(_graph2.default.links).distance(50)).force("charge", d3.forceManyBody().strength(-120)).force('center', d3.forceCenter(width / 2, height / 2));
+      //Set up the force layout
+
+      var simulation = d3.forceSimulation().nodes(_graph2.default.nodes).force("link", d3.forceLink(_graph2.default.links).distance(50)).force("charge", d3.forceManyBody().strength(-120)).force('center', d3.forceCenter(width / 2, height / 2));
+
+      //Append a SVG to the reference point. Assign this SVG as an object to svg
+      var svg = d3.select(this.refs.mountPoint).append('svg').attr('width', width).attr('height', height);
+
+      var node = svg.selectAll('circle').data(_graph2.default.nodes).enter().append('g').attr("class", "node");
+
+      node.append('circle').attr('r', 5).style('stroke', '#FFFFFF').style('stroke-width', 1.5);
+
+      node.append("text").attr("dx", 10).attr("dy", ".35em").text(function (d) {
+        return d.id;
+      });
+
+      var link = svg.selectAll('line').data(_graph2.default.links).enter().append('line').attr("class", "link").style('stroke', '#999999').style('stroke-opacity', 0.6);
+
+      function ticked() {
+        // node
+        //   .attr('cx', function(d) { return d.x; })
+        //   .attr('cy', function(d) { return d.y; })
+        link.attr('x1', function (d) {
+          return d.source.x;
+        }).attr('y1', function (d) {
+          return d.source.y;
+        }).attr('x2', function (d) {
+          return d.target.x;
+        }).attr('y2', function (d) {
+          return d.target.y;
+        });
+
+        d3.selectAll("circle").attr("cx", function (d) {
+          return d.x;
+        }).attr("cy", function (d) {
+          return d.y;
+        });
+
+        d3.selectAll("text").attr("x", function (d) {
+          return d.x;
+        }).attr("y", function (d) {
+          return d.y;
+        });
+      }
+
+      simulation.on("tick", ticked);
     }
   }, {
     key: 'render',
