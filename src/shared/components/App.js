@@ -61,23 +61,82 @@ export default class App extends Component {
       numSuggestion: this.state.request.numSuggestion
     }
 
+    const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
+    var response = new Object(); //var o = {};
+
+    function updateGraphJson(originalJsonObject, submittedObject, responseArray) {
+
+      var graph = originalJsonObject;
+
+      //check if the submittedObject is an object from originalJsonObject
+      var isPresent = false;
+      var newCentreNode;
+
+      for(var i = 0 ; i < originalJsonObject.nodes.length ; i++){
+        isPresent = originalJsonObject.nodes[i].id == submittedObject.text;
+        if(isPresent){
+          newCentreNode = originalJsonObject.nodes[i];
+        }
+      }
+
+      if(!isPresent){
+        newCentreNode = {
+          id: submittedObject.text,
+          size: 30,
+          type: "circle",
+          score: 0
+        };
+        graph.nodes.push(newCentreNode);
+
+        for(var j = 0 ; j < responseArray.length ; j++){
+          var newResponseNode = {
+            id: responseArray[j].word,
+            size: 30,
+            type: "circle",
+            score: responseArray[j].score
+          };
+          graph.nodes.push(newResponseNode);
+
+          var newLink = {
+            source: newCentreNode,
+            target: newResponseNode
+          }
+          graph.links.push(newLink);
+        }
+      } else {
+        for(var j = 0 ; j < responseArray.length ; j++){
+          var newResponseNode = {
+            id: responseArray[j].word,
+            size: 30,
+            type: "circle",
+            score: responseArray[j].score
+          };
+          graph.nodes.push(newResponseNode);
+
+          var newLink = {
+            source: newCentreNode,
+            target: newResponseNode
+          }
+          graph.links.push(newLink);
+        }
+      }
+      return graph;
+    }
+
+    datamuse.request(request)
+    .then((json) => { //json is an array of objects
+      console.log(json);
+      const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
+      this.setState({value: response}); //for display in textarea
+      var graph = updateGraphJson(this.state.graphjson, submitted, json);  //TODO
+      this.setState({graphjson: graph});  //TODO
+      console.log(this.state.graphjson); //object
+    });
+
     //clear text input
     var req = this.state.request;
     req.text = '';
     this.setState({request: req});
-
-    const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
-    var response = new Object(); //var o = {};
-
-    datamuse.request(request)
-    .then((json) => {
-      console.log(json);
-      const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
-      this.setState({value: response});
-      // var graph = createGraphJson(response);  //TODO
-      // this.setState({graphjson: graph});  //TODO
-      console.log(this.state.graphjson);
-    });
 
     // alert('User input: ' + submitted['text'] + '; degree: ' + submitted['degConnection'] + '; number: ' + submitted['numSuggestion'] + '\n' +
     //       'Submitted request: ' + request + '\n' +

@@ -20892,22 +20892,82 @@ var App = function (_Component) {
         numSuggestion: this.state.request.numSuggestion
       };
 
+      var request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
+      var response = new Object(); //var o = {};
+
+      function updateGraphJson(originalJsonObject, submittedObject, responseArray) {
+
+        var graph = originalJsonObject;
+
+        //check if the submittedObject is an object from originalJsonObject
+        var isPresent = false;
+        var newCentreNode;
+
+        for (var i = 0; i < originalJsonObject.nodes.length; i++) {
+          isPresent = originalJsonObject.nodes[i].id == submittedObject.text;
+          if (isPresent) {
+            newCentreNode = originalJsonObject.nodes[i];
+          }
+        }
+
+        if (!isPresent) {
+          newCentreNode = {
+            id: submittedObject.text,
+            size: 30,
+            type: "circle",
+            score: 0
+          };
+          graph.nodes.push(newCentreNode);
+
+          for (var j = 0; j < responseArray.length; j++) {
+            var newResponseNode = {
+              id: responseArray[j].word,
+              size: 30,
+              type: "circle",
+              score: responseArray[j].score
+            };
+            graph.nodes.push(newResponseNode);
+
+            var newLink = {
+              source: newCentreNode,
+              target: newResponseNode
+            };
+            graph.links.push(newLink);
+          }
+        } else {
+          for (var j = 0; j < responseArray.length; j++) {
+            var newResponseNode = {
+              id: responseArray[j].word,
+              size: 30,
+              type: "circle",
+              score: responseArray[j].score
+            };
+            graph.nodes.push(newResponseNode);
+
+            var newLink = {
+              source: newCentreNode,
+              target: newResponseNode
+            };
+            graph.links.push(newLink);
+          }
+        }
+        return graph;
+      }
+
+      datamuse.request(request).then(function (json) {
+        //json is an array of objects
+        console.log(json);
+        var response = JSON.stringify(json, null, 4); //convert JS object to JSON string
+        _this2.setState({ value: response }); //for display in textarea
+        var graph = updateGraphJson(_this2.state.graphjson, submitted, json); //TODO
+        _this2.setState({ graphjson: graph }); //TODO
+        console.log(_this2.state.graphjson); //object
+      });
+
       //clear text input
       var req = this.state.request;
       req.text = '';
       this.setState({ request: req });
-
-      var request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
-      var response = new Object(); //var o = {};
-
-      datamuse.request(request).then(function (json) {
-        console.log(json);
-        var response = JSON.stringify(json, null, 4); //convert JS object to JSON string
-        _this2.setState({ value: response });
-        // var graph = createGraphJson(response);  //TODO
-        // this.setState({graphjson: graph});  //TODO
-        console.log(_this2.state.graphjson);
-      });
 
       // alert('User input: ' + submitted['text'] + '; degree: ' + submitted['degConnection'] + '; number: ' + submitted['numSuggestion'] + '\n' +
       //       'Submitted request: ' + request + '\n' +
@@ -21139,7 +21199,7 @@ var ForceGraph = function (_React$Component) {
 
       simulation.on("tick", ticked);
 
-      console.log(_graph2.default);
+      console.log(_graph2.default); //object
     }
   }, {
     key: 'render',
