@@ -20959,8 +20959,8 @@ var App = function (_Component) {
         console.log(json);
         var response = JSON.stringify(json, null, 4); //convert JS object to JSON string
         _this2.setState({ value: response }); //for display in textarea
-        var graph = updateGraphJson(_this2.state.graphjson, submitted, json); //TODO
-        _this2.setState({ graphjson: graph }); //TODO
+        var graph = updateGraphJson(_this2.state.graphjson, submitted, json);
+        _this2.setState({ graphjson: graph });
         console.log(_this2.state.graphjson); //object
       });
 
@@ -20984,7 +20984,7 @@ var App = function (_Component) {
           'div',
           { style: styles.displayArea },
           _react2.default.createElement('textarea', {
-            rows: '30', cols: '50',
+            rows: '30', cols: '30',
             value: this.state.value,
             style: this.state.txtClass,
             onChange: this.saveText }),

@@ -26,7 +26,19 @@ const ReactDOMServer = require('react-dom/server');
 // var board = require('./routes/board');
 
 var app = express();
-app.use(cors());
+// app.use(cors());
+
+var whitelist = ['https://murmuring-gorge-69160.herokuapp.com'];
+var corsOptions = {
+  origin: function (origin, callback) {
+    console.log(origin);
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'pug');
@@ -43,7 +55,7 @@ app.use(cors());
 const PATH_PUBLIC = path.resolve(__dirname, '../../public');
 app.use('/static', express.static(PATH_PUBLIC));
 
-app.get('/', (req, res) => {
+app.get('/', cors(corsOptions),(req, res) => {
   console.log('HERE-------------');
   res.sendFile(PATH_PUBLIC + '/index.html');
 });
