@@ -18,6 +18,7 @@
   "dependencies": {
     "babel-register": "^6.24.1",
     "body-parser": "~1.17.1",
+    "cors": "^2.8.3",
     "d3": "^4.8.0",
     "datamuse": "^1.0.5",
     "debug": "~2.6.3",

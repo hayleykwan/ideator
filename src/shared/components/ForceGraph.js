@@ -1,6 +1,5 @@
 import React from 'react';
 import * as d3 from 'd3';
-// import force from 'd3-force';
 import json from '../../data/graph.json';
 
 export default class ForceGraph extends React.Component{

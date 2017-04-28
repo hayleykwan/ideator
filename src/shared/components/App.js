@@ -128,8 +128,8 @@ export default class App extends Component {
       console.log(json);
       const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
       this.setState({value: response}); //for display in textarea
-      var graph = updateGraphJson(this.state.graphjson, submitted, json);  //TODO
-      this.setState({graphjson: graph});  //TODO
+      var graph = updateGraphJson(this.state.graphjson, submitted, json);
+      this.setState({graphjson: graph});
       console.log(this.state.graphjson); //object
     });
 
@@ -137,10 +137,6 @@ export default class App extends Component {
     var req = this.state.request;
     req.text = '';
     this.setState({request: req});
-
-    // alert('User input: ' + submitted['text'] + '; degree: ' + submitted['degConnection'] + '; number: ' + submitted['numSuggestion'] + '\n' +
-    //       'Submitted request: ' + request + '\n' +
-    //       'response: '+ response);
   }
 
   render() {
@@ -149,7 +145,7 @@ export default class App extends Component {
           <h1 style={styles.header}>The Ideator</h1>
           <div style={styles.displayArea}>
             <textarea
-              rows="30"   cols="50"
+              rows="30"   cols="30"
               value={this.state.value}
               style={this.state.txtClass}
               onChange={this.saveText}>

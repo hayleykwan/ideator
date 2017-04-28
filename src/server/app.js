@@ -4,6 +4,7 @@
 
 console.log('begin app.js file');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 
 require('babel-register')({
@@ -25,7 +26,7 @@ const ReactDOMServer = require('react-dom/server');
 // var board = require('./routes/board');
 
 var app = express();
-
+app.use(cors());
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'pug');
