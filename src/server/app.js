@@ -28,17 +28,22 @@ const ReactDOMServer = require('react-dom/server');
 var app = express();
 // app.use(cors());
 
-var whitelist = ['https://murmuring-gorge-69160.herokuapp.com'];
 var corsOptions = {
-  origin: function (origin, callback) {
-    console.log(origin);
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
+  origin: true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+
+// var whitelist = ['https://murmuring-gorge-69160.herokuapp.com'];
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log(origin);
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS: ' + origin + '.\n'))
+//     }
+//   }
+// }
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'pug');
