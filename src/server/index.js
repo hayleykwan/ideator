@@ -30,10 +30,8 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(requestObject){
-    console.log('Request object from client: ' + requestObject.text);
     datamuse.request('words?ml=' + requestObject.text + '&max=' + requestObject.numSuggestion)
     .then((json) => { //json is an array of objects
-      console.log(JSON.stringify(json, null, 4));
       socket.emit('response', json);
     });
   });

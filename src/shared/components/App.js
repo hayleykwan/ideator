@@ -75,9 +75,7 @@ export default class App extends Component {
 
     var self = this;
     this.socket.on('response', function(json){
-      console.log('I got a response');
       const jsonRes = JSON.stringify(json, null, 4);
-      console.log(jsonRes);
       self.setState({value: jsonRes});
     });
 
