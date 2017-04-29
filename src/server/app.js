@@ -41,12 +41,6 @@ app.use('/static', express.static(PATH_PUBLIC));
 
 app.get('/', (req, res) => {
   debug('HERE-------------');
-
-  datamuse.request('words?ml=panda&max=8')
-  .then((json) => { //json is an array of objects
-    console.log(json);
-  });
-
   res.sendFile(PATH_PUBLIC + '/index.html');
 });
 

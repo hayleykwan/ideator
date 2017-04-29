@@ -4,6 +4,7 @@ import IdeaToolBar from './Toolbar';
 import ForceGraph from './ForceGraph';
 import Json from '../../data/graph.json';
 
+const io = require('socket.io-client');
 const datamuse = require('datamuse');
 
 export default class App extends Component {
@@ -30,6 +31,13 @@ export default class App extends Component {
     this.handleDegreeSlideChange = this.handleDegreeSlideChange.bind(this);
     this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillMount(){
+    this.socket = io();
+    this.socket.on('connect', () =>{
+      console.log('Connected to server. ' + this.socket.id); //works
+    });
   }
 
   saveText(e) {
@@ -59,79 +67,92 @@ export default class App extends Component {
       text: this.state.request.text,
       degConnection: this.state.request.degConnection,
       numSuggestion: this.state.request.numSuggestion
-    }
+    };
 
-    const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
-    var response = new Object(); //var o = {};
+    if(submitted.text.length > 0 && typeof submitted.text === 'string') {
+      this.socket.emit('request', submitted);
+    };
 
-    function updateGraphJson(originalJsonObject, submittedObject, responseArray) {
-
-      var graph = originalJsonObject;
-
-      //check if the submittedObject is an object from originalJsonObject
-      var isPresent = false;
-      var newCentreNode;
-
-      for(var i = 0 ; i < originalJsonObject.nodes.length ; i++){
-        isPresent = originalJsonObject.nodes[i].id == submittedObject.text;
-        if(isPresent){
-          newCentreNode = originalJsonObject.nodes[i];
-        }
-      }
-
-      if(!isPresent){
-        newCentreNode = {
-          id: submittedObject.text,
-          size: 30,
-          type: "circle",
-          score: 0
-        };
-        graph.nodes.push(newCentreNode);
-
-        for(var j = 0 ; j < responseArray.length ; j++){
-          var newResponseNode = {
-            id: responseArray[j].word,
-            size: 30,
-            type: "circle",
-            score: responseArray[j].score
-          };
-          graph.nodes.push(newResponseNode);
-
-          var newLink = {
-            source: newCentreNode,
-            target: newResponseNode
-          }
-          graph.links.push(newLink);
-        }
-      } else {
-        for(var j = 0 ; j < responseArray.length ; j++){
-          var newResponseNode = {
-            id: responseArray[j].word,
-            size: 30,
-            type: "circle",
-            score: responseArray[j].score
-          };
-          graph.nodes.push(newResponseNode);
-
-          var newLink = {
-            source: newCentreNode,
-            target: newResponseNode
-          }
-          graph.links.push(newLink);
-        }
-      }
-      return graph;
-    }
-
-    datamuse.request(request)
-    .then((json) => { //json is an array of objects
-      console.log(json);
-      const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
-      this.setState({value: response}); //for display in textarea
-      var graph = updateGraphJson(this.state.graphjson, submitted, json);
-      this.setState({graphjson: graph});
-      console.log(this.state.graphjson); //object
+    var self = this;
+    this.socket.on('response', function(json){
+      console.log('I got a response');
+      const jsonRes = JSON.stringify(json, null, 4);
+      console.log(jsonRes);
+      self.setState({value: jsonRes});
     });
+
+
+    // const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
+    // var response = new Object(); //var o = {};
+    //
+    // function updateGraphJson(originalJsonObject, submittedObject, responseArray) {
+    //
+    //   var graph = originalJsonObject;
+    //
+    //   //check if the submittedObject is an object from originalJsonObject
+    //   var isPresent = false;
+    //   var newCentreNode;
+    //
+    //   for(var i = 0 ; i < originalJsonObject.nodes.length ; i++){
+    //     isPresent = originalJsonObject.nodes[i].id == submittedObject.text;
+    //     if(isPresent){
+    //       newCentreNode = originalJsonObject.nodes[i];
+    //     }
+    //   }
+    //
+    //   if(!isPresent){
+    //     newCentreNode = {
+    //       id: submittedObject.text,
+    //       size: 30,
+    //       type: "circle",
+    //       score: 0
+    //     };
+    //     graph.nodes.push(newCentreNode);
+    //
+    //     for(var j = 0 ; j < responseArray.length ; j++){
+    //       var newResponseNode = {
+    //         id: responseArray[j].word,
+    //         size: 30,
+    //         type: "circle",
+    //         score: responseArray[j].score
+    //       };
+    //       graph.nodes.push(newResponseNode);
+    //
+    //       var newLink = {
+    //         source: newCentreNode,
+    //         target: newResponseNode
+    //       }
+    //       graph.links.push(newLink);
+    //     }
+    //   } else {
+    //     for(var j = 0 ; j < responseArray.length ; j++){
+    //       var newResponseNode = {
+    //         id: responseArray[j].word,
+    //         size: 30,
+    //         type: "circle",
+    //         score: responseArray[j].score
+    //       };
+    //       graph.nodes.push(newResponseNode);
+    //
+    //       var newLink = {
+    //         source: newCentreNode,
+    //         target: newResponseNode
+    //       }
+    //       graph.links.push(newLink);
+    //     }
+    //   }
+    //   return graph;
+    // }
+
+    // datamuse.request(request)
+    // .then((json) => { //json is an array of objects
+    //   console.log(json);
+    //   const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
+    //   this.setState({value: response}); //for display in textarea
+    //   var graph = updateGraphJson(this.state.graphjson, submitted, json);
+    //   this.setState({graphjson: graph});
+    //   console.log(this.state.graphjson); //object
+    // });
 
     //clear text input
     var req = this.state.request;

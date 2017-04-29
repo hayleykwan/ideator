@@ -4,7 +4,7 @@
 var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
-
+const datamuse = require('datamuse');
 /**
  * Get port from environment and store in Express.
  */
@@ -25,6 +25,23 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+io.on('connection', function(socket) { //listen on the connection event for incoming sockets
+  console.log('Client Connection: %s', socket.id);
+
+  socket.on('request', function(requestObject){
+    console.log('Request object from client: ' + requestObject.text);
+    datamuse.request('words?ml=' + requestObject.text + '&max=' + requestObject.numSuggestion)
+    .then((json) => { //json is an array of objects
+      console.log(JSON.stringify(json, null, 4));
+      socket.emit('response', json);
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected: %s', socket.id);
+  });
+})
 /**
  * Normalize a port into a number, string, or false.
  */
