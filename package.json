@@ -11,7 +11,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node ./src/server/index.js",
+    "start": "node ./src/server/index.js"
   },
   "dependencies": {
     "babel-register": "^6.24.1",
