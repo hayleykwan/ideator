@@ -1,66 +1,49 @@
-#!/usr/bin/env node
-
-/*
- *  Sets up server, port etc. 
- */
-
 /**
  * Module dependencies.
  */
-console.log('at bin www file');
-var app = require('../src/server/app');
+var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
-
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
-console.log('Server created.');
+debug('Server created.');
+var io = require('socket.io')(server);
+
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
-console.log('Listening to port '+ port);
-
 server.on('error', onError);
 server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
-    // named pipe
-    return val;
+    return val;// named pipe
   }
-
   if (port >= 0) {
-    // port number
-    return port;
+    return port;// port number
   }
-
   return false;
 }
 
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
-  console.log('Error occurred');
+  debug('Error occurred');
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -87,9 +70,8 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
-  console.log('Event listener listening');
+  debug('Event listener listening');
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr

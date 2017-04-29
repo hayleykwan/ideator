@@ -1,11 +1,10 @@
 /*
  *  Sets up app to be ready on server
  */
-
-console.log('begin app.js file');
+var debug = require('debug')('ideator:express-app');
 var express = require('express');
-var cors = require('cors');
 var path = require('path');
+const datamuse = require('datamuse');
 
 require('babel-register')({
   // This will override `node_modules` ignoring - you can alternatively pass
@@ -18,32 +17,12 @@ require('babel-register')({
 // var cookieParser = require('cookie-parser');
 // var bodyParser = require('body-parser');
 
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
-
 // var index = require('./routes/index');
 // var users = require('./routes/users');
 // var board = require('./routes/board');
 
 var app = express();
-// app.use(cors());
 
-var corsOptions = {
-  origin: true,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-
-// var whitelist = ['https://murmuring-gorge-69160.herokuapp.com'];
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     console.log(origin);
-//     if (whitelist.indexOf(origin) !== -1) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('Not allowed by CORS: ' + origin + '.\n'))
-//     }
-//   }
-// }
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'pug');
@@ -60,13 +39,22 @@ var corsOptions = {
 const PATH_PUBLIC = path.resolve(__dirname, '../../public');
 app.use('/static', express.static(PATH_PUBLIC));
 
-app.get('/', cors(corsOptions),(req, res) => {
-  console.log('HERE-------------');
+app.get('/', (req, res) => {
+  debug('HERE-------------');
+
+  datamuse.request('words?ml=panda&max=8')
+  .then((json) => { //json is an array of objects
+    console.log(json);
+  });
+
   res.sendFile(PATH_PUBLIC + '/index.html');
 });
 
 
 // isomorphic javascript
+
+// const React = require('react');
+// const ReactDOMServer = require('react-dom/server');
 // app.get('/', (req, res) => {
 //   // instantiate the React component
 //   const rApp = React.createFactory(Welcome)({});
