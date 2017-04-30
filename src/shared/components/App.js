@@ -17,9 +17,9 @@ export default class App extends Component {
     };
 
     this.state = {
-      value: JSON.stringify(placeholder, null, 4),
+      value: JSON.stringify(placeholder, null, 4), //not needed
       graphjson: Json,
-      txtClass: styles.textArea,
+      txtClass: styles.textArea, //not needed
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -64,98 +64,27 @@ export default class App extends Component {
 
   handleSubmit(event) {
     const submitted = {
-      text: this.state.request.text,
+      word: this.state.request.text,
       degConnection: this.state.request.degConnection,
       numSuggestion: this.state.request.numSuggestion
     };
 
-    if(submitted.text.length > 0 && typeof submitted.text === 'string') {
-      this.socket.emit('request', submitted);
+    if(submitted.word.length > 0 && typeof submitted.word === 'string') {
+      console.log(this.state.graphjson);
+      this.socket.emit('request', submitted, this.state.graphjson);
     };
-
-    var self = this;
-    this.socket.on('response', function(json){
-      const jsonRes = JSON.stringify(json, null, 4);
-      self.setState({value: jsonRes});
-    });
-
-
-    // const request = 'words?ml=' + submitted["text"] + '&max=' + submitted.numSuggestion;
-    // var response = new Object(); //var o = {};
-    //
-    // function updateGraphJson(originalJsonObject, submittedObject, responseArray) {
-    //
-    //   var graph = originalJsonObject;
-    //
-    //   //check if the submittedObject is an object from originalJsonObject
-    //   var isPresent = false;
-    //   var newCentreNode;
-    //
-    //   for(var i = 0 ; i < originalJsonObject.nodes.length ; i++){
-    //     isPresent = originalJsonObject.nodes[i].id == submittedObject.text;
-    //     if(isPresent){
-    //       newCentreNode = originalJsonObject.nodes[i];
-    //     }
-    //   }
-    //
-    //   if(!isPresent){
-    //     newCentreNode = {
-    //       id: submittedObject.text,
-    //       size: 30,
-    //       type: "circle",
-    //       score: 0
-    //     };
-    //     graph.nodes.push(newCentreNode);
-    //
-    //     for(var j = 0 ; j < responseArray.length ; j++){
-    //       var newResponseNode = {
-    //         id: responseArray[j].word,
-    //         size: 30,
-    //         type: "circle",
-    //         score: responseArray[j].score
-    //       };
-    //       graph.nodes.push(newResponseNode);
-    //
-    //       var newLink = {
-    //         source: newCentreNode,
-    //         target: newResponseNode
-    //       }
-    //       graph.links.push(newLink);
-    //     }
-    //   } else {
-    //     for(var j = 0 ; j < responseArray.length ; j++){
-    //       var newResponseNode = {
-    //         id: responseArray[j].word,
-    //         size: 30,
-    //         type: "circle",
-    //         score: responseArray[j].score
-    //       };
-    //       graph.nodes.push(newResponseNode);
-    //
-    //       var newLink = {
-    //         source: newCentreNode,
-    //         target: newResponseNode
-    //       }
-    //       graph.links.push(newLink);
-    //     }
-    //   }
-    //   return graph;
-    // }
-
-    // datamuse.request(request)
-    // .then((json) => { //json is an array of objects
-    //   console.log(json);
-    //   const response = JSON.stringify(json, null, 4); //convert JS object to JSON string
-    //   this.setState({value: response}); //for display in textarea
-    //   var graph = updateGraphJson(this.state.graphjson, submitted, json);
-    //   this.setState({graphjson: graph});
-    //   console.log(this.state.graphjson); //object
-    // });
 
     //clear text input
     var req = this.state.request;
     req.text = '';
     this.setState({request: req});
+
+    var self = this;
+    this.socket.on('response', function(json, newGraph){
+      const jsonRes = JSON.stringify(json, null, 2);
+      self.setState({value: jsonRes});
+      self.setState({graphjson: newGraph});
+    });
   }
 
   render() {
@@ -163,7 +92,7 @@ export default class App extends Component {
         <div id="app" style={styles.container}>
           <h1 style={styles.header}>The Ideator</h1>
           <div style={styles.displayArea}>
-            <textarea
+            <textarea //not needed
               rows="30"   cols="30"
               value={this.state.value}
               style={this.state.txtClass}
@@ -171,7 +100,7 @@ export default class App extends Component {
             </textarea>
             <ForceGraph
               width="400" height="400"
-              // data={this.state.graphjson} //TODO
+              json={this.state.graphjson}
             />
           </div>
           <MuiThemeProvider>

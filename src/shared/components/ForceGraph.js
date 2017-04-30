@@ -1,6 +1,5 @@
 import React from 'react';
 import * as d3 from 'd3';
-import json from '../../data/graph.json';
 
 export default class ForceGraph extends React.Component{
   constructor(props){
@@ -8,7 +7,7 @@ export default class ForceGraph extends React.Component{
   }
 
   componentDidMount(){
-    const {width, height} = this.props;
+    const {width, height, json} = this.props;
     //no need to parse JSON
 
     //Set up the force layout

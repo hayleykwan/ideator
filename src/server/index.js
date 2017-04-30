@@ -5,6 +5,8 @@ var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 const datamuse = require('datamuse');
+const modifyGraph = require('./modify-json');
+
 /**
  * Get port from environment and store in Express.
  */
@@ -29,10 +31,12 @@ server.on('listening', onListening);
 io.on('connection', function(socket) { //listen on the connection event for incoming sockets
   console.log('Client Connection: %s', socket.id);
 
-  socket.on('request', function(requestObject){
-    datamuse.request('words?ml=' + requestObject.text + '&max=' + requestObject.numSuggestion)
+  socket.on('request', function(requestObject, currentGraph){
+    datamuse.request('words?ml=' + requestObject.word + '&max=' + requestObject.numSuggestion)
     .then((json) => { //json is an array of objects
-      socket.emit('response', json);
+      //process json to create completed json
+      var newGraph = modifyGraph.update(currentGraph, requestObject, json);
+      socket.emit('response', json, newGraph);
     });
   });
 
