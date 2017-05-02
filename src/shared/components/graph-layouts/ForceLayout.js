@@ -1,30 +1,26 @@
 import React from 'react';
 import * as d3 from 'd3';
 
-export default class ForceGraph extends React.Component{
+export default class ForceLayout extends React.Component{
   constructor(props){
     super(props);
   }
 
   componentDidMount(){
-    const {width, height, json} = this.props;
-    //no need to parse JSON
+    var nodes = this.props.nodes;
+    var links = this.props.links;
+    const width = this.props.width;
+    const height = this.props.height;
 
-    //Set up the force layout
-    const simulation = d3.forceSimulation()
-      .nodes(json.nodes)
-      .force("link", d3.forceLink(json.links).distance(50))
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).distance(50))
       .force("charge", d3.forceManyBody().strength(-120))
       .force('center', d3.forceCenter(width / 2, height / 2));
 
-//Append a SVG to the reference point. Assign this SVG as an object to svg
-    const svg = d3.select(this.refs.mountPoint)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    const graph = d3.select(this.refs.graph);
 
-    const node = svg.selectAll('circle')
-      .data(json.nodes)
+    const node = graph.selectAll('circle')
+      .data(nodes)
       .enter()
       .append('g')
       .attr("class", "node");
@@ -39,8 +35,8 @@ export default class ForceGraph extends React.Component{
       .attr("dy", ".35em")
       .text(function(d) { return d.id });
 
-    const link = svg.selectAll('line')
-      .data(json.links)
+    const link = graph.selectAll('line')
+      .data(links)
       .enter()
       .append('line')
       .attr("class", "link")
@@ -64,17 +60,20 @@ export default class ForceGraph extends React.Component{
       d3.selectAll("text")
         .attr("x", function (d) {return d.x;})
         .attr("y", function (d) {return d.y;});
-    }
+      }
 
     simulation.on("tick", ticked);
 
   }
 
-  render() {
-    const {width, height} = this.props;
-    const style = {
-      width, height, border:'1px solid #323232'
-    };
-    return <div style={style} ref="mountPoint"/>
+  render(){
+    return(
+      <svg
+        width={this.props.width}
+        height={this.props.height}
+        style={this.props.style}>
+        <g ref='graph' />
+      </svg>
+    );
   }
 }

@@ -7,7 +7,8 @@
     "url": "https://github.com/hayleykwan/ideator.git"
   },
   "engines": {
-    "node": "6.10.2"
+    "node": "6.10.2",
+    "npm": "3.10.10"
   },
   "private": true,
   "scripts": {
@@ -28,7 +29,8 @@
     "react-tap-event-plugin": "^2.0.1",
     "serve-favicon": "~2.4.2",
     "socket.io": "^1.7.3",
-    "socket.io-client": "^1.7.3"
+    "socket.io-client": "^1.7.3",
+    "underscore": "^1.8.3"
   },
   "author": "Hayley Weng Hei Kwan",
   "keywords": [

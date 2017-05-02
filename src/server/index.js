@@ -31,11 +31,11 @@ server.on('listening', onListening);
 io.on('connection', function(socket) { //listen on the connection event for incoming sockets
   console.log('Client Connection: %s', socket.id);
 
-  socket.on('request', function(requestObject, currentGraph){
-    datamuse.request('words?ml=' + requestObject.word + '&max=' + requestObject.numSuggestion)
+  socket.on('request', function(submitted, currentGraph){
+    datamuse.request('words?ml=' + submitted.word + '&max=' + submitted.numSuggestion)
     .then((json) => { //json is an array of objects
-      //process json to create completed json
-      var newGraph = modifyGraph.update(currentGraph, requestObject, json);
+      var newGraph = modifyGraph.update(currentGraph, submitted, json);
+      // should update database
       socket.emit('response', json, newGraph);
     });
   });

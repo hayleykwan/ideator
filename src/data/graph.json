@@ -1,5 +1,4 @@
 {
-    "graph": [],
     "links": [
         {"source": 0, "target": 1},
         {"source": 0, "target": 2},
@@ -37,7 +36,7 @@
             "type": "circle",
             "score": 1
         }
-    ],      
+    ],
     "directed": false,
     "multigraph": false
 }

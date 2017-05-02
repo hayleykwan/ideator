@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import IdeaToolBar from './Toolbar';
-import ForceGraph from './ForceGraph';
+import Graph from './Graph';
 import Json from '../../data/graph.json';
 
 const io = require('socket.io-client');
@@ -18,7 +18,7 @@ export default class App extends Component {
 
     this.state = {
       value: JSON.stringify(placeholder, null, 4), //not needed
-      graphjson: Json,
+      data: Json,
       txtClass: styles.textArea, //not needed
       request: {
         numSuggestion: 6,
@@ -70,8 +70,7 @@ export default class App extends Component {
     };
 
     if(submitted.word.length > 0 && typeof submitted.word === 'string') {
-      console.log(this.state.graphjson);
-      this.socket.emit('request', submitted, this.state.graphjson);
+      this.socket.emit('request', submitted, this.state.data);
     };
 
     //clear text input
@@ -81,9 +80,13 @@ export default class App extends Component {
 
     var self = this;
     this.socket.on('response', function(json, newGraph){
+      //if new graph is the same as old graph
+      //shouldComponentUpdate return false
+      //else update state
       const jsonRes = JSON.stringify(json, null, 2);
       self.setState({value: jsonRes});
-      self.setState({graphjson: newGraph});
+      console.log(newGraph);
+      self.setState({data: newGraph});
     });
   }
 
@@ -98,9 +101,11 @@ export default class App extends Component {
               style={this.state.txtClass}
               onChange={this.saveText}>
             </textarea>
-            <ForceGraph
-              width="400" height="400"
-              json={this.state.graphjson}
+            <Graph
+              graphType="force"
+              data={this.state.data}
+              width="400"
+              height="400"
             />
           </div>
           <MuiThemeProvider>
