@@ -20,14 +20,11 @@ export default class Graph extends React.Component{
   //to render different layouts
 
   render(){
-    const style = {  //uniform style for all layouts
-      border:'5px solid #9E9EFF'
-    }
     // should use switch statement instead
     if (this.props.graphType === "force"){
+      // console.log(this.props.data); already assigned index, x, y, vx, vy
       return (
         <ForceLayout
-          style={style}
           nodes={this.props.data.nodes}
           links={this.props.data.links}
           width={this.props.width}

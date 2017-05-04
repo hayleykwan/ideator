@@ -7,36 +7,29 @@
     ],
     "nodes": [
         {
-            "id": "panda",
-            "size": 150,
-            "type": "circle",
+            "word": "panda",
+            "size": 80,
             "score": 0
         },
         {
-            "id": "china",
+            "word": "china",
             "size": 30,
-            "type": "circle",
             "score": 1
         },
         {
-            "id": "chubby",
+            "word": "chubby",
             "size": 30,
-            "type": "circle",
             "score": 1
         },
         {
-            "id": "black",
+            "word": "black",
             "size": 60,
-            "type": "circle",
             "score": 1
         },
         {
-            "id": "white",
+            "word": "white",
             "size": 60,
-            "type": "circle",
             "score": 1
         }
-    ],
-    "directed": false,
-    "multigraph": false
+    ]
 }

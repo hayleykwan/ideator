@@ -41,7 +41,11 @@ class CustomSlider extends React.Component {
     const name = this.props.name
     return (
       <div>
-        <p>{sliderNames[name]}</p>
+        <p>
+          <span>{sliderNames[name]}</span>
+          <span>{': '}</span>
+          <span>{this.props.value}</span>
+        </p>
         <Slider
           min={this.props.min} max={this.props.max}
           step={this.props.step}
@@ -50,8 +54,8 @@ class CustomSlider extends React.Component {
           style={{width: 150}}
         />
         <p>
-          <span>{'Currently: '}</span>
-          <span>{this.props.value}</span>
+
+
         </p>
       </div>
     );

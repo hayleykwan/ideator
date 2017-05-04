@@ -1,32 +1,34 @@
 import React, { Component } from 'react';
+// import './styles.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import IdeaToolBar from './Toolbar';
+import NavBar from './NavBar';
 import Graph from './Graph';
 import Json from '../../data/graph.json';
 
 const io = require('socket.io-client');
-const datamuse = require('datamuse');
+
+var a = {word: "panda"};
+var b = {word:"black"};
+var c = {word:"china"};
 
 export default class App extends Component {
   constructor(props) {
     super(props);
 
-    const placeholder = {
-      try: 'removing some whitespace!',
-      then: ['then', 'click', 'format']
+    var data = {
+      nodes: [a, b, c],
+      links: [{source: a, target: b}, {source: a, target: c}]
     };
 
     this.state = {
-      value: JSON.stringify(placeholder, null, 4), //not needed
-      data: Json,
-      txtClass: styles.textArea, //not needed
+      data: data,  //Json
       request: {
         numSuggestion: 6,
         degConnection: 1,
         text: ''}
     };
 
-    this.saveText = this.saveText.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleDegreeSlideChange = this.handleDegreeSlideChange.bind(this);
     this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
@@ -36,12 +38,8 @@ export default class App extends Component {
   componentWillMount(){
     this.socket = io();
     this.socket.on('connect', () =>{
-      console.log('Connected to server. ' + this.socket.id); //works
+      console.log('Connected to server. ' + this.socket.id);
     });
-  }
-
-  saveText(e) {
-    this.setState({value: e.target.value});
   }
 
   handleTextChange(value) {
@@ -79,37 +77,26 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(json, newGraph){
-      //if new graph is the same as old graph
-      //shouldComponentUpdate return false
-      //else update state
-      const jsonRes = JSON.stringify(json, null, 2);
-      self.setState({value: jsonRes});
-      console.log(newGraph);
+    this.socket.on('response', function(newGraph){
       self.setState({data: newGraph});
     });
   }
 
   render() {
     return (
-        <div id="app" style={styles.container}>
-          <h1 style={styles.header}>The Ideator</h1>
+        <div id="app" className='globalWrapper' style={styles.container}>
+          <h2 style={styles.header}>The Ideator</h2>
+          {/* <NavBar /> */}
           <div style={styles.displayArea}>
-            <textarea //not needed
-              rows="30"   cols="30"
-              value={this.state.value}
-              style={this.state.txtClass}
-              onChange={this.saveText}>
-            </textarea>
             <Graph
               graphType="force"
               data={this.state.data}
-              width="400"
-              height="400"
+              width="950"
+              height="500"
             />
           </div>
           <MuiThemeProvider>
-            <IdeaToolBar
+            <IdeaToolBar className='toolbar'
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
@@ -131,12 +118,7 @@ const styles = {
   header: {
     flex: '0 1 auto'
   },
-  textArea: {
-    flex: '0 1 auto',
-    fontFamily: 'monospace'
-  },
   displayArea: {
-    display: 'flex',
-    flexDirection: 'row'
+    border:'5px solid #9E9EFF'
   }
 };

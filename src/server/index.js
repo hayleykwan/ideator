@@ -5,7 +5,7 @@ var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 const datamuse = require('datamuse');
-const modifyGraph = require('./modify-json');
+const dataUpdate = require('./data-update');
 
 /**
  * Get port from environment and store in Express.
@@ -34,9 +34,12 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   socket.on('request', function(submitted, currentGraph){
     datamuse.request('words?ml=' + submitted.word + '&max=' + submitted.numSuggestion)
     .then((json) => { //json is an array of objects
-      var newGraph = modifyGraph.update(currentGraph, submitted, json);
+      debug('Response from datamuse' + JSON.stringify(json, null,3));
+      debug('Current graph to be updated' + JSON.stringify(currentGraph, null, 3));
+      var newGraph = dataUpdate.update(currentGraph, submitted, json);
+      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       // should update database
-      socket.emit('response', json, newGraph);
+      socket.emit('response', newGraph);
     });
   });
 
