@@ -35570,11 +35570,6 @@ var App = function (_Component) {
 
       var self = this;
       this.socket.on('response', function (newGraph) {
-        //if new graph is the same as old graph
-        //shouldComponentUpdate return false
-        //else update state
-        console.log('Data before updating: ' + JSON.stringify(self.state.data, null, 3));
-        console.log('New graph received: ' + JSON.stringify(newGraph, null, 3));
         self.setState({ data: newGraph });
       });
     }
@@ -36205,15 +36200,15 @@ var ForceLayout = function (_React$Component) {
       var width = this.props.width;
       var height = this.props.height;
 
-      this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).distance(50)).force("charge", d3.forceManyBody().strength(-120)).force('center', d3.forceCenter(width / 2, height / 2));
+      this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).distance(50)).force("charge", d3.forceManyBody().strength(-120)).force("center", d3.forceCenter(width / 2, height / 2));
 
-      this.svg = d3.select('svg');
-      this.svg.call(d3.zoom().on("zoom", function () {
-        _this2.svg.attr("transform", d3.event.transform);
-      }));
-
-      this.graph = d3.select(this.refs.graph);
+      this.graph = d3.select(this.refs.graph).attr("class", "everything");
       // this.graph.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+      this.svg = d3.select("svg");
+      this.svg.call(d3.zoom().on("zoom", function () {
+        _this2.graph.attr("transform", d3.event.transform);
+      }));
 
       var node = this.graph.selectAll('.node').data(nodes).enter().append('g').attr("class", "node").call(enterNode);
 
@@ -36226,34 +36221,45 @@ var ForceLayout = function (_React$Component) {
   }, {
     key: 'shouldComponentUpdate',
     value: function shouldComponentUpdate(nextProps) {
-      var _this3 = this;
-
       //only allow d3 to re-render if the nodes and links props are different
       if (nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links) {
         console.log('should only appear when updating graph');
 
-        this.simulation.stop();
+        var newNodes = nextProps.nodes.slice(); //array //this.props.nodes.slice(); //
+        var newLinks = nextProps.links.slice(); //array //this.props.links.slice(); //
+
+        //JUST TESTING PUSHING
+        // var node = {word: "newnode"};
+        // newNodes.push(node);
+        // var link = {source: this.props.nodes[0], target: node};
+        // newLinks.push(link);
+
+        // this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
 
-        var d3Nodes = this.graph.selectAll('.node').data(nextProps.nodes).enter() //enter new nodes
-        .append('g').attr("class", "node").call(enterNode);
+        var d3Nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
+          return d.word;
+        }); //nextProps.nodes
+        d3Nodes.enter().append('g').attr("class", "node").call(enterNode);
         d3Nodes.exit().remove();
-        // d3Nodes.call(updateNode);
+        d3Nodes.call(updateNode);
 
-        var d3Links = this.graph.selectAll('.link').data(nextProps.links).enter().call(enterLink);
+        var d3Links = this.graph.selectAll('.link').data(newLinks, function (d) {
+          return d.source.word + "-" + d.target.word;
+        }); //nextProps.links
+        d3Links.enter().call(enterLink);
         d3Links.exit().remove();
-        // d3Links.call(updateLink);
+        d3Links.call(updateLink);
 
-        var newNodes = Object.assign({}, nextProps.nodes);
-        var newLinks = Object.assign({}, nextProps.links);
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
-        this.simulation.on('tick', function () {
-          _this3.graph.call(updateGraph);
-        });
         this.simulation.alpha(1).restart();
+
+        // this.simulation.on('tick', () => {
+        //   this.graph.call(updateGraph);
+        // });
       }
-      console.log('all props changes trigger this');
+
       return false;
     }
   }, {
@@ -36278,8 +36284,7 @@ var ForceLayout = function (_React$Component) {
 
 exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
-  selection.append('circle').attr('r', 10).style('fill', '#888888').style('stroke', '#fff') //outline is black
-  .style('stroke-width', 1.5); //outline thickness
+  selection.append('circle').attr('r', 10).style('fill', '#888888').style('stroke', '#fff').style('stroke-width', 1.5);
 
   selection.append("text").attr("x", function (d) {
     return 20;
@@ -36291,7 +36296,9 @@ var enterNode = function enterNode(selection) {
 };
 
 var enterLink = function enterLink(selection) {
-  selection.append('line').attr("class", "link").style('stroke', '#999999').style('stroke-opacity', 0.6);
+  selection.insert('line', '.node')
+  // .append('line')
+  .attr("class", "link").style('stroke', '#999999').style('stroke-opacity', 0.6);
 };
 
 var updateNode = function updateNode(selection) {

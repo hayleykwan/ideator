@@ -84,7 +84,7 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
     }
   }
 
-  maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
+  // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
   return currentGraph;
 }
 
