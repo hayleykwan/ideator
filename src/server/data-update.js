@@ -3,6 +3,14 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   // submitted is one object: word, num, deg
   //datamuseRe is array of objects: word, score,
 
+  // var new_node = {word: "newnode"};
+  // var new_node2 = {word: "newnode2"}
+  // currentGraph.nodes.push(new_node);
+  // currentGraph.nodes.push(new_node2);
+  // var new_link = {source: currentGraph.nodes[0], target: currentGraph.nodes[1]};
+  // currentGraph.links.push(new_link);
+  // return currentGraph;
+
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);

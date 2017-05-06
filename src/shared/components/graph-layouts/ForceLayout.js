@@ -16,7 +16,7 @@ export default class ForceLayout extends React.Component{
 
     this.simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).distance(50))
-      .force("charge", d3.forceManyBody().strength(-120))
+      .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     this.graph = d3.select(this.refs.graph).attr("class", "everything");
@@ -30,14 +30,14 @@ export default class ForceLayout extends React.Component{
     );
 
     var node = this.graph.selectAll('.node')
-      .data(nodes)
+      .data(nodes, function(d) {return d.word})
       .enter()
       .append('g')
       .attr("class", "node")
       .call(enterNode);
 
     var link = this.graph.selectAll('.link')
-      .data(links)
+      .data(links, function(d) { return d.source.word + "-" + d.target.word; })
       .enter()
       .call(enterLink);
 
@@ -46,48 +46,54 @@ export default class ForceLayout extends React.Component{
     });
   }
 
+  // componentWillReceiveProps(nextProps){
+  //   this.setState({
+  //     nodes: nextProps.nodes,
+  //     links: nextProps.links
+  //   })
+  // }
+
   shouldComponentUpdate(nextProps){
+    console.log('shouldComponentUpdate triggered');
+
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
       console.log('should only appear when updating graph');
-
-      var newNodes = nextProps.nodes.slice(); //array //this.props.nodes.slice(); //
-      var newLinks = nextProps.links.slice(); //array //this.props.links.slice(); //
-
-//JUST TESTING PUSHING
-      // var node = {word: "newnode"};
-      // newNodes.push(node);
-      // var link = {source: this.props.nodes[0], target: node};
-      // newLinks.push(link);
+      console.log(nextProps.nodes);
+      console.log(nextProps.links);
+      var newNodes = nextProps.nodes.slice();
+      var newLinks = nextProps.links.slice();
 
       // this.simulation.stop();
       this.graph = d3.select(this.refs.graph);
 
       var d3Nodes = this.graph.selectAll('.node')
         .data(newNodes, function(d) {return d.word}); //nextProps.nodes
+      d3Nodes.exit().remove();
       d3Nodes
         .enter()
         .append('g')
         .attr("class", "node")
-        .call(enterNode);
-      d3Nodes.exit().remove();
-      d3Nodes.call(updateNode);
+        .call(enterNode)
+        .merge(d3Nodes);
+      // d3Nodes.call(updateNode);
 
       var d3Links = this.graph.selectAll('.link')
         .data(newLinks, function(d) { return d.source.word + "-" + d.target.word; }); //nextProps.links
+      d3Links.exit().remove();
       d3Links
         .enter()
-        .call(enterLink);
-      d3Links.exit().remove();
-      d3Links.call(updateLink);
+        .call(enterLink)
+        .merge(d3Links);
+      // d3Links.call(updateLink);
 
       this.simulation.nodes(newNodes);
       this.simulation.force("link").links(newLinks);
       this.simulation.alpha(1).restart();
 
-      // this.simulation.on('tick', () => {
-      //   this.graph.call(updateGraph);
-      // });
+      this.simulation.on('tick', () => {
+        this.graph.call(updateGraph);
+      });
     }
 
     return false;
@@ -123,7 +129,6 @@ var enterNode = (selection) => {
 var enterLink = (selection) => {
   selection
     .insert('line', '.node')
-    // .append('line')
     .attr("class", "link")
     .style('stroke', '#999999')
     .style('stroke-opacity', 0.6);

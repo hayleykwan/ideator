@@ -7,18 +7,15 @@ import Graph from './Graph';
 import Json from '../../data/graph.json';
 
 const io = require('socket.io-client');
-
-var a = {word: "panda"};
-var b = {word:"black"};
-var c = {word:"china"};
+const dataUpdate = require('../../server/data-update');
 
 export default class App extends Component {
   constructor(props) {
     super(props);
 
     var data = {
-      nodes: [a, b, c],
-      links: [{source: a, target: b}, {source: a, target: c}]
+      nodes: [], //[a, b, c],
+      links: []  //[{source: a, target: b}, {source: a, target: c}]
     };
 
     this.state = {
@@ -77,8 +74,28 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(newGraph){
-      self.setState({data: newGraph});
+    this.socket.on('response', function(json, newGraph){
+
+      var data = Object.assign({}, self.state.data);
+
+      // var new_node = {word: "newnode"}; //pushing new data each time
+      // var new_node2 = {word: "newnode2"}
+      // data.nodes.push(new_node);
+      // data.nodes.push(new_node2);
+      // var new_link = {source: data.nodes[0], target: data.nodes[1]};
+      // data.links.push(new_link);
+
+      // var a = {word: "panda"};  //reset data
+      // var b = {word: "black"};
+      // var c = {word: "china"};
+      // data.nodes = [a, b, c];
+      // data.links = [{source: a, target: b}, {source: a, target: c}];
+
+      data.nodes = newGraph.nodes;
+      data.links = newGraph.links;
+
+      // data = dataUpdate.update(data, submitted, json); //
+      self.setState({data: data}); //newGraph
     });
   }
 

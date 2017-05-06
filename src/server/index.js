@@ -39,7 +39,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       // should update database
-      socket.emit('response', newGraph);
+      socket.emit('response', json, newGraph);
     });
   });
 
