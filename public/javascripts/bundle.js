@@ -35502,7 +35502,7 @@ var App = function (_Component) {
     };
 
     _this.state = {
-      data: data, //Json
+      data: _graph2.default, //Json
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -35568,23 +35568,30 @@ var App = function (_Component) {
       var self = this;
       this.socket.on('response', function (json, newGraph) {
 
-        var data = Object.assign({}, self.state.data);
+        var data = { nodes: [], links: [] }; //Object.assign({}, self.state.data);
 
-        // var new_node = {word: "newnode"}; //pushing new data each time
-        // var new_node2 = {word: "newnode2"}
+        var new_node = { word: "newnode" }; //pushing new data each time
+        var new_node2 = { word: "newnode2" };
+        data.nodes.push(new_node);
+        data.nodes.push(new_node2);
+        var new_link = { source: data.nodes[0], target: data.nodes[1], type: "test" };
+        data.links.push(new_link);
+
+        // var new_node = {"word": "newnode", "length": 5};
+        // var new_node2 = {"word": "newnode2", "length": 5};
         // data.nodes.push(new_node);
         // data.nodes.push(new_node2);
-        // var new_link = {source: data.nodes[0], target: data.nodes[1]};
+        // var new_link = {source: data.nodes[0], target: new_node2};
         // data.links.push(new_link);
 
-        // var a = {word: "panda"};  //reset data
+        // var a = {word: "hi"};  //reset data
         // var b = {word: "black"};
         // var c = {word: "china"};
-        // data.nodes = [a, b, c];
+        // data.nodes= [a, b, c];
         // data.links = [{source: a, target: b}, {source: a, target: c}];
 
-        data.nodes = newGraph.nodes;
-        data.links = newGraph.links;
+        // data.nodes = newGraph.nodes;
+        // data.links = newGraph.links;
 
         // data = dataUpdate.update(data, submitted, json); //
         self.setState({ data: data }); //newGraph
@@ -35789,98 +35796,104 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
   // submitted is one object: word, num, deg
   //datamuseRe is array of objects: word, score,
 
-  // var new_node = {word: "newnode"};
-  // var new_node2 = {word: "newnode2"}
+  // var new_node = {"word": "newnode", "length": "7"};
+  // var new_node2 = {"word": "newnode2", "length": "8"};
   // currentGraph.nodes.push(new_node);
   // currentGraph.nodes.push(new_node2);
-  // var new_link = {source: currentGraph.nodes[0], target: currentGraph.nodes[1]};
+  // var new_link = {source: currentGraph.nodes[0], target: new_node2};
   // currentGraph.links.push(new_link);
   // return currentGraph;
 
-  //if datamuseResponse is empty, return same graph
-  if (datamuseRe.length === 0) {
-    console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
-    return currentGraph;
-  }
-  //else update graph
-
-  var oldNodes = currentGraph.nodes.slice();
-  //check if the submittedObject is an object from originalJsonObject
-  if (indexOfWordInGraph(currentGraph, submitted) !== -1) {
-    //source is present, only need to add links
-    var centreIndex = indexOfWordInGraph(currentGraph, submitted);
-    currentGraph.nodes[centreIndex].score = 80;
-    //for each datamuse response object
-    //check if target exists in currentGraph
-    //if it does, link centreIndex (src) and this index (target) up
-    //if not, append new node, link centreIndex and this up
-    for (var i = 0; i < datamuseRe.length; i++) {
-      if (indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1) {
-        //it exists in currentGraph
-        var targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
-        var link = {
-          source: currentGraph.nodes[centreIndex],
-          target: currentGraph.nodes[targetIndex]
-        };
-        currentGraph.links.push(link);
-      } else {
-        //it does not exist in currentGraph
-        var node = { //create new node
-          word: datamuseRe[i].word,
-          size: 50,
-          score: 1
-        };
-        currentGraph.nodes.push(node);
-        var link = { //create new link
-          source: currentGraph.nodes[centreIndex],
-          target: node
-        };
-        currentGraph.links.push(link);
-      }
-    }
-  } else {
-    // not present, need to add new centre
-    // create new centre node
-    var centre = {
-      word: submitted.word,
-      size: 80,
-      score: 1
-    };
-    currentGraph.nodes.push(centre);
-
-    // for each datamuse response object
-    //check if it exists in currentGraph
-    //if it does, link centreIndex (src) and this index (target) up
-    //if not, append new node, link centreIndex and this up
-    for (var i = 0; i < datamuseRe.length; i++) {
-      if (indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1) {
-        //it exists in currentGraph
-        var _targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
-        var link = {
-          source: centre,
-          target: currentGraph.nodes[_targetIndex]
-        };
-        currentGraph.links.push(link);
-      } else {
-        //it does not exist in currentGraph
-        var node = { //create new node
-          word: datamuseRe[i].word,
-          size: 50,
-          score: 1
-        };
-        currentGraph.nodes.push(node);
-        var link = { //create new link
-          source: centre,
-          target: node
-        };
-        currentGraph.links.push(link);
-      }
-    }
-  }
-
-  // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
-  return currentGraph;
+  var data = { nodes: [], links: [] };
+  var new_node = { word: "newnode" }; //pushing new data each time
+  var new_node2 = { word: "newnode2" };
+  data.nodes.push(new_node);
+  data.nodes.push(new_node2);
+  var new_link = { source: data.nodes[0], target: data.nodes[1], type: "test" };
+  data.links.push(new_link);
+  return data;
 };
+//   //if datamuseResponse is empty, return same graph
+//   if(datamuseRe.length === 0){
+//     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
+//     return currentGraph;
+//   }
+//   //else update graph
+//
+//   // var oldNodes = currentGraph.nodes.slice();
+//   //check if the submittedObject is an object from originalJsonObject
+//   if(indexOfWordInGraph(currentGraph, submitted) !== -1){
+//     //source is present, only need to add links
+//     const centreIndex = indexOfWordInGraph(currentGraph, submitted);
+//     currentGraph.nodes[centreIndex].score = 80;
+//     //for each response object
+//     //check if target exists in currentGraph
+//     //if it does, link centreIndex (src) and this index (target) up
+//     //if not, append new node, link centreIndex and this up
+//     for(var i = 0 ; i < datamuseRe.length ; i++){
+//       if(indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1){
+//         //it exists in currentGraph
+//         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+//         var link = {
+//           source: currentGraph.nodes[centreIndex],
+//           target: currentGraph.nodes[targetIndex]
+//         };
+//         currentGraph.links.push(link);
+//       } else {
+//         //it does not exist in currentGraph
+//         var node = {     //create new node
+//           word: datamuseRe[i].word,
+//           score: 1
+//         };
+//         currentGraph.nodes.push(node);
+//         var link = {     //create new link
+//           source: currentGraph.nodes[centreIndex],
+//           target: node
+//         };
+//         currentGraph.links.push(link);
+//       }
+//     }
+//   } else {
+//     // not present, need to add new centre
+//     // create new centre node
+//     var centre = {
+//       word: submitted.word,
+//       score: 1
+//     };
+//     currentGraph.nodes.push(centre);
+//
+//     // for each response object
+//       //check if it exists in currentGraph
+//       //if it does, link centreIndex (src) and this index (target) up
+//       //if not, append new node, link centreIndex and this up
+//     for(var i = 0 ; i < datamuseRe.length ; i++){
+//       if(indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1){
+//         //it exists in currentGraph
+//         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+//         var link = {
+//           source: centre,
+//           target: currentGraph.nodes[targetIndex]
+//         };
+//         currentGraph.links.push(link);
+//       } else {
+//         //it does not exist in currentGraph
+//         var node = {     //create new node
+//           word: datamuseRe[i].word,
+//           score: 1
+//         };
+//         currentGraph.nodes.push(node);
+//         var link = {     //create new link
+//           source: centre,
+//           target: node
+//         };
+//         currentGraph.links.push(link);
+//       }
+//     }
+//   }
+//
+//   // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
+//   return currentGraph;
+// }
 
 //if present, return index
 //else return -1
@@ -36357,7 +36370,9 @@ var ForceLayout = function (_React$Component) {
       var width = this.props.width;
       var height = this.props.height;
 
-      this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).distance(50)).force("charge", d3.forceManyBody().strength(-100)).force("center", d3.forceCenter(width / 2, height / 2));
+      this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).id(function (d) {
+        return d.index;
+      }).distance(80)).force("charge", d3.forceManyBody().strength(-100)).force("center", d3.forceCenter(width / 2, height / 2));
 
       this.graph = d3.select(this.refs.graph).attr("class", "everything");
       // this.graph.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
@@ -36399,8 +36414,8 @@ var ForceLayout = function (_React$Component) {
         console.log('should only appear when updating graph');
         console.log(nextProps.nodes);
         console.log(nextProps.links);
-        var newNodes = this.props.nodes.slice();
-        var newLinks = this.props.links.slice();
+        var newNodes = nextProps.nodes.slice();
+        var newLinks = nextProps.links.slice();
 
         // this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
@@ -36452,19 +36467,29 @@ var ForceLayout = function (_React$Component) {
 
 exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
-  selection.append('circle').attr('r', 10).style('fill', '#888888').style('stroke', '#fff').style('stroke-width', 1.5);
+  selection.append('circle').attr('r', function (d) {
+    return d.word.length * 5;
+  }).style('fill', 'white').style('stroke', 'black').style('stroke-width', 3);
 
-  selection.append("text").attr("x", function (d) {
-    return 20;
-  }) //
-  .attr("dy", ".35em") // vertically centre text regardless of font size
-  .text(function (d) {
+  selection.append("text").attr("dx", function (d) {
+    return -3.5 * d.word.length;
+  }).attr("dy", ".35em") // vertically centre text regardless of font size
+  .style("font-size", "13px").text(function (d) {
     return d.word;
   });
 };
 
 var enterLink = function enterLink(selection) {
-  selection.insert('line', '.node').attr("class", "link").style('stroke', '#999999').style('stroke-opacity', 0.6);
+  // selection
+  //   .append('g')
+  //   .attr("class", "link");
+
+  selection.insert('line', '.node').attr("class", "link").style('stroke', '#999999').style('stroke-width', 5).style('stroke-opacity', 0.6);
+
+  // selection.append("text")
+  //   .attr("dx", function(d){return -3.75 * d.type.length})
+  //   .attr("dy", ".35em") // vertically centre text regardless of font size
+  //   .text(function(d) { return d.type });
 };
 
 var updateNode = function updateNode(selection) {
@@ -68893,45 +68918,44 @@ module.exports = {
 	"links": [
 		{
 			"source": 0,
-			"target": 1
+			"target": 1,
+			"type": "country"
 		},
 		{
 			"source": 0,
-			"target": 2
+			"target": 2,
+			"type": "adjective"
 		},
 		{
 			"source": 0,
-			"target": 3
+			"target": 3,
+			"type": "colour"
 		},
 		{
 			"source": 0,
-			"target": 4
+			"target": 4,
+			"type": "colour"
 		}
 	],
 	"nodes": [
 		{
 			"word": "panda",
-			"size": 80,
 			"score": 0
 		},
 		{
 			"word": "china",
-			"size": 30,
 			"score": 1
 		},
 		{
 			"word": "chubby",
-			"size": 30,
 			"score": 1
 		},
 		{
 			"word": "black",
-			"size": 60,
 			"score": 1
 		},
 		{
 			"word": "white",
-			"size": 60,
 			"score": 1
 		}
 	]

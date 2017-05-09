@@ -1,34 +1,29 @@
 {
     "links": [
-        {"source": 0, "target": 1},
-        {"source": 0, "target": 2},
-        {"source": 0, "target": 3},
-        {"source": 0, "target": 4}
+        {"source": 0, "target": 1, "type": "country"},
+        {"source": 0, "target": 2, "type": "adjective"},
+        {"source": 0, "target": 3, "type": "colour"},
+        {"source": 0, "target": 4, "type": "colour"}
     ],
     "nodes": [
         {
             "word": "panda",
-            "size": 80,
             "score": 0
         },
         {
             "word": "china",
-            "size": 30,
             "score": 1
         },
         {
             "word": "chubby",
-            "size": 30,
             "score": 1
         },
         {
             "word": "black",
-            "size": 60,
             "score": 1
         },
         {
             "word": "white",
-            "size": 60,
             "score": 1
         }
     ]

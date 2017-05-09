@@ -15,7 +15,7 @@ export default class ForceLayout extends React.Component{
     const height = this.props.height;
 
     this.simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).distance(50))
+      .force("link", d3.forceLink(links).id(d => d.index).distance(80))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -115,23 +115,34 @@ export default class ForceLayout extends React.Component{
 //  d3 functions to manipulate attributes
 var enterNode = (selection) => {
   selection.append('circle')
-        .attr('r', 10)
-        .style('fill', '#888888')
-        .style('stroke', '#fff')
-        .style('stroke-width', 1.5);
+    .attr('r', function(d){return d.word.length * 5})
+    .style('fill', 'white')
+    .style('stroke', 'black')
+    .style('stroke-width', 3);
 
   selection.append("text")
-        .attr("x", function(d){return 20}) //
-        .attr("dy", ".35em") // vertically centre text regardless of font size
-        .text(function(d) { return d.word });
+    .attr("dx", function(d){return -3.5 * d.word.length})
+    .attr("dy", ".35em") // vertically centre text regardless of font size
+    .style("font-size", "13px")
+    .text(function(d) { return d.word });
 };
 
 var enterLink = (selection) => {
+  // selection
+  //   .append('g')
+  //   .attr("class", "link");
+
   selection
     .insert('line', '.node')
     .attr("class", "link")
     .style('stroke', '#999999')
+    .style('stroke-width', 5)
     .style('stroke-opacity', 0.6);
+
+  // selection.append("text")
+  //   .attr("dx", function(d){return -3.75 * d.type.length})
+  //   .attr("dy", ".35em") // vertically centre text regardless of font size
+  //   .text(function(d) { return d.type });
 };
 
 var updateNode = (selection) => {

@@ -19,7 +19,7 @@ export default class App extends Component {
     };
 
     this.state = {
-      data: data,  //Json
+      data: Json,  //Json
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -76,23 +76,30 @@ export default class App extends Component {
     var self = this;
     this.socket.on('response', function(json, newGraph){
 
-      var data = Object.assign({}, self.state.data);
+      var data = {nodes: [], links: []}; //Object.assign({}, self.state.data);
 
-      // var new_node = {word: "newnode"}; //pushing new data each time
-      // var new_node2 = {word: "newnode2"}
+      var new_node = {word: "newnode"}; //pushing new data each time
+      var new_node2 = {word: "newnode2"};
+      data.nodes.push(new_node);
+      data.nodes.push(new_node2);
+      var new_link = {source: data.nodes[0], target: data.nodes[1], type: "test"};
+      data.links.push(new_link);
+
+      // var new_node = {"word": "newnode", "length": 5};
+      // var new_node2 = {"word": "newnode2", "length": 5};
       // data.nodes.push(new_node);
       // data.nodes.push(new_node2);
-      // var new_link = {source: data.nodes[0], target: data.nodes[1]};
+      // var new_link = {source: data.nodes[0], target: new_node2};
       // data.links.push(new_link);
 
-      // var a = {word: "panda"};  //reset data
+      // var a = {word: "hi"};  //reset data
       // var b = {word: "black"};
       // var c = {word: "china"};
-      // data.nodes = [a, b, c];
+      // data.nodes= [a, b, c];
       // data.links = [{source: a, target: b}, {source: a, target: c}];
 
-      data.nodes = newGraph.nodes;
-      data.links = newGraph.links;
+      // data.nodes = newGraph.nodes;
+      // data.links = newGraph.links;
 
       // data = dataUpdate.update(data, submitted, json); //
       self.setState({data: data}); //newGraph

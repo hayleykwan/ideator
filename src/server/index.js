@@ -32,7 +32,11 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(submitted, currentGraph){
-    datamuse.request('words?ml=' + submitted.word + '&max=' + submitted.numSuggestion)
+    //own module to draft requests, sort through results
+    datamuse.words({
+      ml: submitted.word,
+      max: submitted.numSuggestion
+    })
     .then((json) => { //json is an array of objects
       debug('Response from datamuse' + JSON.stringify(json, null,3));
       debug('Current graph to be updated' + JSON.stringify(currentGraph, null, 3));
