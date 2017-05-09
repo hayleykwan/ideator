@@ -36368,16 +36368,16 @@ var ForceLayout = function (_React$Component) {
         _this2.graph.attr("transform", d3.event.transform);
       }));
 
-      var node = this.graph.selectAll('.node').data(nodes, function (d) {
-        return d.word;
-      }).enter().append('g').attr("class", "node").call(enterNode);
-
       var link = this.graph.selectAll('.link').data(links, function (d) {
         return d.source.word + "-" + d.target.word;
       }).enter().append('g').attr('class', 'link');
 
       var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
       .attr('class', 'link-line').call(enterLinkLine);
+
+      var node = this.graph.selectAll('.node').data(nodes, function (d) {
+        return d.word;
+      }).enter().append('g').attr("class", "node").call(enterNode);
 
       var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
 

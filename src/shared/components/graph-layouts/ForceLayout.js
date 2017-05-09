@@ -31,13 +31,6 @@ export default class ForceLayout extends React.Component{
       })
     );
 
-    var node = this.graph.selectAll('.node')
-      .data(nodes, function(d) {return d.word})
-      .enter()
-        .append('g')
-        .attr("class", "node")
-      .call(enterNode);
-
     var link = this.graph.selectAll('.link')
       .data(links, function(d) { return d.source.word + "-" + d.target.word; })
       .enter()
@@ -48,6 +41,13 @@ export default class ForceLayout extends React.Component{
       .append('line') //.insert('line', '.node')
       .attr('class', 'link-line')
       .call(enterLinkLine);
+
+    var node = this.graph.selectAll('.node')
+      .data(nodes, function(d) {return d.word})
+      .enter()
+        .append('g')
+        .attr("class", "node")
+      .call(enterNode);
 
     var linkLabel = this.graph.selectAll(".link")
       .append("text")
