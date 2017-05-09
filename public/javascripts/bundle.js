@@ -36374,10 +36374,12 @@ var ForceLayout = function (_React$Component) {
 
       var link = this.graph.selectAll('.link').data(links, function (d) {
         return d.source.word + "-" + d.target.word;
-      }).enter()
-      // .append('g')
-      // .attr("class", "link")
-      .call(enterLink);
+      }).enter().append('g').attr('class', 'link');
+
+      var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
+      .attr('class', 'link-line').call(enterLinkLine);
+
+      var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
 
       this.simulation.on('tick', function () {
         _this2.graph.call(updateGraph);
@@ -36409,22 +36411,27 @@ var ForceLayout = function (_React$Component) {
         // this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
 
-        var d3Nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
+        var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
           return d.word;
         }); //nextProps.nodes
-        d3Nodes.exit().remove();
-        d3Nodes.enter().append('g').attr("class", "node").call(enterNode).merge(d3Nodes);
-        // d3Nodes.call(updateNode);
+        nodes.exit().remove();
+        nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
+        // nodes.call(updateNode);
 
-        var d3Links = this.graph.selectAll('.link').data(newLinks, function (d) {
+        var links = this.graph.selectAll('.link').data(newLinks, function (d) {
           return d.source.word + "-" + d.target.word;
         }); //nextProps.links
-        d3Links.exit().remove();
-        d3Links.enter()
-        // .append('g')
-        // .attr("class", "link")
-        .call(enterLink).merge(d3Links);
-        // d3Links.call(updateLink);
+        links.exit().remove();
+        links.enter().append('g').attr('class', 'link');
+
+        var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
+        .attr('class', 'link-line').call(enterLinkLine);
+
+        // var linkLabel = this.graph.selectAll(".link")
+        //     .append("text")
+        //     .attr("class", "link-label")
+        //     .call(enterLinkLabel);
+        // links.call(updateLink);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
@@ -36461,7 +36468,9 @@ exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
   selection.append('circle').attr('r', function (d) {
     return d.word.length + 30;
-  }).style('fill', 'white').style('stroke', 'black').style('stroke-width', 3);
+  }).style('fill', 'white').style('stroke', 'black').style('stroke-width', 3).on('click', function (d, i) {
+    alert('clicked');
+  });
 
   selection.append("text").attr("text-anchor", "middle").attr("dy", ".35em") // vertically centre text regardless of font size
   .style("font-size", "13px").text(function (d) {
@@ -36469,15 +36478,16 @@ var enterNode = function enterNode(selection) {
   });
 };
 
-var enterLink = function enterLink(selection) {
-  selection.insert('line', '.node').attr('class', 'link').style('stroke', function (d) {
+var enterLinkLine = function enterLinkLine(selection) {
+  selection.style('stroke', function (d) {
     return color(d.type);
   }).style('stroke-width', 5).style('stroke-opacity', 0.6);
+};
 
-  // selection
-  //   .append("text")
-  //     .attr("dy", ".35em") // vertically centre text regardless of font size
-  //     .text(function(d) { return d.type });
+var enterLinkLabel = function enterLinkLabel(selection) {
+  selection.attr("fill", "Black").style("font", "normal 12px Arial").attr("dy", ".35em").attr("text-anchor", "middle").text(function (d) {
+    return d.type;
+  });
 };
 
 var updateNode = function updateNode(selection) {
@@ -36498,9 +36508,18 @@ var updateLink = function updateLink(selection) {
   });
 };
 
+var updateLinkLabel = function updateLinkLabel(selection) {
+  selection.attr("x", function (d) {
+    return (d.source.x + d.target.x) / 2;
+  }).attr("y", function (d) {
+    return (d.source.y + d.target.y) / 2;
+  });
+};
+
 var updateGraph = function updateGraph(selection) {
   selection.selectAll('.node').call(updateNode);
-  selection.selectAll('.link').call(updateLink);
+  selection.selectAll('.link-line').call(updateLink);
+  selection.selectAll('.link-label').call(updateLinkLabel);
 };
 
 /***/ }),

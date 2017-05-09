@@ -42,22 +42,17 @@ export default class ForceLayout extends React.Component{
       .data(links, function(d) { return d.source.word + "-" + d.target.word; })
       .enter()
         .append('g')
-        .attr("class", "link")
-        // .append('line') //.insert('line', '.node')
-        // .attr('class', 'link-line')
-          .style('stroke', function(d){return color(d.type)})
-          .style('stroke-width', 5)
-          .style('stroke-opacity', 0.6);
-    //
-    // var linklabel = this.graph.selectAll('.link')
-    //   .append("text")
-    //   .attr("class", "link-label")
-    //   .attr("fill", "Black")
-    //   .style("font", "normal 12px")
-    //   .attr("dy", ".35em")
-    //   .attr("text-anchor", "middle")
-    //   .text("eeeeee");
+        .attr('class', 'link');
 
+    var linkLine = this.graph.selectAll('.link')
+      .append('line') //.insert('line', '.node')
+      .attr('class', 'link-line')
+      .call(enterLinkLine);
+
+    var linkLabel = this.graph.selectAll(".link")
+      .append("text")
+      .attr("class", "link-label")
+      .call(enterLinkLabel);
 
     this.simulation.on('tick', () => {
       this.graph.call(updateGraph);
@@ -86,27 +81,33 @@ export default class ForceLayout extends React.Component{
       // this.simulation.stop();
       this.graph = d3.select(this.refs.graph);
 
-      var d3Nodes = this.graph.selectAll('.node')
+      var nodes = this.graph.selectAll('.node')
         .data(newNodes, function(d) {return d.word}); //nextProps.nodes
-      d3Nodes.exit().remove();
-      d3Nodes
-        .enter()
+      nodes.exit().remove();
+      nodes.enter()
         .append('g')
         .attr("class", "node")
         .call(enterNode)
-        .merge(d3Nodes);
-      // d3Nodes.call(updateNode);
+        .merge(nodes);
+      // nodes.call(updateNode);
 
-      var d3Links = this.graph.selectAll('.link')
+      var links = this.graph.selectAll('.link')
         .data(newLinks, function(d) { return d.source.word + "-" + d.target.word; }); //nextProps.links
-      d3Links.exit().remove();
-      d3Links
-        .enter()
-          // .append('g')
-          // .attr("class", "link")
-        .call(enterLink)
-        .merge(d3Links);
-      // d3Links.call(updateLink);
+      links.exit().remove();
+      links.enter()
+          .append('g')
+          .attr('class', 'link');
+
+      var linkLine = this.graph.selectAll('.link')
+          .append('line') //.insert('line', '.node')
+          .attr('class', 'link-line')
+          .call(enterLinkLine);
+
+      // var linkLabel = this.graph.selectAll(".link")
+      //     .append("text")
+      //     .attr("class", "link-label")
+      //     .call(enterLinkLabel);
+      // links.call(updateLink);
 
       this.simulation.nodes(newNodes);
       this.simulation.force("link").links(newLinks);
@@ -152,19 +153,21 @@ var enterNode = (selection) => {
       .text(function(d) { return d.word });
 };
 
-var enterLink = (selection) => {
+var enterLinkLine = (selection) => {
   selection
-    .insert('line', '.node')
-    .attr('class', 'link')
-      .style('stroke', function(d){return color(d.type)})
-      .style('stroke-width', 5)
-      .style('stroke-opacity', 0.6);
-
-  // selection
-  //   .append("text")
-  //     .attr("dy", ".35em") // vertically centre text regardless of font size
-  //     .text(function(d) { return d.type });
+    .style('stroke', function(d){return color(d.type)})
+    .style('stroke-width', 5)
+    .style('stroke-opacity', 0.6);
 };
+
+var enterLinkLabel = (selection) => {
+  selection
+    .attr("fill", "Black")
+    .style("font", "normal 12px Arial")
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .text((d) => {return d.type});
+}
 
 var updateNode = (selection) => {
   selection.attr("transform", (d) => "translate(" + d.x + "," + d.y + ")");
@@ -178,9 +181,19 @@ var updateLink = (selection) => {
     .attr("y2", (d) => d.target.y);
 };
 
+var updateLinkLabel = (selection) => {
+  selection
+    .attr("x", function(d) {
+          return (d.source.x + d.target.x)/2; })
+    .attr("y", function(d) {
+          return (d.source.y + d.target.y)/2; });
+}
+
 var updateGraph = (selection) => {
   selection.selectAll('.node')
     .call(updateNode);
-  selection.selectAll('.link')
+  selection.selectAll('.link-line')
     .call(updateLink);
+  selection.selectAll('.link-label')
+    .call(updateLinkLabel);
 };
