@@ -38,7 +38,6 @@ io.on('connection', function(socket) { //listen on the connection event for inco
       max: submitted.numSuggestion
     })
     .then((json) => { //json is an array of objects
-      debug('Response from datamuse' + JSON.stringify(json, null,3));
       debug('Current graph to be updated' + JSON.stringify(currentGraph, null, 3));
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));

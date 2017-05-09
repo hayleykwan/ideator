@@ -3,6 +3,8 @@
 import React from 'react';
 import * as d3 from 'd3';
 
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
 export default class ForceLayout extends React.Component{
   constructor(props){
     super(props);
@@ -15,7 +17,7 @@ export default class ForceLayout extends React.Component{
     const height = this.props.height;
 
     this.simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.index).distance(80))
+      .force("link", d3.forceLink(links).id(d => d.index).distance(150))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -32,17 +34,34 @@ export default class ForceLayout extends React.Component{
     var node = this.graph.selectAll('.node')
       .data(nodes, function(d) {return d.word})
       .enter()
-      .append('g')
-      .attr("class", "node")
+        .append('g')
+        .attr("class", "node")
       .call(enterNode);
 
     var link = this.graph.selectAll('.link')
       .data(links, function(d) { return d.source.word + "-" + d.target.word; })
       .enter()
-      .call(enterLink);
+        .append('g')
+        .attr("class", "link")
+        // .append('line') //.insert('line', '.node')
+        // .attr('class', 'link-line')
+          .style('stroke', function(d){return color(d.type)})
+          .style('stroke-width', 5)
+          .style('stroke-opacity', 0.6);
+    //
+    // var linklabel = this.graph.selectAll('.link')
+    //   .append("text")
+    //   .attr("class", "link-label")
+    //   .attr("fill", "Black")
+    //   .style("font", "normal 12px")
+    //   .attr("dy", ".35em")
+    //   .attr("text-anchor", "middle")
+    //   .text("eeeeee");
+
 
     this.simulation.on('tick', () => {
       this.graph.call(updateGraph);
+
     });
   }
 
@@ -83,6 +102,8 @@ export default class ForceLayout extends React.Component{
       d3Links.exit().remove();
       d3Links
         .enter()
+          // .append('g')
+          // .attr("class", "link")
         .call(enterLink)
         .merge(d3Links);
       // d3Links.call(updateLink);
@@ -93,6 +114,7 @@ export default class ForceLayout extends React.Component{
 
       this.simulation.on('tick', () => {
         this.graph.call(updateGraph);
+
       });
     }
 
@@ -114,35 +136,34 @@ export default class ForceLayout extends React.Component{
 
 //  d3 functions to manipulate attributes
 var enterNode = (selection) => {
-  selection.append('circle')
-    .attr('r', function(d){return d.word.length * 5})
-    .style('fill', 'white')
-    .style('stroke', 'black')
-    .style('stroke-width', 3);
+  selection
+    .append('circle')
+      .attr('r', function(d){return d.word.length + 30})
+      .style('fill', 'white')
+      .style('stroke', 'black')
+      .style('stroke-width', 3)
+      .on('click', function(d,i){alert('clicked')});
 
-  selection.append("text")
-    .attr("dx", function(d){return -3.5 * d.word.length})
-    .attr("dy", ".35em") // vertically centre text regardless of font size
-    .style("font-size", "13px")
-    .text(function(d) { return d.word });
+  selection
+    .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", ".35em") // vertically centre text regardless of font size
+      .style("font-size", "13px")
+      .text(function(d) { return d.word });
 };
 
 var enterLink = (selection) => {
-  // selection
-  //   .append('g')
-  //   .attr("class", "link");
-
   selection
     .insert('line', '.node')
-    .attr("class", "link")
-    .style('stroke', '#999999')
-    .style('stroke-width', 5)
-    .style('stroke-opacity', 0.6);
+    .attr('class', 'link')
+      .style('stroke', function(d){return color(d.type)})
+      .style('stroke-width', 5)
+      .style('stroke-opacity', 0.6);
 
-  // selection.append("text")
-  //   .attr("dx", function(d){return -3.75 * d.type.length})
-  //   .attr("dy", ".35em") // vertically centre text regardless of font size
-  //   .text(function(d) { return d.type });
+  // selection
+  //   .append("text")
+  //     .attr("dy", ".35em") // vertically centre text regardless of font size
+  //     .text(function(d) { return d.type });
 };
 
 var updateNode = (selection) => {
@@ -150,7 +171,8 @@ var updateNode = (selection) => {
 };
 
 var updateLink = (selection) => {
-  selection.attr("x1", (d) => d.source.x)
+  selection
+    .attr("x1", (d) => d.source.x)
     .attr("y1", (d) => d.source.y)
     .attr("x2", (d) => d.target.x)
     .attr("y2", (d) => d.target.y);

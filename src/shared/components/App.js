@@ -65,7 +65,8 @@ export default class App extends Component {
     };
 
     if(submitted.word.length > 0 && typeof submitted.word === 'string') {
-      this.socket.emit('request', submitted, this.state.data);
+      var currentGraph = Object.assign({}, this.state.data);
+      this.socket.emit('request', submitted, currentGraph);
     };
 
     //clear text input
@@ -76,33 +77,25 @@ export default class App extends Component {
     var self = this;
     this.socket.on('response', function(json, newGraph){
 
-      var data = {nodes: [], links: []}; //Object.assign({}, self.state.data);
+      // var data = self.state.data;
+      // var data = {nodes: [], links: []};
+      // var data = Object.assign({}, self.state.data);
 
-      var new_node = {word: "newnode"}; //pushing new data each time
-      var new_node2 = {word: "newnode2"};
-      data.nodes.push(new_node);
-      data.nodes.push(new_node2);
-      var new_link = {source: data.nodes[0], target: data.nodes[1], type: "test"};
-      data.links.push(new_link);
-
-      // var new_node = {"word": "newnode", "length": 5};
-      // var new_node2 = {"word": "newnode2", "length": 5};
-      // data.nodes.push(new_node);
-      // data.nodes.push(new_node2);
-      // var new_link = {source: data.nodes[0], target: new_node2};
+      // var a = {word: "newnode"}; //pushing new data each time
+      // var b = {word: "newnode2"};
+      // var c = {word: "newnode3"};
+      // data.nodes.push(a);
+      // data.nodes.push(b);
+      // data.nodes.push(c);
+      // var new_link = {source: data.nodes[0], target: a, type: "test"};
+      // var new_link2 = {source: data.nodes[0], target: data.nodes[2], type: "test"};
       // data.links.push(new_link);
-
-      // var a = {word: "hi"};  //reset data
-      // var b = {word: "black"};
-      // var c = {word: "china"};
-      // data.nodes= [a, b, c];
-      // data.links = [{source: a, target: b}, {source: a, target: c}];
-
-      // data.nodes = newGraph.nodes;
-      // data.links = newGraph.links;
+      // data.links.push(new_link2);
 
       // data = dataUpdate.update(data, submitted, json); //
-      self.setState({data: data}); //newGraph
+      // self.setState({data: data});
+      self.setState({data: newGraph});
+      console.log(self.state.data);
     });
   }
 
