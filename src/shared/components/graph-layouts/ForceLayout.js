@@ -78,7 +78,7 @@ export default class ForceLayout extends React.Component{
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
-      this.simulation.stop();
+      // this.simulation.stop();
       this.graph = d3.select(this.refs.graph);
 
       var links = this.graph.selectAll('.link')
@@ -86,9 +86,10 @@ export default class ForceLayout extends React.Component{
       links.exit().remove();
       links.enter()
            .append('g')
-           .attr('class', 'link');
-
-      var linkLine = this.graph.selectAll('.link')
+           .attr('class', 'link')
+      // 
+      // var linkLine = this.graph.selectAll('.link')
+      //     // .data(newLinks)
           .append('line') //.insert('line', '.node')
           .attr('class', 'link-line')
           .call(enterLinkLine);
@@ -103,6 +104,7 @@ export default class ForceLayout extends React.Component{
            .merge(nodes);
 
       var linkLabel = this.graph.selectAll(".link")
+      // .data(newLinks)
           .append("text")
           .attr("class", "link-label")
           .call(enterLinkLabel);
@@ -136,7 +138,7 @@ export default class ForceLayout extends React.Component{
 var enterNode = (selection) => {
   selection
     .append('circle')
-      .attr('r', function(d){return d.id.length * 3})
+      .attr('r', function(d){return d.id.length * 5})
       .style('fill', 'white')
       .style('stroke', 'black')
       .style('stroke-width', 3)

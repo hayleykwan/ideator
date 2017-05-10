@@ -89,30 +89,29 @@ export default class App extends Component {
       var data = {nodes: [], links: []};
       // var data = Object.assign({}, self.state.data);
 
-      var a = {"id": "newnode"}; //THIS WORKS
-      var b = {"id": "newnode2"};
-      var c = {"id": "newnode3"};
-      data.nodes.push(a);
-      data.nodes.push(b);
-      data.nodes.push(c);
-      var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
-      var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
-      data.links.push(new_link);
-      data.links.push(new_link2);
+      // var a = {"id": "newnode"}; //THIS WORKS
+      // var b = {"id": "newnode2"};
+      // var c = {"id": "newnode3"};
+      // data.nodes.push(a);
+      // data.nodes.push(b);
+      // data.nodes.push(c);
+      // var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
+      // var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
+      // data.links.push(new_link);
+      // data.links.push(new_link2);
       // console.log(data);
 
-      // var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
+      var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
       // for(var i = 0 ; i < newGraph.nodes.length ; i++){
       //   data.nodes.push(newGraph.nodes[i]);
       // }
       // for(var j = 0 ; j < newGraph.links.length ; j++){
       //   data.links.push(newGraph.links[j])
       // }
-      // data.nodes.push(a);
       console.log(data);
 
-      // data.nodes = newGraph.nodes;
-      // data.links = newGraph.links;
+      data.nodes = newGraph.nodes;
+      data.links = newGraph.links;
       self.setState({data: data});
     });
   }

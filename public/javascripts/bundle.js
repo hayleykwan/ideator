@@ -35571,30 +35571,29 @@ var App = function (_Component) {
         var data = { nodes: [], links: [] };
         // var data = Object.assign({}, self.state.data);
 
-        var a = { "id": "newnode" }; //THIS WORKS
-        var b = { "id": "newnode2" };
-        var c = { "id": "newnode3" };
-        data.nodes.push(a);
-        data.nodes.push(b);
-        data.nodes.push(c);
-        var new_link = { "source": "newnode", "target": "newnode2", "type": "test" };
-        var new_link2 = { "source": "newnode", "target": "newnode3", "type": "test" };
-        data.links.push(new_link);
-        data.links.push(new_link2);
+        // var a = {"id": "newnode"}; //THIS WORKS
+        // var b = {"id": "newnode2"};
+        // var c = {"id": "newnode3"};
+        // data.nodes.push(a);
+        // data.nodes.push(b);
+        // data.nodes.push(c);
+        // var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
+        // var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
+        // data.links.push(new_link);
+        // data.links.push(new_link2);
         // console.log(data);
 
-        // var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
+        var newGraph = JSON.parse(newGraphJSON); //THIS DOESN'T WORK
         // for(var i = 0 ; i < newGraph.nodes.length ; i++){
         //   data.nodes.push(newGraph.nodes[i]);
         // }
         // for(var j = 0 ; j < newGraph.links.length ; j++){
         //   data.links.push(newGraph.links[j])
         // }
-        // data.nodes.push(a);
         console.log(data);
 
-        // data.nodes = newGraph.nodes;
-        // data.links = newGraph.links;
+        data.nodes = newGraph.nodes;
+        data.links = newGraph.links;
         self.setState({ data: data });
       });
     }
@@ -35796,14 +35795,6 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
 
   // submitted is one object: word, num, deg
   //datamuseRe is array of objects: word, score
-
-  // var new_node = {"word": "newnode"};
-  // var new_node2 = {"word": "newnode2"};
-  // currentGraph.nodes.push(new_node);
-  // currentGraph.nodes.push(new_node2);
-  // var new_link = {source: currentGraph.nodes[0], target: new_node2, type: "test"};
-  // currentGraph.links.push(new_link);
-  // return currentGraph;
 
   //if datamuseResponse is empty, return same graph
   if (datamuseRe.length === 0) {
@@ -36420,16 +36411,18 @@ var ForceLayout = function (_React$Component) {
         var newNodes = nextProps.nodes.slice();
         var newLinks = nextProps.links.slice();
 
-        this.simulation.stop();
+        // this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
 
         var links = this.graph.selectAll('.link').data(newLinks, function (d) {
           return d.source.id + "-" + d.target.id;
         });
         links.exit().remove();
-        links.enter().append('g').attr('class', 'link');
-
-        var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
+        links.enter().append('g').attr('class', 'link')
+        // 
+        // var linkLine = this.graph.selectAll('.link')
+        //     // .data(newLinks)
+        .append('line') //.insert('line', '.node')
         .attr('class', 'link-line').call(enterLinkLine);
 
         var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
@@ -36438,7 +36431,9 @@ var ForceLayout = function (_React$Component) {
         nodes.exit().remove();
         nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
 
-        var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
+        var linkLabel = this.graph.selectAll(".link")
+        // .data(newLinks)
+        .append("text").attr("class", "link-label").call(enterLinkLabel);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
@@ -36474,7 +36469,7 @@ var ForceLayout = function (_React$Component) {
 exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
   selection.append('circle').attr('r', function (d) {
-    return d.id.length + 30;
+    return d.id.length * 5;
   }).style('fill', 'white').style('stroke', 'black').style('stroke-width', 3).on('click', function (d, i) {
     alert('clicked');
   });
