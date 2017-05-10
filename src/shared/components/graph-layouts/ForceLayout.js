@@ -17,7 +17,7 @@ export default class ForceLayout extends React.Component{
     const height = this.props.height;
 
     this.simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.index).distance(150))
+      .force("link", d3.forceLink(links).id(d => d.id).distance(150))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -32,7 +32,7 @@ export default class ForceLayout extends React.Component{
     );
 
     var link = this.graph.selectAll('.link')
-      .data(links, function(d) { return d.source.word + "-" + d.target.word; })
+      .data(links, function(d) { return d.source.id + "-" + d.target.id; })
       .enter()
         .append('g')
         .attr('class', 'link');
@@ -43,7 +43,7 @@ export default class ForceLayout extends React.Component{
       .call(enterLinkLine);
 
     var node = this.graph.selectAll('.node')
-      .data(nodes, function(d) {return d.word})
+      .data(nodes, function(d) {return d.id})
       .enter()
         .append('g')
         .attr("class", "node")
@@ -78,36 +78,34 @@ export default class ForceLayout extends React.Component{
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
-      // this.simulation.stop();
+      this.simulation.stop();
       this.graph = d3.select(this.refs.graph);
 
-      var nodes = this.graph.selectAll('.node')
-        .data(newNodes, function(d) {return d.word}); //nextProps.nodes
-      nodes.exit().remove();
-      nodes.enter()
-        .append('g')
-        .attr("class", "node")
-        .call(enterNode)
-        .merge(nodes);
-      // nodes.call(updateNode);
-
       var links = this.graph.selectAll('.link')
-        .data(newLinks, function(d) { return d.source.word + "-" + d.target.word; }); //nextProps.links
+           .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit().remove();
       links.enter()
-          .append('g')
-          .attr('class', 'link');
+           .append('g')
+           .attr('class', 'link');
 
       var linkLine = this.graph.selectAll('.link')
           .append('line') //.insert('line', '.node')
           .attr('class', 'link-line')
           .call(enterLinkLine);
 
-      // var linkLabel = this.graph.selectAll(".link")
-      //     .append("text")
-      //     .attr("class", "link-label")
-      //     .call(enterLinkLabel);
-      // links.call(updateLink);
+      var nodes = this.graph.selectAll('.node')
+           .data(newNodes, function(d) {return d.id});
+      nodes.exit().remove();
+      nodes.enter()
+           .append('g')
+           .attr("class", "node")
+           .call(enterNode)
+           .merge(nodes);
+
+      var linkLabel = this.graph.selectAll(".link")
+          .append("text")
+          .attr("class", "link-label")
+          .call(enterLinkLabel);
 
       this.simulation.nodes(newNodes);
       this.simulation.force("link").links(newLinks);
@@ -115,7 +113,6 @@ export default class ForceLayout extends React.Component{
 
       this.simulation.on('tick', () => {
         this.graph.call(updateGraph);
-
       });
     }
 
@@ -139,7 +136,7 @@ export default class ForceLayout extends React.Component{
 var enterNode = (selection) => {
   selection
     .append('circle')
-      .attr('r', function(d){return d.word.length + 30})
+      .attr('r', function(d){return d.id.length * 3})
       .style('fill', 'white')
       .style('stroke', 'black')
       .style('stroke-width', 3)
@@ -150,7 +147,7 @@ var enterNode = (selection) => {
       .attr("text-anchor", "middle")
       .attr("dy", ".35em") // vertically centre text regardless of font size
       .style("font-size", "13px")
-      .text(function(d) { return d.word });
+      .text(function(d) { return d.id });
 };
 
 var enterLinkLine = (selection) => {

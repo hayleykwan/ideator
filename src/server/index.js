@@ -31,18 +31,21 @@ server.on('listening', onListening);
 io.on('connection', function(socket) { //listen on the connection event for incoming sockets
   console.log('Client Connection: %s', socket.id);
 
-  socket.on('request', function(submitted, currentGraph){
+  socket.on('request', function(submitted, currentGraphJSON){
     //own module to draft requests, sort through results
     datamuse.words({
       ml: submitted.word,
       max: submitted.numSuggestion
     })
     .then((json) => { //json is an array of objects
-      debug('Current graph to be updated' + JSON.stringify(currentGraph, null, 3));
+      debug('Current graph in JSON' + currentGraphJSON);
+      var currentGraph = JSON.parse(currentGraphJSON);
+      debug('Current graph to be updated' + currentGraph);
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      var newGraphJSON = JSON.stringify(newGraph);
       // should update database
-      socket.emit('response', json, newGraph);
+      socket.emit('response', json, newGraphJSON, currentGraphJSON);
     });
   });
 

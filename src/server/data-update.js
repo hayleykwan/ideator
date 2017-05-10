@@ -14,9 +14,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
-    return currentGraph;
+    return currentGraph;  //should send error
   }
-  //else update graph
 
   // var oldNodes = currentGraph.nodes.slice();
   //check if the submittedObject is an object from originalJsonObject
@@ -33,30 +32,29 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         //it exists in currentGraph
         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
-          source: currentGraph.nodes[centreIndex],
-          target: currentGraph.nodes[targetIndex]
+          "source": currentGraph.nodes[centreIndex].id,
+          "target": currentGraph.nodes[targetIndex].id
         };
         currentGraph.links.push(link);
       } else {
         //it does not exist in currentGraph
         var node = {     //create new node
-          word: datamuseRe[i].word,
-          score: 1
+          "id": datamuseRe[i].word,
+          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
-          source: currentGraph.nodes[centreIndex],
-          target: node
+          "source": currentGraph.nodes[centreIndex].id,
+          "target": node.id
         };
         currentGraph.links.push(link);
       }
     }
   } else {
     // not present, need to add new centre
-    // create new centre node
     var centre = {
-      word: submitted.word,
-      score: 1
+      "id": submitted.word,
+      "score": 1
     };
     currentGraph.nodes.push(centre);
 
@@ -69,26 +67,32 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         //it exists in currentGraph
         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
-          source: centre,
-          target: currentGraph.nodes[targetIndex]
+          "source": centre.id,
+          "target": currentGraph.nodes[targetIndex].id
         };
         currentGraph.links.push(link);
       } else {
         //it does not exist in currentGraph
-        var node = {     //create new node
-          word: datamuseRe[i].word,
-          score: 1
+        var node = {
+          "id": datamuseRe[i].word,
+          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
-          source: centre,
-          target: node
+          "source": centre.id,
+          "target": node.id
         };
         currentGraph.links.push(link);
       }
     }
   }
 
+  //remove duplicate links
+  // currentGraph.links.forEach(function(d) {
+  //   var sourceTemp = d.source;
+  //   var targetTemp = d.target;
+  //
+  // });
   // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
   return currentGraph;
 }
@@ -97,7 +101,7 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
 //else return -1
 function indexOfWordInGraph(currentGraph, obj){
   for(var i = 0 ; i < currentGraph.nodes.length ; i++){
-    if(currentGraph.nodes[i].word === obj.word){
+    if(currentGraph.nodes[i].id === obj.word){
       return i;
     }
   }
@@ -107,13 +111,13 @@ function indexOfWordInGraph(currentGraph, obj){
 function maintainNodePositions(oldNodes, nodes, width, height) {
   var kv = {};
   oldNodes.forEach(function(d) {
-    kv[d.word] = d;
+    kv[d.id] = d;
   });
   nodes.forEach(function(d) {
-    if (kv[d.word]) {
+    if (kv[d.id]) {
       // if the node already exists, maintain current position
-      d.x = kv[d.word].x;
-      d.y = kv[d.word].y;
+      d.x = kv[d.id].x;
+      d.y = kv[d.id].y;
     } else {
       // else assign it a random position near the center
       d.x = width / 2 + getRandomInt(-150, 150);

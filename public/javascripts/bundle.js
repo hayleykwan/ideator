@@ -35471,10 +35471,6 @@ var _Graph = __webpack_require__(206);
 
 var _Graph2 = _interopRequireDefault(_Graph);
 
-var _graph = __webpack_require__(483);
-
-var _graph2 = _interopRequireDefault(_graph);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35496,13 +35492,16 @@ var App = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-    var data = {
-      nodes: [], //[a, b, c],
-      links: [] //[{source: a, target: b}, {source: a, target: c}]
+    var placeholder = {
+      nodes: [{ "id": "panda", "score": 0 }, { "id": "china", "score": 1 }, { "id": "chubby", "score": 1 }, { "id": "black", "score": 1 }, { "id": "white", "score": 1 }],
+      links: [{ "source": "panda", "target": "china", "type": "country" }, { "source": "panda", "target": "chubby", "type": "adjective" }, { "source": "panda", "target": "black", "type": "colour" }, { "source": "panda", "target": "white", "type": "colour" }]
     };
 
     _this.state = {
-      data: _graph2.default, //Json
+      data: {
+        nodes: placeholder.nodes, // []
+        links: placeholder.links // []
+      },
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -35557,8 +35556,8 @@ var App = function (_Component) {
       };
 
       if (submitted.word.length > 0 && typeof submitted.word === 'string') {
-        var currentGraph = Object.assign({}, this.state.data);
-        this.socket.emit('request', submitted, currentGraph);
+        var currentGraphJSON = JSON.stringify(this.state.data);
+        this.socket.emit('request', submitted, currentGraphJSON);
       };
 
       //clear text input
@@ -35567,27 +35566,36 @@ var App = function (_Component) {
       this.setState({ request: req });
 
       var self = this;
-      this.socket.on('response', function (json, newGraph) {
+      this.socket.on('response', function (json, newGraphJSON, currentGraphJSON) {
 
-        // var data = self.state.data;
-        // var data = {nodes: [], links: []};
+        var data = { nodes: [], links: [] };
         // var data = Object.assign({}, self.state.data);
 
-        // var a = {word: "newnode"}; //pushing new data each time
-        // var b = {word: "newnode2"};
-        // var c = {word: "newnode3"};
-        // data.nodes.push(a);
-        // data.nodes.push(b);
-        // data.nodes.push(c);
-        // var new_link = {source: data.nodes[0], target: a, type: "test"};
-        // var new_link2 = {source: data.nodes[0], target: data.nodes[2], type: "test"};
-        // data.links.push(new_link);
-        // data.links.push(new_link2);
+        var a = { "id": "newnode" }; //THIS WORKS
+        var b = { "id": "newnode2" };
+        var c = { "id": "newnode3" };
+        data.nodes.push(a);
+        data.nodes.push(b);
+        data.nodes.push(c);
+        var new_link = { "source": "newnode", "target": "newnode2", "type": "test" };
+        var new_link2 = { "source": "newnode", "target": "newnode3", "type": "test" };
+        data.links.push(new_link);
+        data.links.push(new_link2);
+        // console.log(data);
 
-        // data = dataUpdate.update(data, submitted, json); //
-        // self.setState({data: data});
-        self.setState({ data: newGraph });
-        console.log(self.state.data);
+        // var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
+        // for(var i = 0 ; i < newGraph.nodes.length ; i++){
+        //   data.nodes.push(newGraph.nodes[i]);
+        // }
+        // for(var j = 0 ; j < newGraph.links.length ; j++){
+        //   data.links.push(newGraph.links[j])
+        // }
+        // data.nodes.push(a);
+        console.log(data);
+
+        // data.nodes = newGraph.nodes;
+        // data.links = newGraph.links;
+        self.setState({ data: data });
       });
     }
   }, {
@@ -35800,9 +35808,8 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
   //if datamuseResponse is empty, return same graph
   if (datamuseRe.length === 0) {
     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
-    return currentGraph;
+    return currentGraph; //should send error
   }
-  //else update graph
 
   // var oldNodes = currentGraph.nodes.slice();
   //check if the submittedObject is an object from originalJsonObject
@@ -35819,30 +35826,29 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         //it exists in currentGraph
         var targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
-          source: currentGraph.nodes[centreIndex],
-          target: currentGraph.nodes[targetIndex]
+          "source": currentGraph.nodes[centreIndex].id,
+          "target": currentGraph.nodes[targetIndex].id
         };
         currentGraph.links.push(link);
       } else {
         //it does not exist in currentGraph
         var node = { //create new node
-          word: datamuseRe[i].word,
-          score: 1
+          "id": datamuseRe[i].word,
+          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = { //create new link
-          source: currentGraph.nodes[centreIndex],
-          target: node
+          "source": currentGraph.nodes[centreIndex].id,
+          "target": node.id
         };
         currentGraph.links.push(link);
       }
     }
   } else {
     // not present, need to add new centre
-    // create new centre node
     var centre = {
-      word: submitted.word,
-      score: 1
+      "id": submitted.word,
+      "score": 1
     };
     currentGraph.nodes.push(centre);
 
@@ -35855,26 +35861,32 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         //it exists in currentGraph
         var _targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
-          source: centre,
-          target: currentGraph.nodes[_targetIndex]
+          "source": centre.id,
+          "target": currentGraph.nodes[_targetIndex].id
         };
         currentGraph.links.push(link);
       } else {
         //it does not exist in currentGraph
-        var node = { //create new node
-          word: datamuseRe[i].word,
-          score: 1
+        var node = {
+          "id": datamuseRe[i].word,
+          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = { //create new link
-          source: centre,
-          target: node
+          "source": centre.id,
+          "target": node.id
         };
         currentGraph.links.push(link);
       }
     }
   }
 
+  //remove duplicate links
+  // currentGraph.links.forEach(function(d) {
+  //   var sourceTemp = d.source;
+  //   var targetTemp = d.target;
+  //
+  // });
   // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
   return currentGraph;
 };
@@ -35883,7 +35895,7 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
 //else return -1
 function indexOfWordInGraph(currentGraph, obj) {
   for (var i = 0; i < currentGraph.nodes.length; i++) {
-    if (currentGraph.nodes[i].word === obj.word) {
+    if (currentGraph.nodes[i].id === obj.word) {
       return i;
     }
   }
@@ -35893,13 +35905,13 @@ function indexOfWordInGraph(currentGraph, obj) {
 function maintainNodePositions(oldNodes, nodes, width, height) {
   var kv = {};
   oldNodes.forEach(function (d) {
-    kv[d.word] = d;
+    kv[d.id] = d;
   });
   nodes.forEach(function (d) {
-    if (kv[d.word]) {
+    if (kv[d.id]) {
       // if the node already exists, maintain current position
-      d.x = kv[d.word].x;
-      d.y = kv[d.word].y;
+      d.x = kv[d.id].x;
+      d.y = kv[d.id].y;
     } else {
       // else assign it a random position near the center
       d.x = width / 2 + getRandomInt(-150, 150);
@@ -36357,7 +36369,7 @@ var ForceLayout = function (_React$Component) {
       var height = this.props.height;
 
       this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).id(function (d) {
-        return d.index;
+        return d.id;
       }).distance(150)).force("charge", d3.forceManyBody().strength(-100)).force("center", d3.forceCenter(width / 2, height / 2));
 
       this.graph = d3.select(this.refs.graph).attr("class", "everything");
@@ -36369,14 +36381,14 @@ var ForceLayout = function (_React$Component) {
       }));
 
       var link = this.graph.selectAll('.link').data(links, function (d) {
-        return d.source.word + "-" + d.target.word;
+        return d.source.id + "-" + d.target.id;
       }).enter().append('g').attr('class', 'link');
 
       var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
       .attr('class', 'link-line').call(enterLinkLine);
 
       var node = this.graph.selectAll('.node').data(nodes, function (d) {
-        return d.word;
+        return d.id;
       }).enter().append('g').attr("class", "node").call(enterNode);
 
       var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
@@ -36408,30 +36420,25 @@ var ForceLayout = function (_React$Component) {
         var newNodes = nextProps.nodes.slice();
         var newLinks = nextProps.links.slice();
 
-        // this.simulation.stop();
+        this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
 
-        var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
-          return d.word;
-        }); //nextProps.nodes
-        nodes.exit().remove();
-        nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
-        // nodes.call(updateNode);
-
         var links = this.graph.selectAll('.link').data(newLinks, function (d) {
-          return d.source.word + "-" + d.target.word;
-        }); //nextProps.links
+          return d.source.id + "-" + d.target.id;
+        });
         links.exit().remove();
         links.enter().append('g').attr('class', 'link');
 
         var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
         .attr('class', 'link-line').call(enterLinkLine);
 
-        // var linkLabel = this.graph.selectAll(".link")
-        //     .append("text")
-        //     .attr("class", "link-label")
-        //     .call(enterLinkLabel);
-        // links.call(updateLink);
+        var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
+          return d.id;
+        });
+        nodes.exit().remove();
+        nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
+
+        var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
@@ -36467,14 +36474,14 @@ var ForceLayout = function (_React$Component) {
 exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
   selection.append('circle').attr('r', function (d) {
-    return d.word.length + 30;
+    return d.id.length + 30;
   }).style('fill', 'white').style('stroke', 'black').style('stroke-width', 3).on('click', function (d, i) {
     alert('clicked');
   });
 
   selection.append("text").attr("text-anchor", "middle").attr("dy", ".35em") // vertically centre text regardless of font size
   .style("font-size", "13px").text(function (d) {
-    return d.word;
+    return d.id;
   });
 };
 
@@ -36855,7 +36862,7 @@ module.exports = (function() {
 
 !function (root, name, definition) {
   if (typeof module != 'undefined' && module.exports) module.exports = definition()
-  else if (true) __webpack_require__(484)(name, definition)
+  else if (true) __webpack_require__(483)(name, definition)
   else root[name] = definition()
 }(this, 'bowser', function () {
   /**
@@ -39985,7 +39992,7 @@ var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
 if (typeof window === 'undefined') {
   try {
-    NodeWebSocket = __webpack_require__(486);
+    NodeWebSocket = __webpack_require__(485);
   } catch (e) { }
 }
 
@@ -42571,7 +42578,7 @@ module.exports = exports['default'];
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
-  var isLoader = "function" === "function" && __webpack_require__(485);
+  var isLoader = "function" === "function" && __webpack_require__(484);
 
   // A set of types used to distinguish objects from primitives.
   var objectTypes = {
@@ -68921,64 +68928,13 @@ function toArray(list, index) {
 /* 483 */
 /***/ (function(module, exports) {
 
-module.exports = {
-	"links": [
-		{
-			"source": 0,
-			"target": 1,
-			"type": "country"
-		},
-		{
-			"source": 0,
-			"target": 2,
-			"type": "adjective"
-		},
-		{
-			"source": 0,
-			"target": 3,
-			"type": "colour"
-		},
-		{
-			"source": 0,
-			"target": 4,
-			"type": "colour"
-		}
-	],
-	"nodes": [
-		{
-			"word": "panda",
-			"score": 0
-		},
-		{
-			"word": "china",
-			"score": 1
-		},
-		{
-			"word": "chubby",
-			"score": 1
-		},
-		{
-			"word": "black",
-			"score": 1
-		},
-		{
-			"word": "white",
-			"score": 1
-		}
-	]
-};
-
-/***/ }),
-/* 484 */
-/***/ (function(module, exports) {
-
 module.exports = function() {
 	throw new Error("define cannot be used indirect");
 };
 
 
 /***/ }),
-/* 485 */
+/* 484 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -68987,7 +68943,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 486 */
+/* 485 */
 /***/ (function(module, exports) {
 
 /* (ignored) */

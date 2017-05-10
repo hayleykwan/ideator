@@ -4,7 +4,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import IdeaToolBar from './Toolbar';
 import NavBar from './NavBar';
 import Graph from './Graph';
-import Json from '../../data/graph.json';
 
 const io = require('socket.io-client');
 const dataUpdate = require('../../server/data-update');
@@ -13,13 +12,23 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    var data = {
-      nodes: [], //[a, b, c],
-      links: []  //[{source: a, target: b}, {source: a, target: c}]
-    };
+    var placeholder = {
+      nodes: [{"id": "panda", "score": 0},
+              {"id": "china", "score": 1},
+              {"id": "chubby", "score": 1},
+              {"id": "black", "score": 1},
+              {"id": "white", "score": 1}],
+      links: [{"source": "panda", "target": "china", "type": "country"},
+              {"source": "panda", "target": "chubby", "type": "adjective"},
+              {"source": "panda", "target": "black", "type": "colour"},
+              {"source": "panda", "target": "white", "type": "colour"}]
+    }
 
     this.state = {
-      data: Json,  //Json
+      data: {
+        nodes: placeholder.nodes,  // []
+        links: placeholder.links   // []
+      },
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -65,8 +74,8 @@ export default class App extends Component {
     };
 
     if(submitted.word.length > 0 && typeof submitted.word === 'string') {
-      var currentGraph = Object.assign({}, this.state.data);
-      this.socket.emit('request', submitted, currentGraph);
+      var currentGraphJSON = JSON.stringify(this.state.data);
+      this.socket.emit('request', submitted, currentGraphJSON);
     };
 
     //clear text input
@@ -75,27 +84,36 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(json, newGraph){
+    this.socket.on('response', function(json, newGraphJSON, currentGraphJSON){
 
-      // var data = self.state.data;
-      // var data = {nodes: [], links: []};
+      var data = {nodes: [], links: []};
       // var data = Object.assign({}, self.state.data);
 
-      // var a = {word: "newnode"}; //pushing new data each time
-      // var b = {word: "newnode2"};
-      // var c = {word: "newnode3"};
-      // data.nodes.push(a);
-      // data.nodes.push(b);
-      // data.nodes.push(c);
-      // var new_link = {source: data.nodes[0], target: a, type: "test"};
-      // var new_link2 = {source: data.nodes[0], target: data.nodes[2], type: "test"};
-      // data.links.push(new_link);
-      // data.links.push(new_link2);
+      var a = {"id": "newnode"}; //THIS WORKS
+      var b = {"id": "newnode2"};
+      var c = {"id": "newnode3"};
+      data.nodes.push(a);
+      data.nodes.push(b);
+      data.nodes.push(c);
+      var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
+      var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
+      data.links.push(new_link);
+      data.links.push(new_link2);
+      // console.log(data);
 
-      // data = dataUpdate.update(data, submitted, json); //
-      // self.setState({data: data});
-      self.setState({data: newGraph});
-      console.log(self.state.data);
+      // var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
+      // for(var i = 0 ; i < newGraph.nodes.length ; i++){
+      //   data.nodes.push(newGraph.nodes[i]);
+      // }
+      // for(var j = 0 ; j < newGraph.links.length ; j++){
+      //   data.links.push(newGraph.links[j])
+      // }
+      // data.nodes.push(a);
+      console.log(data);
+
+      // data.nodes = newGraph.nodes;
+      // data.links = newGraph.links;
+      self.setState({data: data});
     });
   }
 
