@@ -36368,7 +36368,6 @@ var ForceLayout = function (_React$Component) {
       }).distance(150)).force("charge", d3.forceManyBody().strength(-100)).force("center", d3.forceCenter(width / 2, height / 2));
 
       this.graph = d3.select(this.refs.graph).attr("class", "everything");
-      // this.graph.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
       this.svg = d3.select("svg");
       this.svg.call(d3.zoom().on("zoom", function () {
@@ -36387,13 +36386,15 @@ var ForceLayout = function (_React$Component) {
 
       var linkLabels = this.graph.selectAll('.link-label').data(links, function (d) {
         return d.source.id + "-" + d.target.id;
-      }).enter().append("text").attr("class", "link-label").attr("fill", "Black").style("font", "normal 12px").attr("dy", ".35em").attr("text-anchor", "middle").text(function (d) {
-        return d.type;
-      });
+      }).enter().append("text").attr("class", "link-label").call(enterLinkLabel);
 
       var node = this.graph.selectAll('.node').data(nodes, function (d) {
         return d.id;
-      }).enter().append('g').attr("class", "node").call(enterNode);
+      }).enter().append('g').attr("class", "node").attr("cx", function (d) {
+        return d.x;
+      }).attr("cy", function (d) {
+        return d.y;
+      }).call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)).call(enterNode);
 
       this.simulation.on('tick', function () {
         _this2.graph.call(updateGraph);
@@ -36441,23 +36442,22 @@ var ForceLayout = function (_React$Component) {
           return d.source.id + "-" + d.target.id;
         });
         linkLabels.exit().remove();
-        linkLabels.enter().append("text").attr("class", "link-label").attr("fill", "Black").style("font", "normal 12px").attr("dy", ".35em").attr("text-anchor", "middle").text(function (d) {
-          return d.type;
-        });
+        linkLabels.enter().append("text").attr("class", "link-label").call(enterLinkLabel);
 
         var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
           return d.id;
         });
         nodes.exit().remove();
-        nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
+        nodes.enter().append('g').attr("class", "node").call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)).call(enterNode).merge(nodes);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
-        this.simulation.alpha(1).restart();
 
         this.simulation.on('tick', function () {
           _this3.graph.call(updateGraph);
         });
+
+        this.simulation.alpha(1).restart();
       }
 
       return false;
@@ -36539,6 +36539,27 @@ var updateGraph = function updateGraph(selection) {
   selection.selectAll('.link-line').call(updateLink);
   selection.selectAll('.link-label').call(updateLinkLabel);
 };
+
+/* D3 DRAG */
+function dragstarted(d) {
+  if (!d3.event.active) this.simulation.alpha(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+  // d3.select(this).raise().classed("active", true);
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+  // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+}
+
+function dragended(d) {
+  // if (!d3.event.active) this.simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+  // d3.select(this).classed("active", false);
+}
 
 /***/ }),
 /* 210 */
