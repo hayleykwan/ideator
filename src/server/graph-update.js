@@ -1,7 +1,7 @@
 exports.update =  function(currentGraph, submitted, datamuseRe){
 
   // submitted is one object: word, num, deg
-  //datamuseRe is array of objects: word, score
+  // datamuseRe is array of objects: word, score
 
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
@@ -9,26 +9,25 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
     return currentGraph;  //should send error
   }
 
-  // var oldNodes = currentGraph.nodes.slice();
-  //check if the submittedObject is an object from originalJsonObject
-  if(indexOfWordInGraph(currentGraph, submitted) !== -1){
-    //source is present, only need to add links
-    const centreIndex = indexOfWordInGraph(currentGraph, submitted);
+  //check if the submittedObject is in currentGraph
+  const centreIndex = indexOfWordInGraph(currentGraph, submitted);
+  if(centreIndex !== -1){ //source is present, only need to add links
     currentGraph.nodes[centreIndex].score = 80;
     //for each response object
     //check if target exists in currentGraph
     //if it does, link centreIndex (src) and this index (target) up
     //if not, append new node, link centreIndex and this up
     for(var i = 0 ; i < datamuseRe.length ; i++){
-      if(indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1){
-        //it exists in currentGraph
-        const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
-        var link = {
-          "source": currentGraph.nodes[centreIndex].id,
-          "target": currentGraph.nodes[targetIndex].id,
-          "type": "test"
-        };
-        currentGraph.links.push(link);
+      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+      if(targetIndex !== -1){ //it exists in currentGraph
+        if(existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id)){
+          var link = {
+            "source": currentGraph.nodes[centreIndex].id,
+            "target": currentGraph.nodes[targetIndex].id,
+            "type": "test"
+          };
+          currentGraph.links.push(link);
+        }
       } else {
         //it does not exist in currentGraph
         var node = {     //create new node
@@ -57,9 +56,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
       //if it does, link centreIndex (src) and this index (target) up
       //if not, append new node, link centreIndex and this up
     for(var i = 0 ; i < datamuseRe.length ; i++){
-      if(indexOfWordInGraph(currentGraph, datamuseRe[i]) !== -1){
-        //it exists in currentGraph
-        const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+      if(targetIndex!== -1){  //it exists in currentGraph
         var link = {
           "source": centre.id,
           "target": currentGraph.nodes[targetIndex].id,
@@ -89,19 +87,39 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   //   var targetTemp = d.target;
   //
   // });
-  // maintainNodePositions(oldNodes, currentGraph.nodes, 950, 500);
+
   return currentGraph;
 }
 
 //if present, return index
 //else return -1
 function indexOfWordInGraph(currentGraph, obj){
+  // currentGraph.nodes.forEach(function(d) {
+  //   if(d.id === obj.word){
+  //     return d;
+  //   }
+  //   return -1;
+  // })
   for(var i = 0 ; i < currentGraph.nodes.length ; i++){
     if(currentGraph.nodes[i].id === obj.word){
       return i;
     }
   }
   return -1;
+}
+
+function existLink(currentGraph, sourceId, targetId){
+  //for each link in currentGraph
+  // no link with sourceId as src and targetId as target
+  // no link with targetId as src and sourceId as target
+  currentGraph.links.forEach(function(d){
+    var curSrc = d.source;
+    var curTar = d.target;
+    return (
+       (curSrc.id === sourceId && curTar.id === targetId) ||
+       (curSrc.id === targetId && curTar.id === sourceId)
+     );
+  })
 }
 
 function maintainNodePositions(oldNodes, nodes, width, height) {
@@ -121,7 +139,6 @@ function maintainNodePositions(oldNodes, nodes, width, height) {
     }
   });
 }
-
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);

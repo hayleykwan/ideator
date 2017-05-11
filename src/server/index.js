@@ -5,7 +5,7 @@ var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 const datamuse = require('datamuse');
-const dataUpdate = require('./data-update');
+const dataUpdate = require('./graph-update');
 
 /**
  * Get port from environment and store in Express.
@@ -32,7 +32,9 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(submitted, currentGraphJSON){
-    //own module to draft requests, sort through results
+    //check database if word is cached
+    //if not send request(s) to datamuse, and store in database
+
     datamuse.words({
       ml: submitted.word,
       max: submitted.numSuggestion

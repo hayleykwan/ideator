@@ -6,7 +6,6 @@ import NavBar from './NavBar';
 import Graph from './Graph';
 
 const io = require('socket.io-client');
-const dataUpdate = require('../../server/data-update');
 
 export default class App extends Component {
   constructor(props) {
