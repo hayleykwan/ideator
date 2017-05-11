@@ -25,7 +25,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
           "source": currentGraph.nodes[centreIndex].id,
-          "target": currentGraph.nodes[targetIndex].id
+          "target": currentGraph.nodes[targetIndex].id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       } else {
@@ -37,7 +38,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
-          "target": node.id
+          "target": node.id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       }
@@ -60,7 +62,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
           "source": centre.id,
-          "target": currentGraph.nodes[targetIndex].id
+          "target": currentGraph.nodes[targetIndex].id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       } else {
@@ -72,7 +75,8 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": centre.id,
-          "target": node.id
+          "target": node.id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       }

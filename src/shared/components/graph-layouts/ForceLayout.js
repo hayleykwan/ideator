@@ -17,7 +17,7 @@ export default class ForceLayout extends React.Component{
     const height = this.props.height;
 
     this.simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+      .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -31,16 +31,27 @@ export default class ForceLayout extends React.Component{
       })
     );
 
-    var link = this.graph.selectAll('.link')
+    var link = this.graph.selectAll('.link-line')
       .data(links, function(d) { return d.source.id + "-" + d.target.id; })
       .enter()
-        .append('g')
-        .attr('class', 'link');
-
-    var linkLine = this.graph.selectAll('.link')
+      // .append('g')
+      //   .attr('class', 'link')
       .append('line') //.insert('line', '.node')
-      .attr('class', 'link-line')
-      .call(enterLinkLine);
+        .attr('class', 'link-line')
+        .style('stroke', function(d){return color(d.type)})
+        .style('stroke-width', 5)
+        .style('stroke-opacity', 0.6)
+
+    var linkLabels = this.graph.selectAll('.link-label')
+      .data(links, function(d){return d.source.id + "-" + d.target.id;})
+      .enter()
+        .append("text")
+        .attr("class", "link-label")
+        .attr("fill", "Black")
+        .style("font", "normal 12px")
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(function(d){return d.type});
 
     var node = this.graph.selectAll('.node')
       .data(nodes, function(d) {return d.id})
@@ -48,11 +59,6 @@ export default class ForceLayout extends React.Component{
         .append('g')
         .attr("class", "node")
       .call(enterNode);
-
-    var linkLabel = this.graph.selectAll(".link")
-      .append("text")
-      .attr("class", "link-label")
-      .call(enterLinkLabel);
 
     this.simulation.on('tick', () => {
       this.graph.call(updateGraph);
@@ -81,18 +87,29 @@ export default class ForceLayout extends React.Component{
       // this.simulation.stop();
       this.graph = d3.select(this.refs.graph);
 
-      var links = this.graph.selectAll('.link')
+      var links = this.graph.selectAll('.link-line')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit().remove();
       links.enter()
-           .append('g')
-           .attr('class', 'link')
-      // 
-      // var linkLine = this.graph.selectAll('.link')
-      //     // .data(newLinks)
-          .append('line') //.insert('line', '.node')
-          .attr('class', 'link-line')
-          .call(enterLinkLine);
+          //  .append('g')
+          //    .attr('class', 'link')
+           .append('line') //.insert('line', '.node')
+             .attr('class', 'link-line')
+             .style('stroke', function(d){return color(d.type)})
+             .style('stroke-width', 5)
+             .style('stroke-opacity', 0.6);
+
+      var linkLabels = this.graph.selectAll('.link-label')
+           .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
+      linkLabels.exit().remove();
+      linkLabels.enter()
+           .append("text")
+             .attr("class", "link-label")
+             .attr("fill", "Black")
+             .style("font", "normal 12px")
+             .attr("dy", ".35em")
+             .attr("text-anchor", "middle")
+             .text(function(d){return d.type});
 
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
@@ -102,12 +119,6 @@ export default class ForceLayout extends React.Component{
            .attr("class", "node")
            .call(enterNode)
            .merge(nodes);
-
-      var linkLabel = this.graph.selectAll(".link")
-      // .data(newLinks)
-          .append("text")
-          .attr("class", "link-label")
-          .call(enterLinkLabel);
 
       this.simulation.nodes(newNodes);
       this.simulation.force("link").links(newLinks);
@@ -165,7 +176,7 @@ var enterLinkLabel = (selection) => {
     .style("font", "normal 12px Arial")
     .attr("dy", ".35em")
     .attr("text-anchor", "middle")
-    .text((d) => {return d.type});
+    .text(function(d){return d.type});
 }
 
 var updateNode = (selection) => {

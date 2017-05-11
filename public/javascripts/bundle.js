@@ -35818,7 +35818,8 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         var targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
           "source": currentGraph.nodes[centreIndex].id,
-          "target": currentGraph.nodes[targetIndex].id
+          "target": currentGraph.nodes[targetIndex].id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       } else {
@@ -35830,7 +35831,8 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         currentGraph.nodes.push(node);
         var link = { //create new link
           "source": currentGraph.nodes[centreIndex].id,
-          "target": node.id
+          "target": node.id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       }
@@ -35853,7 +35855,8 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         var _targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
         var link = {
           "source": centre.id,
-          "target": currentGraph.nodes[_targetIndex].id
+          "target": currentGraph.nodes[_targetIndex].id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       } else {
@@ -35865,7 +35868,8 @@ exports.update = function (currentGraph, submitted, datamuseRe) {
         currentGraph.nodes.push(node);
         var link = { //create new link
           "source": centre.id,
-          "target": node.id
+          "target": node.id,
+          "type": "test"
         };
         currentGraph.links.push(link);
       }
@@ -36371,18 +36375,25 @@ var ForceLayout = function (_React$Component) {
         _this2.graph.attr("transform", d3.event.transform);
       }));
 
-      var link = this.graph.selectAll('.link').data(links, function (d) {
+      var link = this.graph.selectAll('.link-line').data(links, function (d) {
         return d.source.id + "-" + d.target.id;
-      }).enter().append('g').attr('class', 'link');
+      }).enter()
+      // .append('g')
+      //   .attr('class', 'link')
+      .append('line') //.insert('line', '.node')
+      .attr('class', 'link-line').style('stroke', function (d) {
+        return color(d.type);
+      }).style('stroke-width', 5).style('stroke-opacity', 0.6);
 
-      var linkLine = this.graph.selectAll('.link').append('line') //.insert('line', '.node')
-      .attr('class', 'link-line').call(enterLinkLine);
+      var linkLabels = this.graph.selectAll('.link-label').data(links, function (d) {
+        return d.source.id + "-" + d.target.id;
+      }).enter().append("text").attr("class", "link-label").attr("fill", "Black").style("font", "normal 12px").attr("dy", ".35em").attr("text-anchor", "middle").text(function (d) {
+        return d.type;
+      });
 
       var node = this.graph.selectAll('.node').data(nodes, function (d) {
         return d.id;
       }).enter().append('g').attr("class", "node").call(enterNode);
-
-      var linkLabel = this.graph.selectAll(".link").append("text").attr("class", "link-label").call(enterLinkLabel);
 
       this.simulation.on('tick', function () {
         _this2.graph.call(updateGraph);
@@ -36414,26 +36425,31 @@ var ForceLayout = function (_React$Component) {
         // this.simulation.stop();
         this.graph = d3.select(this.refs.graph);
 
-        var links = this.graph.selectAll('.link').data(newLinks, function (d) {
+        var links = this.graph.selectAll('.link-line').data(newLinks, function (d) {
           return d.source.id + "-" + d.target.id;
         });
         links.exit().remove();
-        links.enter().append('g').attr('class', 'link')
-        // 
-        // var linkLine = this.graph.selectAll('.link')
-        //     // .data(newLinks)
+        links.enter()
+        //  .append('g')
+        //    .attr('class', 'link')
         .append('line') //.insert('line', '.node')
-        .attr('class', 'link-line').call(enterLinkLine);
+        .attr('class', 'link-line').style('stroke', function (d) {
+          return color(d.type);
+        }).style('stroke-width', 5).style('stroke-opacity', 0.6);
+
+        var linkLabels = this.graph.selectAll('.link-label').data(newLinks, function (d) {
+          return d.source.id + "-" + d.target.id;
+        });
+        linkLabels.exit().remove();
+        linkLabels.enter().append("text").attr("class", "link-label").attr("fill", "Black").style("font", "normal 12px").attr("dy", ".35em").attr("text-anchor", "middle").text(function (d) {
+          return d.type;
+        });
 
         var nodes = this.graph.selectAll('.node').data(newNodes, function (d) {
           return d.id;
         });
         nodes.exit().remove();
         nodes.enter().append('g').attr("class", "node").call(enterNode).merge(nodes);
-
-        var linkLabel = this.graph.selectAll(".link")
-        // .data(newLinks)
-        .append("text").attr("class", "link-label").call(enterLinkLabel);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
