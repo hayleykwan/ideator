@@ -21,6 +21,7 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
       const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
       if(targetIndex !== -1){ //it exists in currentGraph
         if(existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id)){
+          console.log('existLink checking');
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
@@ -115,11 +116,12 @@ function existLink(currentGraph, sourceId, targetId){
   currentGraph.links.forEach(function(d){
     var curSrc = d.source;
     var curTar = d.target;
-    return (
-       (curSrc.id === sourceId && curTar.id === targetId) ||
-       (curSrc.id === targetId && curTar.id === sourceId)
-     );
+    if((curSrc.id === sourceId && curTar.id === targetId) ||
+       (curSrc.id === targetId && curTar.id === sourceId)){
+         return true;
+    };
   })
+  return false;
 }
 
 function maintainNodePositions(oldNodes, nodes, width, height) {

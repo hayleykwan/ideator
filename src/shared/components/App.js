@@ -107,10 +107,9 @@ export default class App extends Component {
       // for(var j = 0 ; j < newGraph.links.length ; j++){
       //   data.links.push(newGraph.links[j])
       // }
-      console.log(data);
-
       data.nodes = newGraph.nodes;
       data.links = newGraph.links;
+      console.log(data);
       self.setState({data: data});
     });
   }

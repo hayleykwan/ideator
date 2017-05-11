@@ -83,8 +83,8 @@ export default class ForceLayout extends React.Component{
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
       console.log('should only appear when updating graph');
-      console.log(nextProps.nodes);
-      console.log(nextProps.links);
+      // console.log(nextProps.nodes);
+      // console.log(nextProps.links);
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
