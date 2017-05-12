@@ -1,26 +1,9 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import {orange500, blue500} from 'material-ui/styles/colors';
-import FlatButton from 'material-ui/FlatButton';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
 import Slider from 'material-ui/Slider';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-
-const styles = {
-  errorStyle: {
-    color: orange500,
-  },
-  underlineStyle: {
-    borderColor: orange500,
-  },
-  floatingLabelStyle: {
-    color: orange500,
-  },
-  floatingLabelFocusStyle: {
-    color: blue500,
-  },
-};
 
 const sliderNames = {
   deg: 'Degree of Connection',
@@ -38,25 +21,22 @@ class CustomSlider extends React.Component {
   }
 
   render() {
-    const name = this.props.name
+    const name = this.props.name;
     return (
       <div>
-        <p>
+        <label style={styles.sliderlabel} for={name}>
           <span>{sliderNames[name]}</span>
           <span>{': '}</span>
           <span>{this.props.value}</span>
-        </p>
+        </label>
         <Slider
           min={this.props.min} max={this.props.max}
           step={this.props.step}
           value={this.props.value}
           onChange={this.handleChange}
           style={{width: 150}}
+          id={name}
         />
-        <p>
-
-
-        </p>
       </div>
     );
   }
@@ -75,17 +55,14 @@ class InputText extends React.Component {
   render() {
     return (
         <TextField
-          id="text-field-controlled"
           value={this.props.text}
           onChange={this.handleChange}
-          floatingLabelText="Input text here"
-          floatingLabelStyle={styles.floatingLabelStyle}
-          floatingLabelFocusStyle={styles.floatingLabelFocusStyle}
+          hintText="Input text here"
+          hintStyle={styles.floatingLabelStyle}
         />
     );
   }
 }
-
 
 export default class IdeaToolBar extends React.Component {
   constructor(props) {
@@ -95,13 +72,13 @@ export default class IdeaToolBar extends React.Component {
   render() {
     return (
       <Toolbar>
-        <ToolbarGroup>
+        <ToolbarGroup style={styles.toolbargroup}>
           <InputText
             text={this.props.request.text}
             onTextChange={this.props.onTextChange}/>
-          <FlatButton label="Search" primary={true} onClick={this.props.onSubmit}/>
+          <RaisedButton label="Search" primary={true} onClick={this.props.onSubmit}/>
         </ToolbarGroup>
-        <ToolbarGroup>
+        <ToolbarGroup style={styles.toolbargroup}>
           <CustomSlider
             name="deg"
             min={0} max={1}
@@ -109,6 +86,8 @@ export default class IdeaToolBar extends React.Component {
             value={this.props.request.degConnection}
             onSliderChange={this.props.onDegreeChange}
           />
+        </ToolbarGroup>
+        <ToolbarGroup style={styles.toolbargroup}>
           <CustomSlider
             name="num"
             min={1} max={8}
@@ -121,3 +100,25 @@ export default class IdeaToolBar extends React.Component {
     );
   }
 }
+
+
+const styles = {
+  errorStyle: {
+    color: orange500,
+  },
+  underlineStyle: {
+    borderColor: orange500,
+  },
+  floatingLabelStyle: {
+    color: orange500,
+  },
+  floatingLabelFocusStyle: {
+    color: blue500,
+  },
+  toolbargroup: {
+    margin: 15,
+  },
+  sliderlabel: {
+    fontSize: '0.8em'
+  }
+};

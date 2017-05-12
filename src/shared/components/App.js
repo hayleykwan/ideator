@@ -120,17 +120,16 @@ export default class App extends Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
-        {/* <div id="app" style={styles.container}> */}
-          <NavBar />
+          <NavBar style={styles.navbar}/>
           <div style={styles.displayArea}>
             <Graph
               graphType="force"
               data={this.state.data}
-              width="950"
+              width="1000" //should be screen size
               height="500"
             />
           </div>
-          <IdeaToolBar className='toolbar'
+          <IdeaToolBar className='toolbar' style={styles.toolbar}
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
@@ -147,9 +146,18 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    height: '100%'
   },
+  navbar: {},
   displayArea: {
-    border:'1px solid #9E9EFF'
+    border:'1px solid #9E9EFF',
+    marginTop: 15,
+    marginBottom: 15,
+    width: '92%'
+  },
+  toolbar: {
+    bottom: '0%',
+    position: 'fixed'
   }
 };
 
@@ -161,7 +169,8 @@ const muiTheme = getMuiTheme({
   appBar: {
     height: 60,
   },
-  toolBar: {
-    height: 100,
+  toolbar: {
+    height: 90,
+    width: '80%'
   }
 });
