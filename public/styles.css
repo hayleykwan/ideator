@@ -2,28 +2,9 @@ html{
   height:100%;
   width:100%;
   font-family: 'Roboto', sans-serif;
-
 }
 body {
-  font-size: 20px;
   height:100%;
   width:100%;
-}
-
-.globalWrapper{
-
-}
-
-.container {
-  margin-right: auto;
-  margin-left: auto;
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-/*
- * Nav bar
- */
-.navbar{
-
+  margin: 0;
 }

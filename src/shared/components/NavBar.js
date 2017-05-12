@@ -1,7 +1,6 @@
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 
 const styles = {
@@ -17,7 +16,7 @@ class NavBar extends React.Component{
   }
 
   handleTouchTap() {
-    alert('onTouchTap triggered on the title component');
+    alert('Go to landing page');
   }
 
   render(){
@@ -25,8 +24,8 @@ class NavBar extends React.Component{
       <AppBar
         title={<span style={styles.title}>The Ideator</span>}
         onTitleTouchTap={this.handleTouchTap}
-        iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-        iconElementRight={<FlatButton label="Save" />}/>
+        iconElementLeft={<FontIcon className="fa fa-lightbulb-o"></FontIcon>}
+        iconElementRight={<FlatButton label="Sign In" />}/>
     )
   }
 }

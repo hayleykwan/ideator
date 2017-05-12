@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 // import './styles.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {cyan500} from 'material-ui/styles/colors';
 import IdeaToolBar from './Toolbar';
 import NavBar from './NavBar';
 import Graph from './Graph';
@@ -116,10 +118,10 @@ export default class App extends Component {
 
   render() {
     return (
-      <MuiThemeProvider>
-        <div id="app" className='globalWrapper' style={styles.container}>
-          <h2 style={styles.header}>The Ideator</h2>
-          {/* <NavBar /> */}
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <div id="app" style={styles.container}>
+        {/* <div id="app" style={styles.container}> */}
+          <NavBar />
           <div style={styles.displayArea}>
             <Graph
               graphType="force"
@@ -128,8 +130,7 @@ export default class App extends Component {
               height="500"
             />
           </div>
-
-            <IdeaToolBar className='toolbar'
+          <IdeaToolBar className='toolbar'
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
@@ -146,12 +147,21 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    fontFamily: "'Roboto', sans-serif"
-  },
-  header: {
-    flex: '0 1 auto'
   },
   displayArea: {
-    border:'5px solid #9E9EFF'
+    border:'1px solid #9E9EFF'
   }
 };
+
+const muiTheme = getMuiTheme({
+  fontFamily: 'Roboto, sans-serif',
+  palette: {
+    textColor: cyan500,
+  },
+  appBar: {
+    height: 60,
+  },
+  toolBar: {
+    height: 100,
+  }
+});
