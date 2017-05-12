@@ -24,6 +24,8 @@ export default class ForceLayout extends React.Component{
       .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
+    //simulation.nodes(nodes).force("link", d3.forceLink(links))
+    // .force("center", d3.forceCenter(width / 2, height / 2));
 
     this.graph = d3.select(this.refs.graph).attr("class", "everything");
 
@@ -59,10 +61,10 @@ export default class ForceLayout extends React.Component{
         .attr("class", "node")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended))
+      // .call(d3.drag()
+      //   .on("start", dragstarted)
+      //   .on("drag", dragged)
+      //   .on("end", dragended))
       .call(enterNode);
 
     this.simulation.on('tick', () => {
@@ -117,10 +119,10 @@ export default class ForceLayout extends React.Component{
       nodes.enter()
            .append('g')
            .attr("class", "node")
-           .call(d3.drag()
-             .on("start", dragstarted)
-             .on("drag", dragged)
-             .on("end", dragended))
+          //  .call(d3.drag()
+          //    .on("start", dragstarted)
+          //    .on("drag", dragged)
+          //    .on("end", dragended))
            .call(enterNode)
            .merge(nodes);
 
