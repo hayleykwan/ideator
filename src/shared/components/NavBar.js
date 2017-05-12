@@ -1,32 +1,32 @@
 import React from 'react';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import FlatButton from 'material-ui/FlatButton';
+
+const styles = {
+  title: {
+    cursor: 'pointer',
+  },
+};
 
 class NavBar extends React.Component{
   constructor(props){
     super(props);
+    this.handleTouchTap = this.handleTouchTap.bind(this);
+  }
+
+  handleTouchTap() {
+    alert('onTouchTap triggered on the title component');
   }
 
   render(){
     return (
-      <nav class='navbar'>
-        <div class='container'>
-          <div class='navbar-centre'>
-            <div class='navbar-brand'>
-              The Ideator
-              {/* link to home page */}
-            </div>
-          </div>
-          <div class='navbar-about'>
-            About
-          </div>
-          <div id='navbar-user' class='navbar-user'>
-            <ul>
-              <li class='navbar-user-create'><a href="">Create</a></li>
-              <li class='navbar-user-member'><a href="">Member</a></li>
-              <li class='navbar-user-boards'><a href="">Boards</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <AppBar
+        title={<span style={styles.title}>The Ideator</span>}
+        onTitleTouchTap={this.handleTouchTap}
+        iconElementLeft={<IconButton><NavigationClose /></IconButton>}
+        iconElementRight={<FlatButton label="Save" />}/>
     )
   }
 }

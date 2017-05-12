@@ -116,6 +116,7 @@ export default class App extends Component {
 
   render() {
     return (
+      <MuiThemeProvider>
         <div id="app" className='globalWrapper' style={styles.container}>
           <h2 style={styles.header}>The Ideator</h2>
           {/* <NavBar /> */}
@@ -127,15 +128,15 @@ export default class App extends Component {
               height="500"
             />
           </div>
-          <MuiThemeProvider>
+
             <IdeaToolBar className='toolbar'
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
               onNumberChange={this.handleNumberSlideChange}
               onSubmit={this.handleSubmit}/>
-          </MuiThemeProvider>
         </div>
+        </MuiThemeProvider>
     );
   }
 }
