@@ -1,6 +1,7 @@
 //React for structure - D3 for data calculation - D3 for rendering
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -26,7 +27,8 @@ class ForceLayout extends React.Component{
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    this.graph = d3.select(this.refs.graph).attr("class", "everything");
+    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph))
+      .attr("class", "everything");
 
     this.svg = d3.select("svg");
     this.svg.call(d3.zoom().on(
@@ -38,13 +40,9 @@ class ForceLayout extends React.Component{
     var link = this.graph.selectAll('.link-line')
       .data(links, function(d) { return d.source.id + "-" + d.target.id; })
       .enter()
-      // .append('g')
-      //   .attr('class', 'link')
       .append('line') //.insert('line', '.node')
         .attr('class', 'link-line')
-        .style('stroke', function(d){return color(d.type)})
-        .style('stroke-width', 5)
-        .style('stroke-opacity', 0.6);
+        .call(enterLinkLine);
 
     var linkLabels = this.graph.selectAll('.link-label')
       .data(links, function(d){return d.source.id + "-" + d.target.id;})
@@ -60,11 +58,11 @@ class ForceLayout extends React.Component{
         .attr("class", "node")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
+      .call(enterNode)
       .call(d3.drag()
         .on("start", this.dragstarted)
         .on("drag", this.dragged)
-        .on("end", this.dragended))
-      .call(enterNode);
+        .on("end", this.dragended));
 
     this.simulation.on('tick', () => {
       this.graph.call(updateGraph);
@@ -83,19 +81,16 @@ class ForceLayout extends React.Component{
       var newLinks = nextProps.links.slice();
 
       // this.simulation.stop();
-      this.graph = d3.select(this.refs.graph);
+      this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
       var links = this.graph.selectAll('.link-line')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit().remove();
       links.enter()
-          //  .append('g')
-          //    .attr('class', 'link')
            .append('line') //.insert('line', '.node')
              .attr('class', 'link-line')
-             .style('stroke', function(d){return color(d.type)})
-             .style('stroke-width', 5)
-             .style('stroke-opacity', 0.6);
+             .call(enterLinkLine);
+      // links.call(updateLink);
 
       var linkLabels = this.graph.selectAll('.link-label')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
@@ -104,6 +99,7 @@ class ForceLayout extends React.Component{
            .append("text")
              .attr("class", "link-label")
              .call(enterLinkLabel);
+      // linkLabels.call(updateLinkLabel);
 
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
@@ -115,11 +111,11 @@ class ForceLayout extends React.Component{
              .on("start", this.dragstarted)
              .on("drag", this.dragged)
              .on("end", this.dragended))
-           .call(enterNode)
-           .merge(nodes);
+           .call(enterNode);
+      // nodes.call(updateNode);
 
       this.simulation.nodes(newNodes);
-      this.simulation.force("link").links(newLinks);
+      this.simulation.force('link').links(newLinks);
 
       this.simulation.on('tick', () => {
         this.graph.call(updateGraph);
@@ -144,20 +140,17 @@ class ForceLayout extends React.Component{
     if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
-    // d3.select(this).raise().classed("active", true);
   }
 
   dragged(d) {
     d.fx = d3.event.x;
     d.fy = d3.event.y;
-    // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
   }
 
   dragended(d) {
     if (!d3.event.active) this.simulation.alphaTarget(0);
      d.fx = null;
      d.fy = null;
-    // d3.select(this).classed("active", false);
   }
 }
 
@@ -177,12 +170,12 @@ var enterNode = (selection) => {
       .attr("text-anchor", "middle")
       .attr("dy", ".35em") // vertically centre text regardless of font size
       .style("font-size", "13px")
-      .text(function(d) { return d.id });
+      .text((d) => d.id );
 };
 
 var enterLinkLine = (selection) => {
   selection
-    .style('stroke', function(d){return color(d.type)})
+    .style('stroke', (d) => color(d.type))
     .style('stroke-width', 5)
     .style('stroke-opacity', 0.6);
 };
@@ -193,7 +186,7 @@ var enterLinkLabel = (selection) => {
     .style("font", "normal 12px Arial")
     .attr("dy", ".35em")
     .attr("text-anchor", "middle")
-    .text(function(d){return d.type});
+    .text((d) => d.type);
 }
 
 var updateNode = (selection) => {
@@ -210,10 +203,8 @@ var updateLink = (selection) => {
 
 var updateLinkLabel = (selection) => {
   selection
-    .attr("x", function(d) {
-          return (d.source.x + d.target.x)/2; })
-    .attr("y", function(d) {
-          return (d.source.y + d.target.y)/2; });
+    .attr("x", (d) => (d.source.x + d.target.x)/2 )
+    .attr("y", (d) => (d.source.y + d.target.y)/2 );
 }
 
 var updateGraph = (selection) => {
