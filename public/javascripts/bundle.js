@@ -34488,6 +34488,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+var simulation = d3.forceSimulation().force("link", d3.forceLink().id(function (d) {
+  return d.id;
+}).distance(150)).force("charge", d3.forceManyBody().strength(-100));
+
 var ForceLayout = function (_React$Component) {
   _inherits(ForceLayout, _React$Component);
 
@@ -34514,9 +34518,12 @@ var ForceLayout = function (_React$Component) {
       var width = this.props.width;
       var height = this.props.height;
 
-      this.simulation = d3.forceSimulation(nodes).force("link", d3.forceLink(links).id(function (d) {
-        return d.id;
-      }).distance(150)).force("charge", d3.forceManyBody().strength(-100)).force("center", d3.forceCenter(width / 2, height / 2));
+      simulation.force("center", d3.forceCenter(width / 2, height / 2));
+
+      // this.simulation = d3.forceSimulation(nodes)
+      //   .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
+      //   .force("charge", d3.forceManyBody().strength(-100))
+      //   .force("center", d3.forceCenter(width / 2, height / 2));
 
       this.graph = d3.select(_reactDom2.default.findDOMNode(this.refs.graph)).attr("class", "everything");
 
@@ -34542,15 +34549,18 @@ var ForceLayout = function (_React$Component) {
         return d.y;
       }).call(enterNode).call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended));
 
-      this.simulation.on('tick', function () {
+      simulation.nodes(nodes);
+      simulation.force("link").links(links);
+      simulation.on("tick", function () {
         _this2.graph.call(updateGraph);
       });
+      // this.simulation.on('tick', () => {
+      //   this.graph.call(updateGraph);
+      // });
     }
   }, {
     key: 'shouldComponentUpdate',
     value: function shouldComponentUpdate(nextProps) {
-      var _this3 = this;
-
       console.log('shouldComponentUpdate triggered');
 
       //only allow d3 to re-render if the nodes and links props are different
@@ -34586,14 +34596,18 @@ var ForceLayout = function (_React$Component) {
         nodes.enter().append('g').attr("class", "node").call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended)).call(enterNode);
         // nodes.call(updateNode);
 
-        this.simulation.nodes(newNodes);
-        this.simulation.force('link').links(newLinks);
+        simulation.nodes(newNodes);
+        simulation.force("link").links(newLinks);
+        // this.simulation.nodes(newNodes);
+        // this.simulation.force('link').links(newLinks);
 
-        this.simulation.on('tick', function () {
-          _this3.graph.call(updateGraph);
-        });
+        // this.simulation.on('tick', () => {
+        // this.graph.call(updateGraph);
+        // });
+        simulation.alpha(1).restart();
+        // this.simulation.alpha(1).restart();
 
-        this.simulation.alpha(1).restart();
+        return false;
       }
       return false;
     }
@@ -34613,7 +34627,7 @@ var ForceLayout = function (_React$Component) {
   }, {
     key: 'dragstarted',
     value: function dragstarted(d) {
-      if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     }
@@ -34626,7 +34640,7 @@ var ForceLayout = function (_React$Component) {
   }, {
     key: 'dragended',
     value: function dragended(d) {
-      if (!d3.event.active) this.simulation.alphaTarget(0);
+      if (!d3.event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
     }

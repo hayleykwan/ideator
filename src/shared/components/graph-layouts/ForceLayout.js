@@ -6,6 +6,10 @@ import * as d3 from 'd3';
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) {return d.id; }).distance(150))
+    .force("charge", d3.forceManyBody().strength(-100));
+
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
@@ -22,10 +26,12 @@ class ForceLayout extends React.Component{
     const width = this.props.width;
     const height = this.props.height;
 
-    this.simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
-      .force("charge", d3.forceManyBody().strength(-100))
-      .force("center", d3.forceCenter(width / 2, height / 2));
+    simulation.force("center", d3.forceCenter(width/2, height/2));
+
+    // this.simulation = d3.forceSimulation(nodes)
+    //   .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
+    //   .force("charge", d3.forceManyBody().strength(-100))
+    //   .force("center", d3.forceCenter(width / 2, height / 2));
 
     this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph))
       .attr("class", "everything");
@@ -64,9 +70,14 @@ class ForceLayout extends React.Component{
         .on("drag", this.dragged)
         .on("end", this.dragended));
 
-    this.simulation.on('tick', () => {
-      this.graph.call(updateGraph);
-    });
+    simulation.nodes(nodes);
+    simulation.force("link").links(links);
+    simulation.on("tick", () => {
+        this.graph.call(updateGraph);
+      });
+    // this.simulation.on('tick', () => {
+    //   this.graph.call(updateGraph);
+    // });
   }
 
   shouldComponentUpdate(nextProps){
@@ -114,14 +125,18 @@ class ForceLayout extends React.Component{
            .call(enterNode);
       // nodes.call(updateNode);
 
-      this.simulation.nodes(newNodes);
-      this.simulation.force('link').links(newLinks);
+      simulation.nodes(newNodes);
+      simulation.force("link").links(newLinks);
+      // this.simulation.nodes(newNodes);
+      // this.simulation.force('link').links(newLinks);
 
-      this.simulation.on('tick', () => {
-        this.graph.call(updateGraph);
-      });
+      // this.simulation.on('tick', () => {
+        // this.graph.call(updateGraph);
+      // });
+      simulation.alpha(1).restart();
+      // this.simulation.alpha(1).restart();
 
-      this.simulation.alpha(1).restart();
+      return false;
     }
     return false;
   }
@@ -137,7 +152,7 @@ class ForceLayout extends React.Component{
 
   /* D3 DRAG */
   dragstarted(d) {
-    if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
   }
@@ -148,7 +163,7 @@ class ForceLayout extends React.Component{
   }
 
   dragended(d) {
-    if (!d3.event.active) this.simulation.alphaTarget(0);
+    if (!d3.event.active) simulation.alphaTarget(0);
      d.fx = null;
      d.fy = null;
   }
