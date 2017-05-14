@@ -34498,13 +34498,11 @@ var ForceLayout = function (_React$Component) {
   function ForceLayout(props) {
     _classCallCheck(this, ForceLayout);
 
-    var _this = _possibleConstructorReturn(this, (ForceLayout.__proto__ || Object.getPrototypeOf(ForceLayout)).call(this, props));
+    return _possibleConstructorReturn(this, (ForceLayout.__proto__ || Object.getPrototypeOf(ForceLayout)).call(this, props));
 
-    _this.dragstarted = _this.dragstarted.bind(_this);
-    _this.dragged = _this.dragged.bind(_this);
-    _this.dragended = _this.dragended.bind(_this);
-
-    return _this;
+    // this.dragstarted = this.dragstarted.bind(this);
+    // this.dragged = this.dragged.bind(this);
+    // this.dragended = this.dragended.bind(this);
   }
 
   _createClass(ForceLayout, [{
@@ -34547,7 +34545,9 @@ var ForceLayout = function (_React$Component) {
         return d.x;
       }).attr("cy", function (d) {
         return d.y;
-      }).call(enterNode).call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended));
+      }).call(enterNode).call(d3.drag().on("start", dragstarted) //this.dragstarted
+      .on("drag", dragged) //this.dragged
+      .on("end", dragended)); //this.dragended
 
       simulation.nodes(nodes);
       simulation.force("link").links(links);
@@ -34593,7 +34593,9 @@ var ForceLayout = function (_React$Component) {
           return d.id;
         });
         nodes.exit().remove();
-        nodes.enter().append('g').attr("class", "node").call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended)).call(enterNode);
+        nodes.enter().append('g').attr("class", "node").call(enterNode).call(d3.drag().on("start", dragstarted) //this.dragstarted
+        .on("drag", dragged) //this.dragged
+        .on("end", dragended)); //this.dragended
         // nodes.call(updateNode);
 
         simulation.nodes(newNodes);
@@ -34620,29 +34622,6 @@ var ForceLayout = function (_React$Component) {
           height: this.props.height },
         _react2.default.createElement('g', { ref: 'graph' })
       );
-    }
-
-    /* D3 DRAG */
-
-  }, {
-    key: 'dragstarted',
-    value: function dragstarted(d) {
-      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
-  }, {
-    key: 'dragged',
-    value: function dragged(d) {
-      d.fx = d3.event.x;
-      d.fy = d3.event.y;
-    }
-  }, {
-    key: 'dragended',
-    value: function dragended(d) {
-      if (!d3.event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
     }
   }]);
 
@@ -34708,6 +34687,24 @@ var updateGraph = function updateGraph(selection) {
   selection.selectAll('.link-line').call(updateLink);
   selection.selectAll('.link-label').call(updateLinkLabel);
 };
+
+/* D3 DRAG */
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
 
 exports.default = ForceLayout;
 

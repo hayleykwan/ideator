@@ -14,9 +14,9 @@ class ForceLayout extends React.Component{
   constructor(props){
     super(props);
 
-    this.dragstarted = this.dragstarted.bind(this);
-    this.dragged = this.dragged.bind(this);
-    this.dragended = this.dragended.bind(this);
+    // this.dragstarted = this.dragstarted.bind(this);
+    // this.dragged = this.dragged.bind(this);
+    // this.dragended = this.dragended.bind(this);
 
   }
 
@@ -66,9 +66,9 @@ class ForceLayout extends React.Component{
         .attr("cy", function(d) { return d.y; })
       .call(enterNode)
       .call(d3.drag()
-        .on("start", this.dragstarted)
-        .on("drag", this.dragged)
-        .on("end", this.dragended));
+        .on("start", dragstarted) //this.dragstarted
+        .on("drag", dragged) //this.dragged
+        .on("end", dragended)); //this.dragended
 
     simulation.nodes(nodes);
     simulation.force("link").links(links);
@@ -118,11 +118,11 @@ class ForceLayout extends React.Component{
       nodes.enter()
            .append('g')
            .attr("class", "node")
+           .call(enterNode)
            .call(d3.drag()
-             .on("start", this.dragstarted)
-             .on("drag", this.dragged)
-             .on("end", this.dragended))
-           .call(enterNode);
+             .on("start", dragstarted) //this.dragstarted
+             .on("drag", dragged) //this.dragged
+             .on("end", dragended)); //this.dragended
       // nodes.call(updateNode);
 
       simulation.nodes(newNodes);
@@ -148,24 +148,6 @@ class ForceLayout extends React.Component{
         <g ref='graph' />
       </svg>
     );
-  }
-
-  /* D3 DRAG */
-  dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-  }
-
-  dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
-
-  dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-     d.fx = null;
-     d.fy = null;
   }
 }
 
@@ -230,5 +212,24 @@ var updateGraph = (selection) => {
   selection.selectAll('.link-label')
     .call(updateLinkLabel);
 };
+
+
+/* D3 DRAG */
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+   d.fx = null;
+   d.fy = null;
+}
 
 export default ForceLayout;
