@@ -5,13 +5,14 @@ import * as d3 from 'd3';
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-// var simulation = d3.forceSimulation()
-//    .force("link", d3.forceLink().id(function(d){return d.id}).distance(150))
-//    .force("charge", d3.forceManyBody().strength(-100));
-
-export default class ForceLayout extends React.Component{
+class ForceLayout extends React.Component{
   constructor(props){
     super(props);
+
+    this.dragstarted = this.dragstarted.bind(this);
+    this.dragged = this.dragged.bind(this);
+    this.dragended = this.dragended.bind(this);
+
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -24,8 +25,6 @@ export default class ForceLayout extends React.Component{
       .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
       .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
-    //simulation.nodes(nodes).force("link", d3.forceLink(links))
-    // .force("center", d3.forceCenter(width / 2, height / 2));
 
     this.graph = d3.select(this.refs.graph).attr("class", "everything");
 
@@ -61,23 +60,16 @@ export default class ForceLayout extends React.Component{
         .attr("class", "node")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-      // .call(d3.drag()
-      //   .on("start", dragstarted)
-      //   .on("drag", dragged)
-      //   .on("end", dragended))
+      .call(d3.drag()
+        .on("start", this.dragstarted)
+        .on("drag", this.dragged)
+        .on("end", this.dragended))
       .call(enterNode);
 
     this.simulation.on('tick', () => {
       this.graph.call(updateGraph);
     });
   }
-
-  // componentWillReceiveProps(nextProps){
-  //   this.setState({
-  //     nodes: nextProps.nodes,
-  //     links: nextProps.links
-  //   })
-  // }
 
   shouldComponentUpdate(nextProps){
     console.log('shouldComponentUpdate triggered');
@@ -119,10 +111,10 @@ export default class ForceLayout extends React.Component{
       nodes.enter()
            .append('g')
            .attr("class", "node")
-          //  .call(d3.drag()
-          //    .on("start", dragstarted)
-          //    .on("drag", dragged)
-          //    .on("end", dragended))
+           .call(d3.drag()
+             .on("start", this.dragstarted)
+             .on("drag", this.dragged)
+             .on("end", this.dragended))
            .call(enterNode)
            .merge(nodes);
 
@@ -135,19 +127,37 @@ export default class ForceLayout extends React.Component{
 
       this.simulation.alpha(1).restart();
     }
-
     return false;
   }
 
   render(){
     return(
-      <svg
-        width={this.props.width}
-        height={this.props.height}
-        style={this.props.style}>
+      <svg width={this.props.width}
+           height={this.props.height}>
         <g ref='graph' />
       </svg>
     );
+  }
+
+  /* D3 DRAG */
+  dragstarted(d) {
+    if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    // d3.select(this).raise().classed("active", true);
+  }
+
+  dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+    // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+  }
+
+  dragended(d) {
+    if (!d3.event.active) this.simulation.alphaTarget(0);
+     d.fx = null;
+     d.fy = null;
+    // d3.select(this).classed("active", false);
   }
 }
 
@@ -215,23 +225,4 @@ var updateGraph = (selection) => {
     .call(updateLinkLabel);
 };
 
-/* D3 DRAG */
-function dragstarted(d) {
-  if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  // d3.select(this).raise().classed("active", true);
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-  // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-}
-
-function dragended(d) {
-  // if (!d3.event.active) this.simulation.alphaTarget(0);
-   d.fx = null;
-   d.fy = null;
-  // d3.select(this).classed("active", false);
-}
+export default ForceLayout;

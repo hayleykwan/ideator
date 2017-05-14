@@ -40,6 +40,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
       max: submitted.numSuggestion
     })
     .then((json) => { //json is an array of objects
+      // debug(json)
       var currentGraph = JSON.parse(currentGraphJSON);
       debug('Current graph to be updated' + currentGraph);
       var newGraph = dataUpdate.update(currentGraph, submitted, json);

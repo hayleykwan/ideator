@@ -240,6 +240,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -34307,7 +34311,7 @@ var CustomSlider = function (_React$Component) {
         null,
         _react2.default.createElement(
           'label',
-          { style: styles.sliderlabel, 'for': name },
+          { style: styles.sliderlabel },
           _react2.default.createElement(
             'span',
             null,
@@ -34480,17 +34484,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-// var simulation = d3.forceSimulation()
-//    .force("link", d3.forceLink().id(function(d){return d.id}).distance(150))
-//    .force("charge", d3.forceManyBody().strength(-100));
-
 var ForceLayout = function (_React$Component) {
   _inherits(ForceLayout, _React$Component);
 
   function ForceLayout(props) {
     _classCallCheck(this, ForceLayout);
 
-    return _possibleConstructorReturn(this, (ForceLayout.__proto__ || Object.getPrototypeOf(ForceLayout)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (ForceLayout.__proto__ || Object.getPrototypeOf(ForceLayout)).call(this, props));
+
+    _this.dragstarted = _this.dragstarted.bind(_this);
+    _this.dragged = _this.dragged.bind(_this);
+    _this.dragended = _this.dragended.bind(_this);
+
+    return _this;
   }
 
   _createClass(ForceLayout, [{
@@ -34535,20 +34541,12 @@ var ForceLayout = function (_React$Component) {
         return d.x;
       }).attr("cy", function (d) {
         return d.y;
-      }).call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)).call(enterNode);
+      }).call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended)).call(enterNode);
 
       this.simulation.on('tick', function () {
         _this2.graph.call(updateGraph);
       });
     }
-
-    // componentWillReceiveProps(nextProps){
-    //   this.setState({
-    //     nodes: nextProps.nodes,
-    //     links: nextProps.links
-    //   })
-    // }
-
   }, {
     key: 'shouldComponentUpdate',
     value: function shouldComponentUpdate(nextProps) {
@@ -34589,7 +34587,7 @@ var ForceLayout = function (_React$Component) {
           return d.id;
         });
         nodes.exit().remove();
-        nodes.enter().append('g').attr("class", "node").call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended)).call(enterNode).merge(nodes);
+        nodes.enter().append('g').attr("class", "node").call(d3.drag().on("start", this.dragstarted).on("drag", this.dragged).on("end", this.dragended)).call(enterNode).merge(nodes);
 
         this.simulation.nodes(newNodes);
         this.simulation.force("link").links(newLinks);
@@ -34600,7 +34598,6 @@ var ForceLayout = function (_React$Component) {
 
         this.simulation.alpha(1).restart();
       }
-
       return false;
     }
   }, {
@@ -34608,12 +34605,36 @@ var ForceLayout = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         'svg',
-        {
-          width: this.props.width,
-          height: this.props.height,
-          style: this.props.style },
+        { width: this.props.width,
+          height: this.props.height },
         _react2.default.createElement('g', { ref: 'graph' })
       );
+    }
+
+    /* D3 DRAG */
+
+  }, {
+    key: 'dragstarted',
+    value: function dragstarted(d) {
+      if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+      // d3.select(this).raise().classed("active", true);
+    }
+  }, {
+    key: 'dragged',
+    value: function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+      // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+  }, {
+    key: 'dragended',
+    value: function dragended(d) {
+      if (!d3.event.active) this.simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+      // d3.select(this).classed("active", false);
     }
   }]);
 
@@ -34623,7 +34644,6 @@ var ForceLayout = function (_React$Component) {
 //  d3 functions to manipulate attributes
 
 
-exports.default = ForceLayout;
 var enterNode = function enterNode(selection) {
   selection.append('circle').attr('r', function (d) {
     return d.id.length * 5;
@@ -34681,26 +34701,7 @@ var updateGraph = function updateGraph(selection) {
   selection.selectAll('.link-label').call(updateLinkLabel);
 };
 
-/* D3 DRAG */
-function dragstarted(d) {
-  if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-  // d3.select(this).raise().classed("active", true);
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-  // d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-}
-
-function dragended(d) {
-  // if (!d3.event.active) this.simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-  // d3.select(this).classed("active", false);
-}
+exports.default = ForceLayout;
 
 /***/ }),
 /* 200 */

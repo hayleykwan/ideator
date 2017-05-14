@@ -24,7 +24,7 @@ class CustomSlider extends React.Component {
     const name = this.props.name;
     return (
       <div>
-        <label style={styles.sliderlabel} for={name}>
+        <label style={styles.sliderlabel}>
           <span>{sliderNames[name]}</span>
           <span>{': '}</span>
           <span>{this.props.value}</span>

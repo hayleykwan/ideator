@@ -39,7 +39,7 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
           "target": node.id,
-          "type": "test"
+          "type": "hello"
         };
         currentGraph.links.push(link);
       }

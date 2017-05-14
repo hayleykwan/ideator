@@ -8,11 +8,13 @@
   },
   "engines": {
     "node": "6.10.2",
-    "npm": "3.10.10"
+    "npm": "4.5.0"
   },
   "private": true,
   "scripts": {
-    "start": "node ./src/server/index.js"
+    "start": "webpack --config webpack.config.js",
+    "run-prod": "node ./src/server/index.js",
+    "run-dev": "DEBUG=ideator:* nodemon ./src/server/index.js"
   },
   "dependencies": {
     "babel-register": "^6.24.1",
@@ -49,6 +51,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "babel-register": "^6.24.1",
+    "nodemon": "^1.11.0",
     "webpack": "^2.4.1"
   }
 }
