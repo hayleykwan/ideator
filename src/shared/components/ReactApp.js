@@ -53,7 +53,7 @@ export default class ReactApp extends Component {
         >
         </textarea>
         <button style={styles.button} onClick={this._validate.bind(this)}>VALIDATE</button>
-        
+
       </div>
     );
   }

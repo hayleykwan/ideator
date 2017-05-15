@@ -120,7 +120,7 @@ export default class App extends Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
-          <NavBar style={styles.navbar}/>
+          <NavBar/>
           <div style={styles.displayArea}>
             <Graph
               graphType="force"
@@ -129,7 +129,7 @@ export default class App extends Component {
               height="500"
             />
           </div>
-          <IdeaToolBar className='toolbar' style={styles.toolbar}
+          <IdeaToolBar style={styles.toolbar}
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
@@ -143,22 +143,25 @@ export default class App extends Component {
 
 const styles = {
   container: {
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    height: '100%'
   },
-  navbar: {},
   displayArea: {
+    flex: 1,
     border:'1px solid #9E9EFF',
     marginTop: 15,
     marginBottom: 15,
-    width: '92%'
+    width: '94%',
   },
   toolbar: {
-    bottom: '0%',
-    position: 'fixed'
-  }
+    // marginBottom: 10,
+    paddingTop: 30,
+    height: 80,
+    marginBottom: 20,
+    overflow: 'hidden'
+  },
 };
 
 const muiTheme = getMuiTheme({
@@ -169,8 +172,4 @@ const muiTheme = getMuiTheme({
   appBar: {
     height: 60,
   },
-  toolbar: {
-    height: 90,
-    width: '80%'
-  }
 });
