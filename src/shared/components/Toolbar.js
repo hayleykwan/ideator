@@ -71,7 +71,7 @@ export default class IdeaToolBar extends React.Component {
 
   render() {
     return (
-      <Toolbar>
+      <Toolbar style={this.props.style}>
         <ToolbarGroup style={styles.toolbargroup}>
           <InputText
             text={this.props.request.text}
@@ -103,6 +103,7 @@ export default class IdeaToolBar extends React.Component {
 
 
 const styles = {
+
   errorStyle: {
     color: orange500,
   },
