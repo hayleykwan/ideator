@@ -33853,9 +33853,18 @@ var App = function (_Component) {
       var self = this;
       this.socket.on('response', function (json, newGraphJSON, currentGraphJSON) {
 
-        var data = { nodes: [], links: [] };
-        // var data = Object.assign({}, self.state.data);
-
+        // var data = {
+        //   nodes: [{"id": "panda", "score": 0},
+        //           {"id": "china", "score": 1},
+        //           {"id": "chubby", "score": 1},
+        //           {"id": "black", "score": 1},
+        //           {"id": "white", "score": 1}],
+        //   links: [{"source": "panda", "target": "china", "type": "country"},
+        //           {"source": "panda", "target": "chubby", "type": "adjective"},
+        //           {"source": "panda", "target": "black", "type": "colour"},
+        //           {"source": "panda", "target": "white", "type": "colour"}]
+        // }
+        //
         // var a = {"id": "newnode"}; //THIS WORKS
         // var b = {"id": "newnode2"};
         // var c = {"id": "newnode3"};
@@ -33867,18 +33876,10 @@ var App = function (_Component) {
         // data.links.push(new_link);
         // data.links.push(new_link2);
         // console.log(data);
+        // self.setState({data: data});
 
         var newGraph = JSON.parse(newGraphJSON); //THIS DOESN'T WORK
-        // for(var i = 0 ; i < newGraph.nodes.length ; i++){
-        //   data.nodes.push(newGraph.nodes[i]);
-        // }
-        // for(var j = 0 ; j < newGraph.links.length ; j++){
-        //   data.links.push(newGraph.links[j])
-        // }
-        data.nodes = newGraph.nodes;
-        data.links = newGraph.links;
-        console.log(data);
-        self.setState({ data: data });
+        self.setState({ data: newGraph });
       });
     }
   }, {
@@ -33917,6 +33918,11 @@ var App = function (_Component) {
 
 exports.default = App;
 
+
+function removeExtraJSON(json) {
+  //node: remove index, x, y, vx, vy
+  //link: create new links based on the ids of nodes
+}
 
 var styles = {
   container: {
@@ -34647,10 +34653,6 @@ var ForceLayout = function (_React$Component) {
     _classCallCheck(this, ForceLayout);
 
     return _possibleConstructorReturn(this, (ForceLayout.__proto__ || Object.getPrototypeOf(ForceLayout)).call(this, props));
-
-    // this.dragstarted = this.dragstarted.bind(this);
-    // this.dragged = this.dragged.bind(this);
-    // this.dragended = this.dragended.bind(this);
   }
 
   _createClass(ForceLayout, [{
@@ -34693,9 +34695,7 @@ var ForceLayout = function (_React$Component) {
         return d.x;
       }).attr("cy", function (d) {
         return d.y;
-      }).call(enterNode).call(d3.drag().on("start", dragstarted) //this.dragstarted
-      .on("drag", dragged) //this.dragged
-      .on("end", dragended)); //this.dragended
+      }).call(enterNode).call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
 
       simulation.nodes(nodes);
       simulation.force("link").links(links);
@@ -34714,8 +34714,6 @@ var ForceLayout = function (_React$Component) {
       //only allow d3 to re-render if the nodes and links props are different
       if (nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links) {
         console.log('should only appear when updating graph');
-        // console.log(nextProps.nodes);
-        // console.log(nextProps.links);
         var newNodes = nextProps.nodes.slice();
         var newLinks = nextProps.links.slice();
 

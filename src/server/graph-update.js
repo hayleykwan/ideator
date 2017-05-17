@@ -3,6 +3,23 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   // submitted is one object: word, num, deg
   // datamuseRe is array of objects: word, score
 
+  console.log(JSON.stringify(currentGraph, null, 3));
+
+  var currentGraph = {
+      nodes: [{"id": "panda", "score": 0},
+              {"id": "china", "score": 1},
+              {"id": "chubby", "score": 1},
+              {"id": "black", "score": 1},
+              {"id": "white", "score": 1}],
+      links: [{"source": "panda", "target": "china", "type": "country"},
+              {"source": "panda", "target": "chubby", "type": "adjective"},
+              {"source": "panda", "target": "black", "type": "colour"},
+              {"source": "panda", "target": "white", "type": "colour"}]
+  }
+
+  console.log(JSON.stringify(currentGraph, null, 3));
+
+
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
@@ -81,13 +98,6 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
       }
     }
   }
-
-  //remove duplicate links
-  // currentGraph.links.forEach(function(d) {
-  //   var sourceTemp = d.source;
-  //   var targetTemp = d.target;
-  //
-  // });
 
   return currentGraph;
 }

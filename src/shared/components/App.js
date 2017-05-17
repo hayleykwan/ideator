@@ -87,9 +87,18 @@ export default class App extends Component {
     var self = this;
     this.socket.on('response', function(json, newGraphJSON, currentGraphJSON){
 
-      var data = {nodes: [], links: []};
-      // var data = Object.assign({}, self.state.data);
-
+      // var data = {
+      //   nodes: [{"id": "panda", "score": 0},
+      //           {"id": "china", "score": 1},
+      //           {"id": "chubby", "score": 1},
+      //           {"id": "black", "score": 1},
+      //           {"id": "white", "score": 1}],
+      //   links: [{"source": "panda", "target": "china", "type": "country"},
+      //           {"source": "panda", "target": "chubby", "type": "adjective"},
+      //           {"source": "panda", "target": "black", "type": "colour"},
+      //           {"source": "panda", "target": "white", "type": "colour"}]
+      // }
+      //
       // var a = {"id": "newnode"}; //THIS WORKS
       // var b = {"id": "newnode2"};
       // var c = {"id": "newnode3"};
@@ -101,18 +110,10 @@ export default class App extends Component {
       // data.links.push(new_link);
       // data.links.push(new_link2);
       // console.log(data);
+      // self.setState({data: data});
 
       var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
-      // for(var i = 0 ; i < newGraph.nodes.length ; i++){
-      //   data.nodes.push(newGraph.nodes[i]);
-      // }
-      // for(var j = 0 ; j < newGraph.links.length ; j++){
-      //   data.links.push(newGraph.links[j])
-      // }
-      data.nodes = newGraph.nodes;
-      data.links = newGraph.links;
-      console.log(data);
-      self.setState({data: data});
+      self.setState({data: newGraph});
     });
   }
 
@@ -139,6 +140,11 @@ export default class App extends Component {
         </MuiThemeProvider>
     );
   }
+}
+
+function removeExtraJSON(json){
+  //node: remove index, x, y, vx, vy
+  //link: create new links based on the ids of nodes
 }
 
 const styles = {

@@ -4,22 +4,11 @@
 var debug = require('debug')('ideator:express-app');
 var express = require('express');
 var path = require('path');
-const datamuse = require('datamuse');
-
-// require('babel-register')({
-//   // This will override `node_modules` ignoring - you can alternatively pass
-//   // an array of strings to be explicitly matched or a regex / glob
-//   ignore: false
-// }); //transpiling .es6, .es, .jsx, .js on the fly
 
 // var favicon = require('serve-favicon');
 // var logger = require('morgan');
 // var cookieParser = require('cookie-parser');
 // var bodyParser = require('body-parser');
-
-// var index = require('./routes/index');
-// var users = require('./routes/users');
-// var board = require('./routes/board');
 
 var app = express();
 
@@ -76,11 +65,6 @@ app.get('/', (req, res) => {
 //   res.send(html);
 // });
 
-
-
-// app.use('/', index);
-// app.use('/users', users);
-// app.use('/board', board);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

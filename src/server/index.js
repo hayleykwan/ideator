@@ -4,6 +4,8 @@
 var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
+
+const neo4j = require('neo4j-driver').v1;
 const datamuse = require('datamuse');
 const dataUpdate = require('./graph-update');
 
@@ -19,6 +21,29 @@ app.set('port', port);
 var server = http.createServer(app);
 debug('Server created.');
 var io = require('socket.io')(server);
+debug('socket.io set up with server');
+
+/**
+ * Connect to Neo4j Database
+ */
+// const driver = neo4j.driver(uri, neo4j.auth.basic(neo4j, test));
+// driver.onCompleted = metedata => {debug('Driver created');}
+// driver.onError = error => {debug(error);}
+//
+// const session = driver.session();
+//
+// const resultPromise = session.writeTransaction(tx => tx.run(
+//   'CREATE (a:Greeting) SET a.message = $message RETURN a.message + ", from node" + id(a)',
+//   {message: 'hello, world'}
+// ));
+// resultPromise.then(result => {
+//   session.close();
+//   const singleRecord = result.records[0];
+//   const greeting = singleRecord.get(0);
+//   console.log(greeting);
+// });
+
+// driver.close(); //should be on application exit
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -27,7 +52,9 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-
+/**
+ * Listen to socket
+ */
 io.on('connection', function(socket) { //listen on the connection event for incoming sockets
   console.log('Client Connection: %s', socket.id);
 
@@ -42,7 +69,6 @@ io.on('connection', function(socket) { //listen on the connection event for inco
     .then((json) => { //json is an array of objects
       // debug(json)
       var currentGraph = JSON.parse(currentGraphJSON);
-      debug('Current graph to be updated' + currentGraph);
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       var newGraphJSON = JSON.stringify(newGraph);
@@ -55,6 +81,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
     console.log('Client disconnected: %s', socket.id);
   });
 })
+
 /**
  * Normalize a port into a number, string, or false.
  */

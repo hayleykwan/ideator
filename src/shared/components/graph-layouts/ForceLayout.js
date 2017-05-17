@@ -13,11 +13,6 @@ var simulation = d3.forceSimulation()
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
-
-    // this.dragstarted = this.dragstarted.bind(this);
-    // this.dragged = this.dragged.bind(this);
-    // this.dragended = this.dragended.bind(this);
-
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -27,11 +22,6 @@ class ForceLayout extends React.Component{
     const height = this.props.height;
 
     simulation.force("center", d3.forceCenter(width/2, height/2));
-
-    // this.simulation = d3.forceSimulation(nodes)
-    //   .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
-    //   .force("charge", d3.forceManyBody().strength(-100))
-    //   .force("center", d3.forceCenter(width / 2, height / 2));
 
     this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph))
       .attr("class", "everything");
@@ -66,18 +56,15 @@ class ForceLayout extends React.Component{
         .attr("cy", function(d) { return d.y; })
       .call(enterNode)
       .call(d3.drag()
-        .on("start", dragstarted) //this.dragstarted
-        .on("drag", dragged) //this.dragged
-        .on("end", dragended)); //this.dragended
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
 
     simulation.nodes(nodes);
     simulation.force("link").links(links);
     simulation.on("tick", () => {
         this.graph.call(updateGraph);
       });
-    // this.simulation.on('tick', () => {
-    //   this.graph.call(updateGraph);
-    // });
   }
 
   shouldComponentUpdate(nextProps){
@@ -86,8 +73,6 @@ class ForceLayout extends React.Component{
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
       console.log('should only appear when updating graph');
-      // console.log(nextProps.nodes);
-      // console.log(nextProps.links);
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
@@ -120,21 +105,14 @@ class ForceLayout extends React.Component{
            .attr("class", "node")
            .call(enterNode)
            .call(d3.drag()
-             .on("start", dragstarted) //this.dragstarted
-             .on("drag", dragged) //this.dragged
-             .on("end", dragended)); //this.dragended
+             .on("start", dragstarted)
+             .on("drag", dragged)
+             .on("end", dragended));
       // nodes.call(updateNode);
 
       simulation.nodes(newNodes);
       simulation.force("link").links(newLinks);
-      // this.simulation.nodes(newNodes);
-      // this.simulation.force('link').links(newLinks);
-
-      // this.simulation.on('tick', () => {
-        // this.graph.call(updateGraph);
-      // });
       simulation.alpha(1).restart();
-      // this.simulation.alpha(1).restart();
 
       return false;
     }
