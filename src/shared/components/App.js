@@ -26,10 +26,7 @@ export default class App extends Component {
     }
 
     this.state = {
-      data: {
-        nodes: placeholder.nodes,  // []
-        links: placeholder.links   // []
-      },
+      data: placeholder,
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -75,7 +72,7 @@ export default class App extends Component {
     };
 
     if(submitted.word.length > 0 && typeof submitted.word === 'string') {
-      var currentGraphJSON = JSON.stringify(this.state.data);
+      const currentGraphJSON = JSON.stringify(this.state.data);
       this.socket.emit('request', submitted, currentGraphJSON);
     };
 
@@ -112,7 +109,7 @@ export default class App extends Component {
       // console.log(data);
       // self.setState({data: data});
 
-      var newGraph = JSON.parse(newGraphJSON);    //THIS DOESN'T WORK
+      var newGraph = JSON.parse(newGraphJSON);
       self.setState({data: newGraph});
     });
   }
@@ -142,10 +139,6 @@ export default class App extends Component {
   }
 }
 
-function removeExtraJSON(json){
-  //node: remove index, x, y, vx, vy
-  //link: create new links based on the ids of nodes
-}
 
 const styles = {
   container: {

@@ -3,21 +3,37 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   // submitted is one object: word, num, deg
   // datamuseRe is array of objects: word, score
 
-  console.log(JSON.stringify(currentGraph, null, 3));
+  console.log(currentGraph);
 
-  var currentGraph = {
-      nodes: [{"id": "panda", "score": 0},
-              {"id": "china", "score": 1},
-              {"id": "chubby", "score": 1},
-              {"id": "black", "score": 1},
-              {"id": "white", "score": 1}],
-      links: [{"source": "panda", "target": "china", "type": "country"},
-              {"source": "panda", "target": "chubby", "type": "adjective"},
-              {"source": "panda", "target": "black", "type": "colour"},
-              {"source": "panda", "target": "white", "type": "colour"}]
-  }
+  currentGraph.nodes.forEach(function(d){
+    delete d.index;
+    delete d.x;
+    delete d.y;
+    delete d.vx;
+    delete d.vy;
+  });
 
-  console.log(JSON.stringify(currentGraph, null, 3));
+  currentGraph.links.forEach(function(d){
+    d.source = d.source.id;
+    d.target = d.target.id;
+    delete d.index;
+  });
+
+  console.log(currentGraph);
+
+  // var currentGraph = {
+  //     nodes: [{"id": "panda", "score": 10},
+  //             {"id": "china", "score": 1},
+  //             {"id": "chubby", "score": 1},
+  //             {"id": "black", "score": 1},
+  //             {"id": "white", "score": 1}],
+  //     links: [{"source": "panda", "target": "china", "type": "country"},
+  //             {"source": "panda", "target": "chubby", "type": "adjective"},
+  //             {"source": "panda", "target": "black", "type": "colour"},
+  //             {"source": "panda", "target": "white", "type": "colour"}]
+  // }
+  //
+  // console.log(currentGraph);
 
 
   //if datamuseResponse is empty, return same graph

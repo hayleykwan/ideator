@@ -7,7 +7,9 @@ var http = require('http');
 
 const neo4j = require('neo4j-driver').v1;
 const datamuse = require('datamuse');
+
 const dataUpdate = require('./graph-update');
+// const utils = require('./utils');
 
 /**
  * Get port from environment and store in Express.
@@ -69,6 +71,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
     .then((json) => { //json is an array of objects
       // debug(json)
       var currentGraph = JSON.parse(currentGraphJSON);
+      // var cleanGraph = utils.removeD3extras(currentGraph);
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       var newGraphJSON = JSON.stringify(newGraph);

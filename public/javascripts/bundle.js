@@ -33783,10 +33783,7 @@ var App = function (_Component) {
     };
 
     _this.state = {
-      data: {
-        nodes: placeholder.nodes, // []
-        links: placeholder.links // []
-      },
+      data: placeholder,
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -33878,7 +33875,7 @@ var App = function (_Component) {
         // console.log(data);
         // self.setState({data: data});
 
-        var newGraph = JSON.parse(newGraphJSON); //THIS DOESN'T WORK
+        var newGraph = JSON.parse(newGraphJSON);
         self.setState({ data: newGraph });
       });
     }
@@ -33918,11 +33915,6 @@ var App = function (_Component) {
 
 exports.default = App;
 
-
-function removeExtraJSON(json) {
-  //node: remove index, x, y, vx, vy
-  //link: create new links based on the ids of nodes
-}
 
 var styles = {
   container: {
@@ -34668,11 +34660,6 @@ var ForceLayout = function (_React$Component) {
 
       simulation.force("center", d3.forceCenter(width / 2, height / 2));
 
-      // this.simulation = d3.forceSimulation(nodes)
-      //   .force("link", d3.forceLink(links).id(function(d){return d.id}).distance(150))
-      //   .force("charge", d3.forceManyBody().strength(-100))
-      //   .force("center", d3.forceCenter(width / 2, height / 2));
-
       this.graph = d3.select(_reactDom2.default.findDOMNode(this.refs.graph)).attr("class", "everything");
 
       this.svg = d3.select("svg");
@@ -34702,9 +34689,6 @@ var ForceLayout = function (_React$Component) {
       simulation.on("tick", function () {
         _this2.graph.call(updateGraph);
       });
-      // this.simulation.on('tick', () => {
-      //   this.graph.call(updateGraph);
-      // });
     }
   }, {
     key: 'shouldComponentUpdate',
@@ -34739,21 +34723,12 @@ var ForceLayout = function (_React$Component) {
           return d.id;
         });
         nodes.exit().remove();
-        nodes.enter().append('g').attr("class", "node").call(enterNode).call(d3.drag().on("start", dragstarted) //this.dragstarted
-        .on("drag", dragged) //this.dragged
-        .on("end", dragended)); //this.dragended
+        nodes.enter().append('g').attr("class", "node").call(enterNode).call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
         // nodes.call(updateNode);
 
         simulation.nodes(newNodes);
         simulation.force("link").links(newLinks);
-        // this.simulation.nodes(newNodes);
-        // this.simulation.force('link').links(newLinks);
-
-        // this.simulation.on('tick', () => {
-        // this.graph.call(updateGraph);
-        // });
         simulation.alpha(1).restart();
-        // this.simulation.alpha(1).restart();
 
         return false;
       }
