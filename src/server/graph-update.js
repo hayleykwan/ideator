@@ -3,8 +3,6 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   // submitted is one object: word, num, deg
   // datamuseRe is array of objects: word, score
 
-  console.log(currentGraph);
-
   currentGraph.nodes.forEach(function(d){
     delete d.index;
     delete d.x;
@@ -20,20 +18,6 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   });
 
   console.log(currentGraph);
-
-  // var currentGraph = {
-  //     nodes: [{"id": "panda", "score": 10},
-  //             {"id": "china", "score": 1},
-  //             {"id": "chubby", "score": 1},
-  //             {"id": "black", "score": 1},
-  //             {"id": "white", "score": 1}],
-  //     links: [{"source": "panda", "target": "china", "type": "country"},
-  //             {"source": "panda", "target": "chubby", "type": "adjective"},
-  //             {"source": "panda", "target": "black", "type": "colour"},
-  //             {"source": "panda", "target": "white", "type": "colour"}]
-  // }
-  //
-  // console.log(currentGraph);
 
 
   //if datamuseResponse is empty, return same graph

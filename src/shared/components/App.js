@@ -36,6 +36,7 @@ export default class App extends Component {
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleDegreeSlideChange = this.handleDegreeSlideChange.bind(this);
     this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -64,6 +65,13 @@ export default class App extends Component {
     this.setState({request:request});
   }
 
+  handleKeyPress(event){
+    if (event.key === 'Enter') {
+      console.log('Clicked Enter!');
+      this.handleSubmit(event);
+    }
+  }
+
   handleSubmit(event) {
     const submitted = {
       word: this.state.request.text,
@@ -83,34 +91,7 @@ export default class App extends Component {
 
     var self = this;
     this.socket.on('response', function(json, newGraphJSON, currentGraphJSON){
-
-      // var data = {
-      //   nodes: [{"id": "panda", "score": 0},
-      //           {"id": "china", "score": 1},
-      //           {"id": "chubby", "score": 1},
-      //           {"id": "black", "score": 1},
-      //           {"id": "white", "score": 1}],
-      //   links: [{"source": "panda", "target": "china", "type": "country"},
-      //           {"source": "panda", "target": "chubby", "type": "adjective"},
-      //           {"source": "panda", "target": "black", "type": "colour"},
-      //           {"source": "panda", "target": "white", "type": "colour"}]
-      // }
-      //
-      // var a = {"id": "newnode"}; //THIS WORKS
-      // var b = {"id": "newnode2"};
-      // var c = {"id": "newnode3"};
-      // data.nodes.push(a);
-      // data.nodes.push(b);
-      // data.nodes.push(c);
-      // var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
-      // var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
-      // data.links.push(new_link);
-      // data.links.push(new_link2);
-      // console.log(data);
-      // self.setState({data: data});
-
-      var newGraph = JSON.parse(newGraphJSON);
-      self.setState({data: newGraph});
+      self.setState({data: JSON.parse(newGraphJSON)});
     });
   }
 
@@ -132,7 +113,8 @@ export default class App extends Component {
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
               onNumberChange={this.handleNumberSlideChange}
-              onSubmit={this.handleSubmit}/>
+              onSubmit={this.handleSubmit}
+              onKeyDown={this.handleKeyPress}/>
         </div>
         </MuiThemeProvider>
     );

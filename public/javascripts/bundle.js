@@ -33793,6 +33793,7 @@ var App = function (_Component) {
     _this.handleTextChange = _this.handleTextChange.bind(_this);
     _this.handleDegreeSlideChange = _this.handleDegreeSlideChange.bind(_this);
     _this.handleNumberSlideChange = _this.handleNumberSlideChange.bind(_this);
+    _this.handleKeyPress = _this.handleKeyPress.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     return _this;
   }
@@ -33829,6 +33830,14 @@ var App = function (_Component) {
       this.setState({ request: request });
     }
   }, {
+    key: 'handleKeyPress',
+    value: function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        console.log('Clicked Enter!');
+        this.handleSubmit(event);
+      }
+    }
+  }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
       var submitted = {
@@ -33849,34 +33858,7 @@ var App = function (_Component) {
 
       var self = this;
       this.socket.on('response', function (json, newGraphJSON, currentGraphJSON) {
-
-        // var data = {
-        //   nodes: [{"id": "panda", "score": 0},
-        //           {"id": "china", "score": 1},
-        //           {"id": "chubby", "score": 1},
-        //           {"id": "black", "score": 1},
-        //           {"id": "white", "score": 1}],
-        //   links: [{"source": "panda", "target": "china", "type": "country"},
-        //           {"source": "panda", "target": "chubby", "type": "adjective"},
-        //           {"source": "panda", "target": "black", "type": "colour"},
-        //           {"source": "panda", "target": "white", "type": "colour"}]
-        // }
-        //
-        // var a = {"id": "newnode"}; //THIS WORKS
-        // var b = {"id": "newnode2"};
-        // var c = {"id": "newnode3"};
-        // data.nodes.push(a);
-        // data.nodes.push(b);
-        // data.nodes.push(c);
-        // var new_link = {"source": "newnode", "target": "newnode2", "type": "test"};
-        // var new_link2 = {"source": "newnode", "target": "newnode3", "type": "test"};
-        // data.links.push(new_link);
-        // data.links.push(new_link2);
-        // console.log(data);
-        // self.setState({data: data});
-
-        var newGraph = JSON.parse(newGraphJSON);
-        self.setState({ data: newGraph });
+        self.setState({ data: JSON.parse(newGraphJSON) });
       });
     }
   }, {
@@ -33904,7 +33886,8 @@ var App = function (_Component) {
             onTextChange: this.handleTextChange,
             onDegreeChange: this.handleDegreeSlideChange,
             onNumberChange: this.handleNumberSlideChange,
-            onSubmit: this.handleSubmit })
+            onSubmit: this.handleSubmit,
+            onKeyDown: this.handleKeyPress })
         )
       );
     }
@@ -34497,6 +34480,7 @@ var InputText = function (_React$Component2) {
     var _this2 = _possibleConstructorReturn(this, (InputText.__proto__ || Object.getPrototypeOf(InputText)).call(this, props));
 
     _this2.handleChange = _this2.handleChange.bind(_this2);
+    _this2.handleKeyPress = _this2.handleKeyPress.bind(_this2);
     return _this2;
   }
 
@@ -34506,13 +34490,19 @@ var InputText = function (_React$Component2) {
       this.props.onTextChange(event.target.value);
     }
   }, {
+    key: 'handleKeyPress',
+    value: function handleKeyPress(event) {
+      this.props.onKeyPress(event);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(_TextField2.default, {
         value: this.props.text,
         onChange: this.handleChange,
         hintText: 'Input text here',
-        hintStyle: styles.floatingLabelStyle
+        hintStyle: styles.floatingLabelStyle,
+        onKeyPress: this.handleKeyPress
       });
     }
   }]);
@@ -34540,7 +34530,8 @@ var IdeaToolBar = function (_React$Component3) {
           { style: styles.toolbargroup },
           _react2.default.createElement(InputText, {
             text: this.props.request.text,
-            onTextChange: this.props.onTextChange }),
+            onTextChange: this.props.onTextChange,
+            onKeyPress: this.props.onKeyDown }),
           _react2.default.createElement(_RaisedButton2.default, { label: 'Search', primary: true, onClick: this.props.onSubmit })
         ),
         _react2.default.createElement(

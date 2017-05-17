@@ -46,11 +46,16 @@ class InputText extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleChange(event){
     this.props.onTextChange(event.target.value);
   };
+
+  handleKeyPress(event){
+    this.props.onKeyPress(event);
+  }
 
   render() {
     return (
@@ -59,6 +64,7 @@ class InputText extends React.Component {
           onChange={this.handleChange}
           hintText="Input text here"
           hintStyle={styles.floatingLabelStyle}
+          onKeyPress={this.handleKeyPress}
         />
     );
   }
@@ -75,7 +81,8 @@ export default class IdeaToolBar extends React.Component {
         <ToolbarGroup style={styles.toolbargroup}>
           <InputText
             text={this.props.request.text}
-            onTextChange={this.props.onTextChange}/>
+            onTextChange={this.props.onTextChange}
+            onKeyPress={this.props.onKeyDown}/>
           <RaisedButton label="Search" primary={true} onClick={this.props.onSubmit}/>
         </ToolbarGroup>
         <ToolbarGroup style={styles.toolbargroup}>
