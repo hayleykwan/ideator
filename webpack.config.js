@@ -7,7 +7,12 @@ const PATH_PUBLIC_JS = path.resolve(__dirname, 'public/javascripts');
 
 module.exports = {
  entry: './src/client/main.js',
- output: { path: PATH_PUBLIC_JS, filename: 'bundle.js' },
+
+ output: {
+   path: PATH_PUBLIC_JS,
+   filename: 'bundle.js'
+ },
+
  module: {
    loaders: [
    {
@@ -17,4 +22,12 @@ module.exports = {
      query: {presets: ['react', 'es2015']}
    }]
  },
+
+ devServer: {
+  //  watchOptions: {
+  //    poll: true
+  //  }
+ },
+
+
 };

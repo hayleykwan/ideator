@@ -12,9 +12,10 @@
   },
   "private": true,
   "scripts": {
-    "start": "webpack --config webpack.config.js",
-    "run-prod": "node ./src/server/index.js",
-    "run-dev": "DEBUG=ideator:* nodemon ./src/server/index.js"
+    "start": "node ./src/server/index.js",
+    "build": "webpack --config webpack.config.js",
+    "dev": "DEBUG=ideator:* nodemon ./src/server/index.js",
+    "webpack-dev": "webpack-dev-server --open"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -28,6 +29,7 @@
     "pug": "~2.0.0-beta11",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-hot-loader": "^3.0.0-beta.7",
     "react-tap-event-plugin": "^2.0.1",
     "serve-favicon": "~2.4.2",
     "socket.io": "^1.7.3",
@@ -51,7 +53,10 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "babel-register": "^6.24.1",
+    "css-loader": "^0.28.1",
     "nodemon": "^1.11.0",
-    "webpack": "^2.4.1"
+    "style-loader": "^0.17.0",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.5"
   }
 }
