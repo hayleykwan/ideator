@@ -90,7 +90,7 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(json, newGraphJSON, currentGraphJSON){
+    this.socket.on('response', function(newGraphJSON){
       self.setState({data: JSON.parse(newGraphJSON)});
     });
   }

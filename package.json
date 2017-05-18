@@ -1,7 +1,7 @@
 {
   "name": "ideator",
   "version": "1.0.0",
-  "description": "Node.js webapp for creativity using Express, React.",
+  "description": "Node.js web application to help you find creative ideas using Express, React, D3 and Neo4j.",
   "repository": {
     "type": "git",
     "url": "https://github.com/hayleykwan/ideator.git"

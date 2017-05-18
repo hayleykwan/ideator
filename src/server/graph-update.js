@@ -3,23 +3,6 @@ exports.update =  function(currentGraph, submitted, datamuseRe){
   // submitted is one object: word, num, deg
   // datamuseRe is array of objects: word, score
 
-  currentGraph.nodes.forEach(function(d){
-    delete d.index;
-    delete d.x;
-    delete d.y;
-    delete d.vx;
-    delete d.vy;
-  });
-
-  currentGraph.links.forEach(function(d){
-    d.source = d.source.id;
-    d.target = d.target.id;
-    delete d.index;
-  });
-
-  console.log(currentGraph);
-
-
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
     console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
@@ -132,28 +115,4 @@ function existLink(currentGraph, sourceId, targetId){
     };
   })
   return false;
-}
-
-function maintainNodePositions(oldNodes, nodes, width, height) {
-  var kv = {};
-  oldNodes.forEach(function(d) {
-    kv[d.id] = d;
-  });
-  nodes.forEach(function(d) {
-    if (kv[d.id]) {
-      // if the node already exists, maintain current position
-      d.x = kv[d.id].x;
-      d.y = kv[d.id].y;
-    } else {
-      // else assign it a random position near the center
-      d.x = width / 2 + getRandomInt(-150, 150);
-      d.y = height / 2 + getRandomInt(-25, 25);
-    }
-  });
-}
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
 }

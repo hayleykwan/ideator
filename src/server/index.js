@@ -1,6 +1,3 @@
-/**
- * Module dependencies.
- */
 var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
@@ -9,7 +6,8 @@ const neo4j = require('neo4j-driver').v1;
 const datamuse = require('datamuse');
 
 const dataUpdate = require('./graph-update');
-// const utils = require('./utils');
+const utils = require('./utils');
+
 
 /**
  * Get port from environment and store in Express.
@@ -61,22 +59,19 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(submitted, currentGraphJSON){
-    //check database if word is cached
-    //if not send request(s) to datamuse, and store in database
+    var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
+
+    //call data-loader
 
     datamuse.words({
       ml: submitted.word,
       max: submitted.numSuggestion
     })
-    .then((json) => { //json is an array of objects
-      // debug(json)
-      var currentGraph = JSON.parse(currentGraphJSON);
-      // var cleanGraph = utils.removeD3extras(currentGraph);
+    .then((json) => {
       var newGraph = dataUpdate.update(currentGraph, submitted, json);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       var newGraphJSON = JSON.stringify(newGraph);
-      // should update database
-      socket.emit('response', json, newGraphJSON, currentGraphJSON);
+      socket.emit('response', newGraphJSON);
     });
   });
 

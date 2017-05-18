@@ -1,13 +1,14 @@
 /*
  * End point of server to database
  */
-
+console.log('at data-loader');
 const neo4j = require('neo4j-driver').v1;
+
 
 /**
  * Connect to Neo4j Database
  */
- console.log('at data-loader');
+
 // const driver = neo4j.driver(uri, neo4j.auth.basic(neo4j, test));
 // driver.onCompleted = metedata => {debug('Driver created');}
 // driver.onError = error => {debug(error);}
