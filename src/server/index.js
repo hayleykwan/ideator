@@ -2,17 +2,17 @@ var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
 
-const neo4j = require('neo4j-driver').v1;
-const datamuse = require('datamuse');
+var dataLoader = require('./data-loader');
+var dataUpdate = require('./graph-update');
+var config = require('./config');
+var utils = require('./utils');
 
-const dataUpdate = require('./graph-update');
-const utils = require('./utils');
-
+var datamuse = require('datamuse');
 
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || '3000');
+var port = config.PORT;
 app.set('port', port);
 
 /**
@@ -22,28 +22,6 @@ var server = http.createServer(app);
 debug('Server created.');
 var io = require('socket.io')(server);
 debug('socket.io set up with server');
-
-/**
- * Connect to Neo4j Database
- */
-// const driver = neo4j.driver(uri, neo4j.auth.basic(neo4j, test));
-// driver.onCompleted = metedata => {debug('Driver created');}
-// driver.onError = error => {debug(error);}
-//
-// const session = driver.session();
-//
-// const resultPromise = session.writeTransaction(tx => tx.run(
-//   'CREATE (a:Greeting) SET a.message = $message RETURN a.message + ", from node" + id(a)',
-//   {message: 'hello, world'}
-// ));
-// resultPromise.then(result => {
-//   session.close();
-//   const singleRecord = result.records[0];
-//   const greeting = singleRecord.get(0);
-//   console.log(greeting);
-// });
-
-// driver.close(); //should be on application exit
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -62,6 +40,8 @@ io.on('connection', function(socket) { //listen on the connection event for inco
     var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
 
     //call data-loader
+    var result = dataLoader.search(submitted);
+    debug('from dataloader' + result);
 
     datamuse.words({
       ml: submitted.word,
@@ -79,20 +59,6 @@ io.on('connection', function(socket) { //listen on the connection event for inco
     console.log('Client disconnected: %s', socket.id);
   });
 })
-
-/**
- * Normalize a port into a number, string, or false.
- */
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-  if (isNaN(port)) {
-    return val;// named pipe
-  }
-  if (port >= 0) {
-    return port;// port number
-  }
-  return false;
-}
 
 /**
  * Event listener for HTTP server "error" event.

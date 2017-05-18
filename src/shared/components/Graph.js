@@ -5,15 +5,6 @@ import ForceLayout from './graph-layouts/ForceLayout';
 export default class Graph extends React.Component{
   constructor(props){
     super(props);
-
-    // width = this.props.size.width
-    // height = this.props.size.height
-
-    // type = this.props.graphType
-
-    // nodes = this.props.data.nodes
-    // links = this.props.data.links
-
   }
 
   //process data here
