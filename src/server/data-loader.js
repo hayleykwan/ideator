@@ -16,6 +16,8 @@ DataLoader.prototype.search = function(query){
   // if not query datamuse
   debug('prototype method: ' + query.word);
   graphenedb.write();
+  var result = graphenedb.read();
+  debug(result);
   return 0;
 
 }

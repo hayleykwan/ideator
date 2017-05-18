@@ -6,32 +6,57 @@ function GrapheneDB(){
   //constructor
   this.driver = neo4j.driver(config.GRAPHENEDB_URL, neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
 
-  // driver.onCompleted = metedata => {debug('Driver created');}
-  // driver.onError = error => {console.log(error);}
-  // this.session = this.driver.session();
+  this.driver.onCompleted = function(metedata) {
+    debug('Driver created');
+  };
+
+  this.driver.onError = function(error) {
+    console.log('Driver instantiation failed. Error: '+ error);
+  };
+
 }
 
 GrapheneDB.prototype.write = function(){
   const session = this.driver.session();
   const resultPromise = session.run(
-    'CREATE (w:Word {word: $word}) RETURN w', {'word': 'hello'});
+    'CREATE (w:Word {word: $word}) RETURN w',
+    {'word': 'HAYLEY'}
+  );
   resultPromise.then(result => {
-
-      result.records.forEach(function(record){
-        debug(record);
-        const node = record.get(0);
-        debug(node.properties.word);
-      });
-      session.close(() => {
-        debug('session closed');
-      });
-
+    result.records.forEach(function(record){
+      debug('record: ' + record);
+      const node = record.get(0);
+      debug('node.properties.word: ' + node.properties.word);
     });
+    session.close(() => {
+      debug('session closed');
+    });
+  });
+  resultPromise.catch(function (error) {
+    console.log(error);
+  })
 }
 
 GrapheneDB.prototype.read = function(){
+  var dbresult;
   const session = this.driver.session();
-
+  const resultPromise = session.run(
+    'MATCH (w:Word {word: $word}) RETURN w',
+    {'word': 'hello'}
+  );
+  resultPromise.then(result => {
+    result.records.forEach(function(record){
+      debug('record: ' + record);
+      const node = record.get(0);
+      debug('node: ' + node);
+      debug('node.properties.word: ' + node.properties.word);
+    });
+    session.close(() => {
+      debug('session closed');
+    });
+    dbresult = result;
+  })
+  return dbresult;
 
 }
 
