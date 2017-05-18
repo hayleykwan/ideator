@@ -4,5 +4,5 @@
 #webpack
 #DEBUG=ideator:* nodemon ./src/server/index.js
 
-npm start
-npm run-script run-dev
+npm run build
+npm run dev
