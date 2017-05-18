@@ -1,16 +1,12 @@
 /*
- * End point of server to database
+ * Server Endpoint to database
  */
 var debug = require('debug')('ideator:server:data-loader');
-var neo4j = require('neo4j-driver').v1;
-var config = require('./config');
+var graphenedb = require('./graphenedb');
 var datamuse = require('./datamuse');
 
 function DataLoader(){
-  debug('constructor');
-  // this.driver = neo4j.driver(config.NEO4J_URL, neo4j.auth.basic(config.NEO4J_USER, config.NEO4J_PASS));
-  // this.driver.onCompleted = metedata => {debug('Driver created');}
-  // this.driver.onError = error => {console.log(error);}
+  debug('Data loader ready to work');
 }
 
 DataLoader.prototype.search = function(query){
@@ -18,13 +14,14 @@ DataLoader.prototype.search = function(query){
 
   // search if submitted word exists on database
   // if not query datamuse
-  debug('prototype method' + query.word);
+  debug('prototype method: ' + query.word);
+  graphenedb.write();
   return 0;
 
 }
 
 DataLoader.prototype.exit = function(){
-  this.driver.close();
+  graphenedb.close();
 }
 
 module.exports = new DataLoader();

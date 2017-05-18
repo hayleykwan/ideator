@@ -1,3 +1,4 @@
+var debug = require('debug')('ideator:server:datamuse');
 const datamuse = require('datamuse');
 
 function Datamuse() {
