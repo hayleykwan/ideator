@@ -3,7 +3,7 @@ var debug = require('debug')('ideator:server');
 var http = require('http');
 
 var dataLoader = require('./data-loader');
-var dataUpdate = require('./graph-update');
+var graphUpdate = require('./graph-update');
 var config = require('./config');
 var utils = require('./utils');
 
@@ -39,19 +39,20 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   socket.on('request', function(submitted, currentGraphJSON){
     var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
 
-    //call data-loader
-    var result = dataLoader.search(submitted);
-    debug('from dataloader' + result);
+    var queryWord = submitted.word;
+    var queryDeg = submitted.degConnection;
+
+    var allRelations = dataLoader.search(queryWord);
+    debug('Result from data loader: ' + allRelations);
 
     datamuse.words({
       ml: submitted.word,
       max: submitted.numSuggestion
     })
-    .then((json) => {
-      var newGraph = dataUpdate.update(currentGraph, submitted, json);
-      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
-      var newGraphJSON = JSON.stringify(newGraph);
-      socket.emit('response', newGraphJSON);
+    .then((json) => { //array of objects, not string
+      var newGraph = graphUpdate(currentGraph, submitted, json);
+      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      socket.emit('response', JSON.stringify(newGraph));
     });
   });
 

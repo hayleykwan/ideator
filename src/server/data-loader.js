@@ -4,22 +4,32 @@
 var debug = require('debug')('ideator:server:data-loader');
 var graphenedb = require('./graphenedb');
 var datamuse = require('./datamuse');
+var utils = require('./utils')
 
 function DataLoader(){
   debug('Data loader ready to work');
 }
 
-DataLoader.prototype.search = function(query){
-  // return relations
+DataLoader.prototype.search = function(queryWord){
 
-  // search if submitted word exists on database
-  // if not query datamuse
-  debug('prototype method: ' + query.word);
-  graphenedb.write();
-  var result = graphenedb.read();
-  debug(result);
+  var relations = {};
+
+debug(graphenedb.exists(queryWord));
+  if(!graphenedb.exists(queryWord)){
+    graphenedb.writeNewWord(queryWord);
+    var suggestions = datamuse.query(queryWord);
+    if(suggestions.length === 0){
+      relations = 'Not Found';
+      return relations;
+    } else{
+      debug(suggestions.length);
+      debug('Result from datamuse: '+ suggestions);
+      // graphenedb.load(json)
+    }
+
+  }
+  // var relations = graphenedb.getRelationsBasedOn(idea);
   return 0;
-
 }
 
 DataLoader.prototype.exit = function(){
@@ -27,21 +37,3 @@ DataLoader.prototype.exit = function(){
 }
 
 module.exports = new DataLoader();
-
-
-// const driver = neo4j.driver(uri, neo4j.auth.basic(neo4j, test));
-// driver.onCompleted = metedata => {debug('Driver created');}
-// driver.onError = error => {debug(error);}
-//
-// const session = driver.session();
-//
-// const resultPromise = session.writeTransaction(tx => tx.run(
-//   'CREATE (a:Greeting) SET a.message = $message RETURN a.message + ", from node" + id(a)',
-//   {message: 'hello, world'}
-// ));
-// resultPromise.then(result => {
-//   session.close();
-//   const singleRecord = result.records[0];
-//   const greeting = singleRecord.get(0);
-//   console.log(greeting);
-// });

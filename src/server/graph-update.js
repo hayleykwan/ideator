@@ -1,4 +1,4 @@
-exports.update =  function(currentGraph, submitted, datamuseRe){
+function update(currentGraph, submitted, datamuseRe){
 
   // submitted is one object: word, num, deg
   // datamuseRe is array of objects: word, score
@@ -116,3 +116,5 @@ function existLink(currentGraph, sourceId, targetId){
   })
   return false;
 }
+
+module.exports = update;
