@@ -12,13 +12,17 @@ function DataLoader(){
 
 DataLoader.prototype.search = function(queryWord){
 
-  var relations = {};
+  debug('looking for word: ' + queryWord);
+
   var existsPromise = graphenedb.exists(queryWord);
-  promise.then(function(exists) {
+
+  existsPromise.then(function(exists) {
     debug(exists);
-    // if(!exists){
-    //   // var suggestions
-    // }
+    if(!exists){
+      // graphenedb.writeNewWord(queryWord);
+      var results = datamuse.query(queryWord);
+      // debug(results);
+    }
   })
   // if(!graphenedb.exists(queryWord)){
   //   graphenedb.writeNewWord(queryWord);

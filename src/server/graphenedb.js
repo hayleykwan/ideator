@@ -6,9 +6,10 @@ function GrapheneDB(){
   //constructor
   this.driver = neo4j.driver(config.GRAPHENEDB_URL, neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
 
-  // this.driver.onCompleted = function(metedata) {
-  //   debug('Driver created');
-  // };
+  this.driver.onCompleted = function(metadata) {
+    debug(metadata);
+  };
+
   this.driver.onError = function(error) {
     console.log('Driver instantiation failed. Error: '+ error);
   };
@@ -63,7 +64,6 @@ GrapheneDB.prototype.exists = function(word) {
 
   var exists = promise.then(result => {
     session.close();
-    debug(result);
 
     if(result.records.length === 0){
       return false;

@@ -6,18 +6,9 @@ function Datamuse() {
   this.paramEnum = {};
 }
 
-//query all possible parameters
-//to stock up the database
 Datamuse.prototype.query = function(word){
-  debug('query datamuse all possible params');
-  // for(var i = 0 ; i < Object.keys(paramEnum) ; i++){
-  //   datamuseUtils.query(word, paramEnum)
-  // }
-  debug(datamuseUtils.meansLike(word));
 
-  // debug(typeof(ml));  //undefined
-  // this.results.push(ml);
-  // debug(this.results); //[empty]
+  datamuseUtils.query(word);
 
   return this.results;
 }

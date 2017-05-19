@@ -49,8 +49,8 @@ io.on('connection', function(socket) { //listen on the connection event for inco
       ml: submitted.word,
       max: submitted.numSuggestion
     })
-    .then((json) => { //array of objects, not string
-      var newGraph = graphUpdate(currentGraph, submitted, json);
+    .then((allRelations) => {
+      var newGraph = graphUpdate(currentGraph, submitted, allRelations);
       // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       socket.emit('response', JSON.stringify(newGraph));
     });
