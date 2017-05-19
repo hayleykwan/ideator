@@ -1,9 +1,6 @@
-/*
- * Server Endpoint to database
- */
 var debug = require('debug')('ideator:server:data-loader');
 var graphenedb = require('./graphenedb');
-var datamuse = require('./datamuse');
+var dataExplorer = require('./data-explorer');
 var utils = require('./utils')
 
 function DataLoader(){
@@ -19,25 +16,16 @@ DataLoader.prototype.search = function(queryWord){
   existsPromise.then(function(exists) {
     debug(exists);
     if(!exists){
-      // graphenedb.writeNewWord(queryWord);
-      var results = datamuse.query(queryWord);
-      // debug(results);
+      var results = dataExplorer.query(queryWord);
+      debug(results);
+      // if results.length === 0 then return
+      // write all to database
+      // return results
+    } else {
+      // read all results from database
+      //return results
     }
   })
-  // if(!graphenedb.exists(queryWord)){
-  //   graphenedb.writeNewWord(queryWord);
-  //   var suggestions = datamuse.query(queryWord);
-  //   if(suggestions.length === 0){
-  //     relations = 'Not Found';
-  //     return relations;
-  //   } else{
-  //     debug(suggestions.length);
-  //     debug('Result from datamuse: '+ suggestions);
-  //     // graphenedb.load(json)
-  //   }
-  //
-  // }
-  // var relations = graphenedb.getRelationsBasedOn(idea);
   return 0;
 }
 

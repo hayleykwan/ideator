@@ -28,10 +28,15 @@ var app = express();
 const PATH_PUBLIC = path.resolve(__dirname, '../../public');
 app.use('/static', express.static(PATH_PUBLIC));
 
-app.get('/', (req, res) => {
+app.use((req, res) => {
   debug('HERE-------------');
   res.sendFile(PATH_PUBLIC + '/index.html');
 });
+
+// app.get('/', (req, res) => { //using HTTP API here, instead of all web sockets
+//   debug('HERE-------------');
+//   res.sendFile(PATH_PUBLIC + '/index.html');
+// });
 
 
 // isomorphic javascript

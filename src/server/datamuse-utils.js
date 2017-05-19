@@ -3,24 +3,24 @@ const datamuse = require('datamuse');
 
 function DatamuseQuery(){
   this.params = {
-    means_like:   'ml',
-    sounds_like:  'sl',
-    spells_like:  'sp',
-    adj_to_noun:  'rel_jja',
-    noun_to_adj:  'rel_jjb',
-    synonym:      'rel_syn',
-    antonym:      'rel_ant',
-    trigger:      'rel_trg',
-    is_type_of:   'rel_spc',
-    specific_be:  'rel_gen',
-    comprise_of:  'rel_com',
-    is_part_of:   'rel_par',
-    followed_by:  'rel_bga',
-    preceeded_by: 'rel_bgb',
-    rhymes_perfect:  'rel_rhy',
-    rhymes_kind_of: 'rel_nry',
-    known_homophones: 'rel_hom',
-    consonant_match: 'rel_cns'
+    'spells_like':  'sp',
+    'means like':   'ml',
+    'adj_to_noun':  'rel_jja',
+    'noun_to_adj':  'rel_jjb',
+    'synonym':      'rel_syn',
+    'antonym':      'rel_ant',
+    'trigger':      'rel_trg',
+    'is type of':   'rel_spc',
+    'specific be':  'rel_gen',
+    'comprise of':  'rel_com',
+    'is part of':   'rel_par',
+    'followed by':  'rel_bga',
+    'preceeded by': 'rel_bgb',
+    'rhymes perfect':  'rel_rhy',
+    'rhymes kind of': 'rel_nry',
+    'sounds like':  'sl',
+    'known_homophones': 'rel_hom',
+    'consonant_match': 'rel_cns'
   }
 }
 
