@@ -11,10 +11,12 @@ DatamuseQuery.prototype.meansLike = function(word){
   datamuse.words({
     ml: word
   }).then((res) => {
+    return res;
     debug(res.length);
     results = res;
     debug(results.length);
   });
+  debug(results);
   return results;
 }
 

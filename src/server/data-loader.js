@@ -13,21 +13,26 @@ function DataLoader(){
 DataLoader.prototype.search = function(queryWord){
 
   var relations = {};
-
-debug(graphenedb.exists(queryWord));
-  if(!graphenedb.exists(queryWord)){
-    graphenedb.writeNewWord(queryWord);
-    var suggestions = datamuse.query(queryWord);
-    if(suggestions.length === 0){
-      relations = 'Not Found';
-      return relations;
-    } else{
-      debug(suggestions.length);
-      debug('Result from datamuse: '+ suggestions);
-      // graphenedb.load(json)
-    }
-
-  }
+  var existsPromise = graphenedb.exists(queryWord);
+  promise.then(function(exists) {
+    debug(exists);
+    // if(!exists){
+    //   // var suggestions
+    // }
+  })
+  // if(!graphenedb.exists(queryWord)){
+  //   graphenedb.writeNewWord(queryWord);
+  //   var suggestions = datamuse.query(queryWord);
+  //   if(suggestions.length === 0){
+  //     relations = 'Not Found';
+  //     return relations;
+  //   } else{
+  //     debug(suggestions.length);
+  //     debug('Result from datamuse: '+ suggestions);
+  //     // graphenedb.load(json)
+  //   }
+  //
+  // }
   // var relations = graphenedb.getRelationsBasedOn(idea);
   return 0;
 }

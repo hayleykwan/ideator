@@ -36,7 +36,6 @@ GrapheneDB.prototype.writeNewWord = function(word){
 }
 
 GrapheneDB.prototype.read = function(){
-  var dbresult;
   const session = this.driver.session();
   const resultPromise = session.run(
     'MATCH (w:Word {word: $word}) RETURN w',
@@ -50,34 +49,34 @@ GrapheneDB.prototype.read = function(){
       debug('node.properties.word: ' + node.properties.word);
     });
     session.close();
-    dbresult = result;
   })
-  return dbresult;
 
 }
 
 GrapheneDB.prototype.exists = function(word) {
   debug('check if word exists');
   const session = this.driver.session();
-  const resultPromise = session.run(
+  const promise = session.run(
     'MATCH (w:Word {word: $word}) RETURN w',
     {'word': word}
   );
 
-  var res = false;
-
-  resultPromise.then(result => {
-    if(result.length === 0){
-      res = false;
-    } else if (result.length > 1){
-      // duplicate nodes!
-      res = true;
-    } else if (result.length === 1){
-      res = true;
-    }
+  var exists = promise.then(result => {
     session.close();
+    debug(result);
+
+    if(result.records.length === 0){
+      return false;
+    } else if (result.records.length > 1){
+      // duplicate nodes!
+      return 'duplicate!';
+    } else if (result.records.length === 1){
+      return true;
+    }
   })
-  return res;
+
+  return exists;
+
 }
 
 GrapheneDB.prototype.getRelationsBasedOn = function(){
