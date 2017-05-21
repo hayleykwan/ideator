@@ -25,9 +25,9 @@ GrapheneDB.prototype.writeNewWord = function(word){
   );
   resultPromise.then(result => {
     result.records.forEach(function(record){
-      debug('record: ' + record);
+      console.log('record: ' + record);
       const node = record.get(0);
-      debug('node.properties.word: ' + node.properties.word);
+      console.log('node.properties.word: ' + node.properties.word);
     });
     session.close();
   });

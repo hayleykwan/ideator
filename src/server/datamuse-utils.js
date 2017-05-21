@@ -1,5 +1,6 @@
 var debug = require('debug')('ideator:server:datamuse-utils');
 const datamuse = require('datamuse');
+const graphenedb = require('./graphenedb');
 
 function DatamuseQuery(){
   this.params = {
@@ -25,6 +26,8 @@ function DatamuseQuery(){
 }
 
 DatamuseQuery.prototype.query = function(word){
+  graphenedb.writeNewWord(word);
+  
   var promises = [];
   var p;
   for(p in this.params){
