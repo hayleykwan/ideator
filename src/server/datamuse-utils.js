@@ -32,18 +32,31 @@ DatamuseQuery.prototype.query = function(word){
   for(let p in this.params){
     promises.push(query(word, this.params[p]));
   }
-  debug('promises after pushing?' + promises);
-  return Promise.all(promises);
 
+  return Promise.all(promises).then(results => {
+    var onearray = [];
+    results.forEach(res => {
+      res.forEach(wordObject => {
+        onearray.push(wordObject);
+      })
+    });
 
+    // break down arrays
+    // merge duplicates
+    // change params into the
+    return onearray
+  });
 }
 
 var query = function(word, param){
   let query = {};
   query[param] = word;
-  return datamusePromise = datamuse.words(query).then((data) => {
+  return datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
-    // data.forEach((d) => { debug(d); })
+    data.forEach((d) => {
+      d['param'] = param;
+    })
+    return data;
   });
 }
 

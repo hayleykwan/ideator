@@ -1,5 +1,6 @@
 var debug = require('debug')('ideator:server:data-explorer');
 const datamuseUtils = require('./datamuse-utils');
+const graphenedb = require('./graphenedb');
 
 function DataExplorer() {
   this.results = [];
@@ -16,7 +17,7 @@ DataExplorer.prototype.query = function(word){
   graphenedb.clearAllWords();
 
   datamuseUtils.query(word).then(results => {
-    debug(results.length);
+    debug(results);
   });
 
 

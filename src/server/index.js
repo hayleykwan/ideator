@@ -41,15 +41,19 @@ io.on('connection', function(socket) { //listen on the connection event for inco
 
     var queryWord = submitted.word;
     var queryDeg = submitted.degConnection;
+    var queryNum = submitted.numSuggestion;
+
+    // debug('Query: ' + queryWord + ', ' + queryNum);
 
     var allRelations = dataLoader.search(queryWord);
     debug('Result from data loader: ' + allRelations);
 
     datamuse.words({
-      ml: submitted.word,
-      max: submitted.numSuggestion
+      ml: queryWord,
+      max: queryNum
     })
     .then((allRelations) => {
+      // debug(allRelations);
       var newGraph = graphUpdate(currentGraph, submitted, allRelations);
       // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       socket.emit('response', JSON.stringify(newGraph));
