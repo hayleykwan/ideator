@@ -44,10 +44,10 @@ GrapheneDB.prototype.read = function(){
   );
   resultPromise.then(result => {
     result.records.forEach(function(record){
-      debug('record: ' + record);
+      console.log('record: ' + record);
       const node = record.get(0);
-      debug('node: ' + node);
-      debug('node.properties.word: ' + node.properties.word);
+      console.log('node: ' + node);
+      console.log('node.properties.word: ' + node.properties.word);
     });
     session.close();
   })
@@ -80,7 +80,7 @@ GrapheneDB.prototype.exists = function(word) {
 }
 
 GrapheneDB.prototype.clearAllWords = function(){
-  const session = this.drive.session();
+  const session = this.driver.session();
   session.run(
     'MATCH (n:Word) DETACH DELETE n'
   )
@@ -92,7 +92,7 @@ GrapheneDB.prototype.clearAllWords = function(){
 }
 
 GrapheneDB.prototype.close = function(){
-  debug('db closing');
+  console.log('db closing');
   this.driver.close();
 }
 

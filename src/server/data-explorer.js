@@ -1,4 +1,4 @@
-var debug = require('debug')('ideator:server:datamuse');
+var debug = require('debug')('ideator:server:data-explorer');
 const datamuseUtils = require('./datamuse-utils');
 
 function DataExplorer() {
@@ -12,9 +12,14 @@ DataExplorer.prototype.query = function(word){
  * 2. sort suggestions
  * 3. store in database
  */
-  datamuseUtils.query(word);
 
-  return this.results;
+  graphenedb.clearAllWords();
+
+  datamuseUtils.query(word).then(results => {
+    debug(results.length);
+  });
+
+
 }
 
 

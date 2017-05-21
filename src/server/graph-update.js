@@ -17,7 +17,7 @@ function update(currentGraph, submitted, datamuseRe){
     //check if target exists in currentGraph
     //if it does, link centreIndex (src) and this index (target) up
     //if not, append new node, link centreIndex and this up
-    for(var i = 0 ; i < datamuseRe.length ; i++){
+    for(let i = 0 ; i < datamuseRe.length ; i++){
       const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
       if(targetIndex !== -1){ //it exists in currentGraph
         if(existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id)){
@@ -56,7 +56,7 @@ function update(currentGraph, submitted, datamuseRe){
       //check if it exists in currentGraph
       //if it does, link centreIndex (src) and this index (target) up
       //if not, append new node, link centreIndex and this up
-    for(var i = 0 ; i < datamuseRe.length ; i++){
+    for(let i = 0 ; i < datamuseRe.length ; i++){
       const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
       if(targetIndex!== -1){  //it exists in currentGraph
         var link = {
@@ -94,7 +94,7 @@ function indexOfWordInGraph(currentGraph, obj){
   //   }
   //   return -1;
   // })
-  for(var i = 0 ; i < currentGraph.nodes.length ; i++){
+  for(let i = 0 ; i < currentGraph.nodes.length ; i++){
     if(currentGraph.nodes[i].id === obj.word){
       return i;
     }

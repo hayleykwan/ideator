@@ -16,8 +16,7 @@ DataLoader.prototype.search = function(queryWord){
   existsPromise.then(function(exists) {
     debug(exists);
     if(!exists){
-      var results = dataExplorer.query(queryWord);
-      debug(results);
+      dataExplorer.query(queryWord);
       // if results.length === 0 th en return
       // write all to database
       // return results
