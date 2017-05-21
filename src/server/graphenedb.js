@@ -79,8 +79,16 @@ GrapheneDB.prototype.exists = function(word) {
 
 }
 
-GrapheneDB.prototype.getRelationsBasedOn = function(){
-
+GrapheneDB.prototype.clearAllWords = function(){
+  const session = this.drive.session();
+  session.run(
+    'MATCH (n:Word) DETACH DELETE n'
+  )
+  .then(result => {
+    session.close();
+    console.log('Should cleared all words: ' + result);
+  })
+  .catch(error => {console.log(error);});
 }
 
 GrapheneDB.prototype.close = function(){

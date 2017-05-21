@@ -27,13 +27,21 @@ function DatamuseQuery(){
 
 DatamuseQuery.prototype.query = function(word){
   graphenedb.writeNewWord(word);
-  
+
   var promises = [];
   var p;
   for(p in this.params){
     promises.push(query(word, this.params[p]));
   }
-  debug(promises);
+  Promise.all(promises).then(results => {
+    debug(results.length);
+    debug(results);
+  })
+}
+
+var fireQueries = function(word, params){
+  var query = {};
+  query[param] = word;
 }
 
 var query = function(word, param){
@@ -41,7 +49,7 @@ var query = function(word, param){
   query[param] = word;
   var datamusePromise = datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
-    data.forEach((d) => { debug(d); })
+    // data.forEach((d) => { debug(d); })
     return data;
   });
   return datamusePromise;
