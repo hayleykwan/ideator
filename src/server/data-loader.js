@@ -18,7 +18,7 @@ DataLoader.prototype.search = function(queryWord){
     if(!exists){
       var results = dataExplorer.query(queryWord);
       debug(results);
-      // if results.length === 0 then return
+      // if results.length === 0 th en return
       // write all to database
       // return results
     } else {

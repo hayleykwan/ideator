@@ -25,10 +25,12 @@ function DatamuseQuery(){
 }
 
 DatamuseQuery.prototype.query = function(word){
+  var promises = [];
   var p;
   for(p in this.params){
-    query(word, this.params[p]);
+    promises.push(query(word, this.params[p]));
   }
+  debug(promises);
 }
 
 var query = function(word, param){
@@ -36,9 +38,7 @@ var query = function(word, param){
   query[param] = word;
   var datamusePromise = datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
-    data.forEach((d) => {
-      debug(d);
-    })
+    data.forEach((d) => { debug(d); })
     return data;
   });
   return datamusePromise;
