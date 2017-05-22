@@ -149,8 +149,13 @@ var enterNode = (selection) => {
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
-      .text((d) => d.id );
+      // .text((d) => wrap(d.id, 40))
+      .call(wrap, 40);
 };
+
+var wrap = (text, width) => {
+  // text.each(function()
+}
 
 var enterLinkLine = (selection) => {
   selection

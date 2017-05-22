@@ -12,10 +12,9 @@ html, body{
   /*overflow: hidden;*/
 }
 
-.node:hover {
-  fill: white;
-}
-
-.node-circle:hover {
-  fill: #FFF;
-}
+/*.node:hover{
+  opacity: 0.5; //works!
+}*/
+/*.node-circle:hover{
+  opacity: 0.5; //works! but only the circle, not the text
+}*/
