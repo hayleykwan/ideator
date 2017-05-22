@@ -26,14 +26,17 @@ function DatamuseQuery(){
 }
 
 DatamuseQuery.prototype.query = function(word){
+  
   graphenedb.writeNewWord(word);
 
   let promises = [];
   for(let p in this.params){
     promises.push(query(word, this.params[p]));
   }
-
+  debug(promises);
   return Promise.all(promises).then(results => {
+    debug(results);
+    // check and merge duplicates
     var onearray = [];
     results.forEach(res => {
       res.forEach(wordObject => {
@@ -42,7 +45,7 @@ DatamuseQuery.prototype.query = function(word){
     });
 
     // break down arrays
-    // merge duplicates
+
     // change params into the
     return onearray
   });
@@ -57,6 +60,8 @@ var query = function(word, param){
       d['param'] = param;
     })
     return data;
+  }).catch(error => {
+    console.log(error);
   });
 }
 

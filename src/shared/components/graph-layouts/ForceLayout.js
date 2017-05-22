@@ -76,21 +76,24 @@ class ForceLayout extends React.Component{
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
-      // this.simulation.stop();
       this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
       var links = this.graph.selectAll('.link-line')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
-      links.exit().remove();
+      links.exit()
+          //  .transition()
+           .remove();
       links.enter()
-           .append('line') //.insert('line', '.node')
+           .insert('line', '.node') //.append('line') 
              .attr('class', 'link-line')
              .call(enterLinkLine);
       // links.call(updateLink);
 
       var linkLabels = this.graph.selectAll('.link-label')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
-      linkLabels.exit().remove();
+      linkLabels.exit()
+          //  .transition()
+           .remove();
       linkLabels.enter()
            .append("text")
              .attr("class", "link-label")
@@ -99,7 +102,10 @@ class ForceLayout extends React.Component{
 
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
-      nodes.exit().remove();
+      nodes.exit()
+          //  .transition()
+            //  .attr('r', 0)
+           .remove();
       nodes.enter()
            .append('g')
            .attr("class", "node")

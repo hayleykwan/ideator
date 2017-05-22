@@ -1,7 +1,6 @@
-var app = require('./app');
 var debug = require('debug')('ideator:server');
 var http = require('http');
-
+var app = require('./app');
 var dataLoader = require('./data-loader');
 var graphUpdate = require('./graph-update');
 var config = require('./config');
