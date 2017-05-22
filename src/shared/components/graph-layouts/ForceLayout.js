@@ -8,7 +8,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) {return d.id; }).distance(150))
-    .force("charge", d3.forceManyBody().strength(-100));
+    .force("charge", d3.forceManyBody().strength(-200));
 
 class ForceLayout extends React.Component{
   constructor(props){
@@ -82,9 +82,14 @@ class ForceLayout extends React.Component{
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit()
           //  .transition()
+          //    .attr('stroke-opacity', 0)
+          //    .attrTween('x1', (d) => {() => d.source.x})
+          //    .attrTween('x2', (d) => {() => d.target.x})
+          //    .attrTween('y1', (d) => {() => d.source.y})
+          //    .attrTween('y2', (d) => {() => d.source.y})
            .remove();
       links.enter()
-           .insert('line', '.node') //.append('line') 
+           .insert('line', '.node') //.append('line')
              .attr('class', 'link-line')
              .call(enterLinkLine);
       // links.call(updateLink);
@@ -95,25 +100,25 @@ class ForceLayout extends React.Component{
           //  .transition()
            .remove();
       linkLabels.enter()
-           .append("text")
-             .attr("class", "link-label")
+           .append('text')
+             .attr('class', 'link-label')
              .call(enterLinkLabel);
       // linkLabels.call(updateLinkLabel);
 
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
       nodes.exit()
-          //  .transition()
-            //  .attr('r', 0)
+           .transition()
+             .attr('r', 0)
            .remove();
       nodes.enter()
            .append('g')
-           .attr("class", "node")
+           .attr('class', 'node')
            .call(enterNode)
            .call(d3.drag()
-             .on("start", dragstarted)
-             .on("drag", dragged)
-             .on("end", dragended));
+             .on('start', dragstarted)
+             .on('drag', dragged)
+             .on('end', dragended));
       // nodes.call(updateNode);
 
       simulation.nodes(newNodes);
@@ -143,14 +148,13 @@ var enterNode = (selection) => {
       .attr('r', function(d){return d.id.length * 5})
       .style('fill', 'white')
       .style('stroke', 'black')
-      .style('stroke-width', 3)
-      .on('click', function(d,i){alert('clicked')});
+      .style('stroke-width', 3);
 
   selection
-    .append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", ".35em") // vertically centre text regardless of font size
-      .style("font-size", "13px")
+    .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '.35em') // vertically centre text regardless of font size
+      .style('font-size', '13px')
       .text((d) => d.id );
 };
 
@@ -163,29 +167,29 @@ var enterLinkLine = (selection) => {
 
 var enterLinkLabel = (selection) => {
   selection
-    .attr("fill", "Black")
-    .style("font", "normal 12px Arial")
-    .attr("dy", ".35em")
-    .attr("text-anchor", "middle")
+    .attr('fill', 'Black')
+    .style('font', 'normal 12px Arial')
+    .attr('dy', '.35em')
+    .attr('text-anchor', 'middle')
     .text((d) => d.type);
 }
 
 var updateNode = (selection) => {
-  selection.attr("transform", (d) => "translate(" + d.x + "," + d.y + ")");
+  selection.attr('transform', (d) => "translate(" + d.x + "," + d.y + ")");
 };
 
 var updateLink = (selection) => {
   selection
-    .attr("x1", (d) => d.source.x)
-    .attr("y1", (d) => d.source.y)
-    .attr("x2", (d) => d.target.x)
-    .attr("y2", (d) => d.target.y);
+    .attr('x1', (d) => d.source.x)
+    .attr('y1', (d) => d.source.y)
+    .attr('x2', (d) => d.target.x)
+    .attr('y2', (d) => d.target.y);
 };
 
 var updateLinkLabel = (selection) => {
   selection
-    .attr("x", (d) => (d.source.x + d.target.x)/2 )
-    .attr("y", (d) => (d.source.y + d.target.y)/2 );
+    .attr('x', (d) => (d.source.x + d.target.x)/2 )
+    .attr('y', (d) => (d.source.y + d.target.y)/2 );
 }
 
 var updateGraph = (selection) => {
