@@ -138,7 +138,7 @@ var enterNode = (selection) => {
   selection
     .append('circle')
       .attr('class', 'node-circle')
-      .attr('r', function(d){return 40}) //d.id.length * 5
+      .attr('r', function(d){return 45}) //d.id.length * 5
       .style('fill', '#d3d3d3')
       // .style('stroke', 'black')
       // .style('stroke-width', 3);
@@ -150,13 +150,13 @@ var enterNode = (selection) => {
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
       .text(d => d.id)
-      .call(wrap, 40);
+      .call(wrap, 70);
 };
 
 var wrap = (text, width) => {
   text.each(function () {
     var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
+        words = text.text().split(/\s+/).reverse(), //return array
         word,
         line = [],
         lineNumber = 0,
@@ -164,10 +164,12 @@ var wrap = (text, width) => {
         y = text.attr('y'),
         dy = parseFloat(text.attr('dy')),
         tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em');
-        console.log(words);
+              console.log(words);
     while(word = words.pop()){
       line.push(word);
       tspan.text(line.join(' '));
+      console.log(words);
+      console.log(tspan.node().getComputedTextLength());
       if(tspan.node().getComputedTextLength() > width){
         line.pop();
         tspan.text(line.join(' '));
