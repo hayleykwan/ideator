@@ -11,3 +11,11 @@ html, body{
   width: 100%;
   /*overflow: hidden;*/
 }
+
+.node:hover {
+  fill: white;
+}
+
+.node-circle:hover {
+  fill: #FFF;
+}

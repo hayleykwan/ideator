@@ -67,8 +67,10 @@ class ForceLayout extends React.Component{
       });
   }
 
-  shouldComponentUpdate(nextProps){
+  shouldComponentUpdate(nextProps){ //essentially redraw whole thing
     console.log('shouldComponentUpdate triggered');
+
+    simulation.stop();
 
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
@@ -80,25 +82,16 @@ class ForceLayout extends React.Component{
 
       var links = this.graph.selectAll('.link-line')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
-      links.exit()
-          //  .transition()
-          //    .attr('stroke-opacity', 0)
-          //    .attrTween('x1', (d) => {() => d.source.x})
-          //    .attrTween('x2', (d) => {() => d.target.x})
-          //    .attrTween('y1', (d) => {() => d.source.y})
-          //    .attrTween('y2', (d) => {() => d.source.y})
-           .remove();
+      links.exit().remove();
       links.enter()
-           .insert('line', '.node') //.append('line')
+           .insert('line', '.node')
              .attr('class', 'link-line')
              .call(enterLinkLine);
       // links.call(updateLink);
 
       var linkLabels = this.graph.selectAll('.link-label')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
-      linkLabels.exit()
-          //  .transition()
-           .remove();
+      linkLabels.exit().remove();
       linkLabels.enter()
            .append('text')
              .attr('class', 'link-label')
@@ -108,8 +101,7 @@ class ForceLayout extends React.Component{
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
       nodes.exit()
-           .transition()
-             .attr('r', 0)
+           .transition().attr('r', 0)
            .remove();
       nodes.enter()
            .append('g')
@@ -145,13 +137,15 @@ class ForceLayout extends React.Component{
 var enterNode = (selection) => {
   selection
     .append('circle')
-      .attr('r', function(d){return d.id.length * 5})
-      .style('fill', 'white')
-      .style('stroke', 'black')
-      .style('stroke-width', 3);
+      .attr('class', 'node-circle')
+      .attr('r', function(d){return 40}) //d.id.length * 5
+      .style('fill', '#d3d3d3')
+      // .style('stroke', 'black')
+      // .style('stroke-width', 3);
 
   selection
     .append('text')
+      .attr('class', 'node-text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
