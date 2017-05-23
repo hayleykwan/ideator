@@ -7,19 +7,28 @@ export default class Graph extends React.Component{
     super(props);
   }
 
-  //process data here
-  //to render different layouts
+  // componentDidMount(){
+  //   this.svg = d3.select("svg");
+  //   this.svg.call(d3.zoom().on(
+  //     "zoom", () => {
+  //       this.graph.attr("transform", d3.event.transform)
+  //     })
+  //   );
+  // }
 
   render(){
     // should use switch statement instead
     if (this.props.graphType === "force"){
-      // console.log(this.props.data); already assigned index, x, y, vx, vy
       return (
-        <ForceLayout
-          nodes={this.props.data.nodes}
-          links={this.props.data.links}
-          width={this.props.width}
-          height={this.props.height}/>
+        // <svg
+        //   width={this.props.width}
+        //   height={this.props.height}>
+          <ForceLayout
+            nodes={this.props.data.nodes}
+            links={this.props.data.links}
+            width={this.props.width}
+            height={this.props.height}/>
+        // </svg>
       );
     }
   }

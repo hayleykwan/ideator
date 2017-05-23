@@ -23,10 +23,12 @@ class ForceLayout extends React.Component{
 
     simulation.force("center", d3.forceCenter(width/2, height/2));
 
-    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph))
-      .attr("class", "everything");
+    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
     this.svg = d3.select("svg");
+    this.svg.attr('viewBox', '0 0 '+ width + ' ' + height)
+      .attr('preserveAspectRatio', 'xMinYMin');
+
     this.svg.call(d3.zoom().on(
       "zoom", () => {
         this.graph.attr("transform", d3.event.transform)
@@ -36,7 +38,7 @@ class ForceLayout extends React.Component{
     var link = this.graph.selectAll('.link-line')
       .data(links, function(d) { return d.source.id + "-" + d.target.id; })
       .enter()
-      .append('line') //.insert('line', '.node')
+      .insert('line', '.node')
         .attr('class', 'link-line')
         .call(enterLinkLine);
 
@@ -52,8 +54,6 @@ class ForceLayout extends React.Component{
       .enter()
         .append('g')
         .attr("class", "node")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
       .call(enterNode)
       .call(d3.drag()
         .on("start", dragstarted)
@@ -70,8 +70,6 @@ class ForceLayout extends React.Component{
   shouldComponentUpdate(nextProps){ //essentially redraw whole thing
     console.log('shouldComponentUpdate triggered');
 
-    simulation.stop();
-
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
       console.log('should only appear when updating graph');
@@ -87,7 +85,6 @@ class ForceLayout extends React.Component{
            .insert('line', '.node')
              .attr('class', 'link-line')
              .call(enterLinkLine);
-      // links.call(updateLink);
 
       var linkLabels = this.graph.selectAll('.link-label')
            .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
@@ -96,7 +93,6 @@ class ForceLayout extends React.Component{
            .append('text')
              .attr('class', 'link-label')
              .call(enterLinkLabel);
-      // linkLabels.call(updateLinkLabel);
 
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
@@ -111,7 +107,6 @@ class ForceLayout extends React.Component{
              .on('start', dragstarted)
              .on('drag', dragged)
              .on('end', dragended));
-      // nodes.call(updateNode);
 
       simulation.nodes(newNodes);
       simulation.force("link").links(newLinks);
@@ -124,22 +119,22 @@ class ForceLayout extends React.Component{
 
   render(){
     return(
-      <svg width={this.props.width}
-           height={this.props.height}>
-        <g ref='graph' />
+      // <svg width={this.props.width}
+      //      height={this.props.height}>
+      <svg>
+        <g ref='graph' className='everything' />
       </svg>
     );
   }
 }
 
 
-//  d3 functions to manipulate attributes
 var enterNode = (selection) => {
   selection
     .append('circle')
       .attr('class', 'node-circle')
       .attr('r', function(d){return 45}) //d.id.length * 5
-      .style('fill', '#d3d3d3')
+      .style('fill', '#d3d3d3');
       // .style('stroke', 'black')
       // .style('stroke-width', 3);
 
@@ -223,8 +218,6 @@ var updateGraph = (selection) => {
     .call(updateLinkLabel);
 };
 
-
-/* D3 DRAG */
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
@@ -241,5 +234,6 @@ function dragended(d) {
    d.fx = null;
    d.fy = null;
 }
+
 
 export default ForceLayout;

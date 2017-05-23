@@ -100,12 +100,12 @@ export default class App extends Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
           <NavBar/>
-          <div style={styles.displayArea}>
+          <div className="svg-container" style={styles.displayArea}>
             <Graph
               graphType="force"
               data={this.state.data}
               width="1000" //should be screen size
-              height="500"
+              height="400"
             />
           </div>
           <IdeaToolBar style={styles.toolbar}
@@ -130,18 +130,18 @@ const styles = {
     alignItems: 'center',
   },
   displayArea: {
-    flex: 1,
+    // display:
+    // flex: 1,
     border:'1px solid #9E9EFF',
     marginTop: 15,
     marginBottom: 15,
-    width: '94%',
+    width: '98%',
   },
   toolbar: {
-    // marginBottom: 10,
     paddingTop: 30,
     height: 80,
-    marginBottom: 20,
-    overflow: 'hidden'
+    marginBottom: 15,
+    overflow: 'hidden',
   },
 };
 
@@ -151,6 +151,6 @@ const muiTheme = getMuiTheme({
     textColor: cyan500,
   },
   appBar: {
-    height: 60,
+    height: 50,
   },
 });
