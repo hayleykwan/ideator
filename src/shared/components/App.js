@@ -105,7 +105,7 @@ export default class App extends Component {
               graphType="force"
               data={this.state.data}
               width="1000" //should be screen size
-              height="400"
+              height="420"
             />
           </div>
           <IdeaToolBar style={styles.toolbar}

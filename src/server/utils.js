@@ -9,6 +9,8 @@ module.exports = {
       delete d.y;
       delete d.vx;
       delete d.vy;
+      delete d.fx;
+      delete d.fy;
     });
 
     currentGraph.links.forEach(function(d){

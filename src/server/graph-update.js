@@ -13,6 +13,7 @@ function update(currentGraph, submitted, datamuseRe){
   const centreIndex = indexOfWordInGraph(currentGraph, submitted);
   if(centreIndex !== -1){ //source is present, only need to add links
     currentGraph.nodes[centreIndex].score = 80;
+    currentGraph.nodes[centreIndex].submitted = true;
     //for each response object
     //check if target exists in currentGraph
     //if it does, link centreIndex (src) and this index (target) up
@@ -48,7 +49,8 @@ function update(currentGraph, submitted, datamuseRe){
     // not present, need to add new centre
     var centre = {
       "id": submitted.word,
-      "score": 1
+      "score": 1,
+      "submitted": true
     };
     currentGraph.nodes.push(centre);
 

@@ -27,7 +27,7 @@ class ForceLayout extends React.Component{
 
     this.svg = d3.select("svg");
     this.svg.attr('viewBox', '0 0 '+ width + ' ' + height)
-      .attr('preserveAspectRatio', 'xMinYMin');
+      .attr('preserveAspectRatio', 'xMidYMid meet');
 
     this.svg.call(d3.zoom().on(
       "zoom", () => {
@@ -107,6 +107,9 @@ class ForceLayout extends React.Component{
              .on('start', dragstarted)
              .on('drag', dragged)
              .on('end', dragended));
+      nodes.style('stroke', (d) => {
+        if (d.submitted) {return 'black'};
+      });
 
       simulation.nodes(newNodes);
       simulation.force("link").links(newLinks);
@@ -133,10 +136,8 @@ var enterNode = (selection) => {
   selection
     .append('circle')
       .attr('class', 'node-circle')
-      .attr('r', function(d){return 45}) //d.id.length * 5
+      .attr('r', function(d){return 45})
       .style('fill', '#d3d3d3');
-      // .style('stroke', 'black')
-      // .style('stroke-width', 3);
 
   selection
     .append('text')
