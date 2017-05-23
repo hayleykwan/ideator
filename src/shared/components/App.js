@@ -124,15 +124,16 @@ export default class App extends Component {
 
 const styles = {
   container: {
-    // height: '100%',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
   displayArea: {
-    // display:
-    // flex: 1,
-    border:'1px solid #9E9EFF',
+    // display: 'inline-block',
+    // position: 'relative',
+    flex: 1,
+    border:'1px solid #9edbff',
     marginTop: 15,
     marginBottom: 15,
     width: '98%',
