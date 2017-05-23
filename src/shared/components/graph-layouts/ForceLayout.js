@@ -35,21 +35,21 @@ class ForceLayout extends React.Component{
       })
     );
 
-    var link = this.graph.selectAll('.link-line')
+    this.graph.selectAll('.link-line')
       .data(links, function(d) { return d.source.id + "-" + d.target.id; })
       .enter()
       .insert('line', '.node')
         .attr('class', 'link-line')
         .call(enterLinkLine);
 
-    var linkLabels = this.graph.selectAll('.link-label')
+    this.graph.selectAll('.link-label')
       .data(links, function(d){return d.source.id + "-" + d.target.id;})
       .enter()
         .append("text")
         .attr("class", "link-label")
         .call(enterLinkLabel);
 
-    var node = this.graph.selectAll('.node')
+    this.graph.selectAll('.node')
       .data(nodes, function(d) {return d.id})
       .enter()
         .append('g')
@@ -72,7 +72,6 @@ class ForceLayout extends React.Component{
 
     //only allow d3 to re-render if the nodes and links props are different
     if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
-      console.log('should only appear when updating graph');
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
@@ -107,9 +106,10 @@ class ForceLayout extends React.Component{
              .on('start', dragstarted)
              .on('drag', dragged)
              .on('end', dragended));
-      nodes.style('stroke', (d) => {
+
+      this.graph.selectAll('.node').style('stroke', (d) => {
         if (d.submitted) {return 'black'};
-      });
+      })
 
       simulation.nodes(newNodes);
       simulation.force("link").links(newLinks);
@@ -122,8 +122,6 @@ class ForceLayout extends React.Component{
 
   render(){
     return(
-      // <svg width={this.props.width}
-      //      height={this.props.height}>
       <svg>
         <g ref='graph' className='everything' />
       </svg>
@@ -137,8 +135,7 @@ var enterNode = (selection) => {
     .append('circle')
       .attr('class', 'node-circle')
       .attr('r', function(d){return 45})
-      .style('fill', '#d3d3d3');
-
+      .style('fill', '#EAEAEA');
   selection
     .append('text')
       .attr('class', 'node-text')
@@ -146,7 +143,7 @@ var enterNode = (selection) => {
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
       .text(d => d.id)
-      .call(wrap, 70);
+      .call(wrap, 85);
 };
 
 var wrap = (text, width) => {
@@ -180,6 +177,7 @@ var enterLinkLine = (selection) => {
   selection
     .style('stroke', (d) => color(d.type))
     .style('stroke-width', 5)
+    .style('stroke-linecap', 'round')
     .style('stroke-opacity', 0.6);
 };
 
