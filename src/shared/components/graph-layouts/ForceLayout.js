@@ -23,11 +23,11 @@ class ForceLayout extends React.Component{
 
     simulation.force("center", d3.forceCenter(width/2, height/2));
 
-    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
-
     this.svg = d3.select("svg");
     this.svg.attr('viewBox', '0 0 '+ width + ' ' + height)
       .attr('preserveAspectRatio', 'xMidYMid meet');
+
+    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
     this.svg.call(d3.zoom().on(
       "zoom", () => {
@@ -35,36 +35,9 @@ class ForceLayout extends React.Component{
       })
     );
 
-    this.graph.selectAll('.link-line')
-      .data(links, function(d) { return d.source.id + "-" + d.target.id; })
-      .enter()
-      .insert('line', '.node')
-        .attr('class', 'link-line')
-        .call(enterLinkLine);
-
-    this.graph.selectAll('.link-label')
-      .data(links, function(d){return d.source.id + "-" + d.target.id;})
-      .enter()
-        .append("text")
-        .attr("class", "link-label")
-        .call(enterLinkLabel);
-
-    this.graph.selectAll('.node')
-      .data(nodes, function(d) {return d.id})
-      .enter()
-        .append('g')
-        .attr("class", "node")
-      .call(enterNode)
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended));
-
-    simulation.nodes(nodes);
-    simulation.force("link").links(links);
     simulation.on("tick", () => {
-        this.graph.call(updateGraph);
-      });
+      this.graph.call(updateGraph);
+    });
   }
 
   shouldComponentUpdate(nextProps){ //essentially redraw whole thing
@@ -107,9 +80,9 @@ class ForceLayout extends React.Component{
              .on('drag', dragged)
              .on('end', dragended));
 
-      this.graph.selectAll('.node').style('stroke', (d) => {
-        if (d.submitted) {return 'black'};
-      })
+      this.graph.selectAll('.node')
+        .style('stroke', (d) => {
+          if (d.submitted) {return 'black'};  })
 
       simulation.nodes(newNodes);
       simulation.force("link").links(newLinks);
@@ -143,7 +116,7 @@ var enterNode = (selection) => {
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
       .text(d => d.id)
-      .call(wrap, 85);
+      .call(wrap, 86);
 };
 
 var wrap = (text, width) => {
@@ -230,8 +203,8 @@ function dragged(d) {
 
 function dragended(d) {
   if (!d3.event.active) simulation.alphaTarget(0);
-   d.fx = null;
-   d.fy = null;
+  //  d.fx = null;
+  //  d.fy = null;
 }
 
 

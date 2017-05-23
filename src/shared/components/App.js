@@ -13,20 +13,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    var placeholder = {
-      nodes: [{"id": "panda", "score": 0},
-              {"id": "china", "score": 1},
-              {"id": "chubby", "score": 1},
-              {"id": "black", "score": 1},
-              {"id": "white", "score": 1}],
-      links: [{"source": "panda", "target": "china", "type": "country"},
-              {"source": "panda", "target": "chubby", "type": "adjective"},
-              {"source": "panda", "target": "black", "type": "colour"},
-              {"source": "panda", "target": "white", "type": "colour"}]
-    }
-
     this.state = {
-      data: placeholder,
+      data: {nodes: [], links: []},
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -38,6 +26,7 @@ export default class App extends Component {
     this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateData = this.updateData.bind(this);
   }
 
   componentWillMount(){
@@ -46,6 +35,21 @@ export default class App extends Component {
       console.log('Connected to server. ' + this.socket.id);
     });
   }
+
+  // componentDidMount(){
+  //   var placeholder = {
+  //     nodes: [{"id": "panda", "score": 0},
+  //             {"id": "china", "score": 1},
+  //             {"id": "chubby", "score": 1},
+  //             {"id": "black", "score": 1},
+  //             {"id": "white", "score": 1}],
+  //     links: [{"source": "panda", "target": "china", "type": "country"},
+  //             {"source": "panda", "target": "chubby", "type": "adjective"},
+  //             {"source": "panda", "target": "black", "type": "colour"},
+  //             {"source": "panda", "target": "white", "type": "colour"}]
+  //   }
+  //   this.setState({data: placeholder});
+  // }
 
   handleTextChange(value) {
     var request = this.state.request;
@@ -91,8 +95,12 @@ export default class App extends Component {
 
     var self = this;
     this.socket.on('response', function(newGraphJSON){
-      self.setState({data: JSON.parse(newGraphJSON)});
+      self.updateData(newGraphJSON);
     });
+  }
+
+  updateData(newGraphJSON){
+    this.setState({data: JSON.parse(newGraphJSON)});
   }
 
   render() {
@@ -130,8 +138,6 @@ const styles = {
     alignItems: 'center',
   },
   displayArea: {
-    // display: 'inline-block',
-    // position: 'relative',
     flex: 1,
     border:'1px solid #9edbff',
     marginTop: 15,
