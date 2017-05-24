@@ -7,12 +7,15 @@ import * as d3 from 'd3';
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) {return d.id; }).distance(150))
-    .force("charge", d3.forceManyBody().strength(-200));
+    .force('link', d3.forceLink().id(d => d.id).distance(150))
+    .force('charge', d3.forceManyBody().strength(-120));
+
+var linkedByIndex = {};
 
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
+
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -44,7 +47,8 @@ class ForceLayout extends React.Component{
     console.log('shouldComponentUpdate triggered');
 
     //only allow d3 to re-render if the nodes and links props are different
-    if(nextProps.nodes !== this.props.nodes || nextProps.links !== this.props.links){
+    if(nextProps.nodes !== this.props.nodes ||
+       nextProps.links !== this.props.links){
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
@@ -78,14 +82,38 @@ class ForceLayout extends React.Component{
            .call(d3.drag()
              .on('start', dragstarted)
              .on('drag', dragged)
-             .on('end', dragended));
+             .on('end', dragended))
+           .on('mouseover', (d) => {
+             this.graph.selectAll('.link-line').style('stroke-opacity', (o) => {
+               o.source === d || o.target === d ? 1 : 0.1;
+             });
+             this.graph.selectAll('.node').style("stroke-opacity", function(o) {
+               var thisOpacity = isConnected(d, o) ? 1 : 0.1;
+               this.setAttribute('fill-opacity', thisOpacity);
+               return thisOpacity;
+             });
+           })
+           .on('mouseout', (d) => {
+             this.graph.selectAll('.link-line').style('stroke-opacity', (o) => {
+               o.source === d || o.target === d ? 1 : 1;
+             });
+             this.graph.selectAll('.node').style("stroke-opacity", function(o) {
+               var thisOpacity = isConnected(d, o) ? 1 : 1;
+               this.setAttribute('fill-opacity', thisOpacity);
+               return thisOpacity;
+             });
+           })
+
+      newLinks.forEach(function(d) {
+        linkedByIndex[d.source.index + "," + d.target.index] = 1;
+      });
 
       this.graph.selectAll('.node')
         .style('stroke', (d) => {
-          if (d.submitted) {return 'black'};  })
+          if (d.submitted) {return 'black'};  });
 
       simulation.nodes(newNodes);
-      simulation.force("link").links(newLinks);
+      simulation.force('link').links(newLinks);
       simulation.alpha(1).restart();
 
       return false;
@@ -129,18 +157,17 @@ var wrap = (text, width) => {
         lineHeight = 1.1, //ems
         y = text.attr('y'),
         dy = parseFloat(text.attr('dy')),
-        tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em');
-              console.log(words);
+        tspan = text.text(null).append('tspan')
+          .attr('x', 0).attr('y', y).attr('dy', dy + 'em');
     while(word = words.pop()){
       line.push(word);
       tspan.text(line.join(' '));
-      console.log(words);
-      console.log(tspan.node().getComputedTextLength());
       if(tspan.node().getComputedTextLength() > width){
         line.pop();
         tspan.text(line.join(' '));
         line = [word];
-        tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
+        tspan = text.append('tspan').attr('x', 0).attr('y', y)
+          .attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
       }
     }
   });
@@ -207,5 +234,10 @@ function dragended(d) {
   //  d.fy = null;
 }
 
+function isConnected(a, b) {
+  return linkedByIndex[a.index + "," + b.index] ||
+         linkedByIndex[b.index + "," + a.index] ||
+         a.index == b.index;
+}
 
 export default ForceLayout;
