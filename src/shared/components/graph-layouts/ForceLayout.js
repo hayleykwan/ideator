@@ -111,7 +111,6 @@ class ForceLayout extends React.Component{
   }
 
   nodeDoubleClick(d){
-    console.log('hi from forcelayout ' + JSON.stringify(d, null, 3));
     this.props.nodeDoubleClick(d.id);
   }
 

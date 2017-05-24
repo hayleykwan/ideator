@@ -63,7 +63,6 @@ export default class App extends Component {
   }
 
   handleSubmit(nodeWord) {
-    console.log('handleSubmit: ' + nodeWord);
     var wordToSubmit = (this.state.request.text === '') ? nodeWord : this.state.request.text;
     const submitted = {
       word: wordToSubmit, //this.state.request.text || nodeWord,
@@ -92,7 +91,6 @@ export default class App extends Component {
   }
 
   nodeDoubleClick(nodeWord){
-    console.log('searching for ' + nodeWord);
     this.handleSubmit(nodeWord);
   }
 
