@@ -54,60 +54,70 @@ class ForceLayout extends React.Component{
       this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
       var links = this.graph.selectAll('.link-line')
-           .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
+        .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit().remove();
       links.enter()
-           .insert('line', '.node')
-             .attr('class', 'link-line')
-             .call(enterLinkLine);
+        .insert('line', '.node')
+        .attr('class', 'link-line')
+        .call(enterLinkLine);
 
       var linkLabels = this.graph.selectAll('.link-label')
-           .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
+        .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       linkLabels.exit().remove();
       linkLabels.enter()
-           .append('text')
-             .attr('class', 'link-label')
-             .call(enterLinkLabel);
+        .append('text')
+        .attr('class', 'link-label')
+        .call(enterLinkLabel);
 
       newLinks.forEach(function(d) {
         linkedByIndex[d.source+ "," + d.target] = 1;
       });
 
       var nodes = this.graph.selectAll('.node')
-           .data(newNodes, function(d) {return d.id});
+        .data(newNodes, function(d) {return d.id});
       nodes.exit()
-           .transition().attr('r', 0)
-           .remove();
+        .transition().attr('r', 0)
+        .remove();
       nodes.enter()
-           .append('g')
-           .attr('class', 'node')
-           .call(enterNode)
-           .call(d3.drag()
-             .on('start', dragstarted)
-             .on('drag', dragged)
-             .on('end', dragended))
-           .on('mouseover', (d) => {
-             this.graph.selectAll('.link-line').style('stroke-opacity', (o) => {
-               console.log(o.source.id + ' ' + o.target.id + ' ' + d.id);
-               return o.source === d || o.target === d ? 1 : 0.1;
-             });
-             this.graph.selectAll('.node').style("stroke-opacity", function(o) {
-               console.log(d.id + ' ' + o.id + ' ' + isConnected(d,o));
-               var thisOpacity = isConnected(d, o) ? 1 : 0.1;
-               this.setAttribute('fill-opacity', thisOpacity);
-               return thisOpacity;
-             });
-           })
-           .on('mouseout', (d) => {
-             this.graph.selectAll('.link-line').style('stroke-opacity', (o) => {
-               o.source === d || o.target === d ? 1 : 1;
-             });
-             this.graph.selectAll('.node').style("stroke-opacity", function(o) {
-               var thisOpacity = isConnected(d, o) ? 1 : 1;
-               this.setAttribute('fill-opacity', thisOpacity);
-               return thisOpacity;
-             });
-           });
+        .append('g')
+        .attr('class', 'node')
+        .call(enterNode)
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended))
+        .on('mouseover', (d) => {
+          this.graph.selectAll('.link-line')
+            .transition().duration(250)
+            .style('stroke-opacity', (o) => {
+              return o.source === d || o.target === d ? 1 : 0.3;
+            });
+          this.graph.selectAll('.link-label')
+            .transition().duration(250)
+            .style('fill-opacity', (o) => {
+              return o.source === d || o.target === d ? 1 : 0.3;
+            });
+          this.graph.selectAll('.node-circle')
+            .transition().duration(250)
+            .style('fill', function (o) {
+              return isConnected(d, o) ? '#EAEAEA': '#F6F6F6';
+            });
+          this.graph.selectAll('.node-text')
+            .transition().duration(250)
+            .style('fill-opacity', function (o) {
+              return isConnected(d, o) ? 1 : 0.3;
+            });
+          })
+        .on('mouseout', (d) => {
+          this.graph.selectAll('.link-line')
+            .transition().duration(250).style('stroke-opacity', 1);
+          this.graph.selectAll('.link-label')
+            .transition().duration(250).style('fill-opacity', 0.6);
+          this.graph.selectAll('.node-circle')
+            .transition().duration(250).style('fill', '#EAEAEA');
+          this.graph.selectAll('.node-text')
+            .transition().duration(250).style('fill-opacity', 1);
+          });
 
       this.graph.selectAll('.node')
         .style('stroke', (d) => {
