@@ -15,6 +15,8 @@ var linkedByIndex = {};
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
+    this._mouseover = this._mouseover.bind(this);
+    this._mouseout = this._mouseout.bind(this);
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -82,46 +84,14 @@ class ForceLayout extends React.Component{
         .append('g')
         .attr('class', 'node')
         .call(enterNode)
+        .merge(nodes)
+        .style('font-weight', (d) => {return (d.submitted) ? 'bold' : 'normal'})
         .call(d3.drag()
           .on('start', dragstarted)
           .on('drag', dragged)
           .on('end', dragended))
-        .on('mouseover', (d) => {
-          this.graph.selectAll('.link-line')
-            .transition().duration(250)
-            .style('stroke-opacity', (o) => {
-              return o.source === d || o.target === d ? 1 : 0.3;
-            });
-          this.graph.selectAll('.link-label')
-            .transition().duration(250)
-            .style('fill-opacity', (o) => {
-              return o.source === d || o.target === d ? 1 : 0.3;
-            });
-          this.graph.selectAll('.node-circle')
-            .transition().duration(250)
-            .style('fill', function (o) {
-              return isConnected(d, o) ? '#EAEAEA': '#F6F6F6';
-            });
-          this.graph.selectAll('.node-text')
-            .transition().duration(250)
-            .style('fill-opacity', function (o) {
-              return isConnected(d, o) ? 1 : 0.3;
-            });
-          })
-        .on('mouseout', (d) => {
-          this.graph.selectAll('.link-line')
-            .transition().duration(250).style('stroke-opacity', 1);
-          this.graph.selectAll('.link-label')
-            .transition().duration(250).style('fill-opacity', 0.6);
-          this.graph.selectAll('.node-circle')
-            .transition().duration(250).style('fill', '#EAEAEA');
-          this.graph.selectAll('.node-text')
-            .transition().duration(250).style('fill-opacity', 1);
-          });
-
-      this.graph.selectAll('.node')
-        .style('stroke', (d) => {
-          if (d.submitted) {return 'black'};  });
+        .on('mouseover', this._mouseover)
+        .on('mouseout', this._mouseout);
 
       simulation.nodes(newNodes);
       simulation.force('link').links(newLinks);
@@ -139,6 +109,42 @@ class ForceLayout extends React.Component{
       </svg>
     );
   }
+
+  _mouseover(d){
+    this.graph.selectAll('.link-line')
+      .transition().duration(250)
+      .style('stroke-opacity', (o) => {
+        return o.source === d || o.target === d ? 0.6 : 0.3;
+      });
+    this.graph.selectAll('.link-label')
+      .transition().duration(250)
+      .style('fill-opacity', (o) => {
+        return o.source === d || o.target === d ? 1 : 0.3;
+      });
+    this.graph.selectAll('.node-circle')
+      .transition().duration(250)
+      .style('fill', function (o) {
+        return isConnected(d, o) ? '#EAEAEA': '#F6F6F6';
+      });
+    this.graph.selectAll('.node-text')
+      .transition().duration(250)
+      .style('fill-opacity', function (o) {
+        var opacity = isConnected(d, o) ? 1 : 0.3;
+        this.setAttribute('stroke-opacity', opacity);
+        return opacity;
+      });
+  }
+
+  _mouseout(d){
+    this.graph.selectAll('.link-line')
+      .transition().duration(250).style('stroke-opacity', 0.6);
+    this.graph.selectAll('.link-label')
+      .transition().duration(250).style('fill-opacity', 1);
+    this.graph.selectAll('.node-circle')
+      .transition().duration(250).style('fill', '#EAEAEA');
+    this.graph.selectAll('.node-text')
+      .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
+  }
 }
 
 
@@ -154,6 +160,7 @@ var enterNode = (selection) => {
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
+      // .style('font-weight', (d) => {return (d.submitted) ? 'bold' : 'normal'})
       .text(d => d.id)
       .call(wrap, 86);
 };
@@ -250,5 +257,7 @@ function isConnected(a, b) {
          linkedByIndex[b.id + "," + a.id] ||
          a.index == b.index;
 }
+
+
 
 export default ForceLayout;
