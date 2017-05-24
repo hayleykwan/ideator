@@ -27,6 +27,7 @@ export default class App extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateData = this.updateData.bind(this);
+    this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
   }
 
   componentWillMount(){
@@ -35,21 +36,6 @@ export default class App extends Component {
       console.log('Connected to server. ' + this.socket.id);
     });
   }
-
-  // componentDidMount(){
-  //   var placeholder = {
-  //     nodes: [{"id": "panda", "score": 0},
-  //             {"id": "china", "score": 1},
-  //             {"id": "chubby", "score": 1},
-  //             {"id": "black", "score": 1},
-  //             {"id": "white", "score": 1}],
-  //     links: [{"source": "panda", "target": "china", "type": "country"},
-  //             {"source": "panda", "target": "chubby", "type": "adjective"},
-  //             {"source": "panda", "target": "black", "type": "colour"},
-  //             {"source": "panda", "target": "white", "type": "colour"}]
-  //   }
-  //   this.setState({data: placeholder});
-  // }
 
   handleTextChange(value) {
     var request = this.state.request;
@@ -76,9 +62,11 @@ export default class App extends Component {
     }
   }
 
-  handleSubmit(event) {
+  handleSubmit(nodeWord) {
+    console.log('handleSubmit: ' + nodeWord);
+    var wordToSubmit = (this.state.request.text === '') ? nodeWord : this.state.request.text;
     const submitted = {
-      word: this.state.request.text,
+      word: wordToSubmit, //this.state.request.text || nodeWord,
       degConnection: this.state.request.degConnection,
       numSuggestion: this.state.request.numSuggestion
     };
@@ -103,6 +91,11 @@ export default class App extends Component {
     this.setState({data: JSON.parse(newGraphJSON)});
   }
 
+  nodeDoubleClick(nodeWord){
+    console.log('searching for ' + nodeWord);
+    this.handleSubmit(nodeWord);
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -114,6 +107,7 @@ export default class App extends Component {
               data={this.state.data}
               width="1000" //should be screen size
               height="420"
+              nodeDoubleClick={this.nodeDoubleClick}
             />
           </div>
           <IdeaToolBar style={styles.toolbar}

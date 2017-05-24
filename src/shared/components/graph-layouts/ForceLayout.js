@@ -15,8 +15,9 @@ var linkedByIndex = {};
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
-    this._mouseover = this._mouseover.bind(this);
-    this._mouseout = this._mouseout.bind(this);
+    this.mouseover = this.mouseover.bind(this);
+    this.mouseout = this.mouseout.bind(this);
+    this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -27,19 +28,17 @@ class ForceLayout extends React.Component{
 
     simulation.force("center", d3.forceCenter(width/2, height/2));
 
-    this.svg = d3.select("svg");
+    this.svg = d3.select('svg');
     this.svg.attr('viewBox', '0 0 '+ width + ' ' + height)
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
     this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
-    this.svg.call(d3.zoom().on(
-      "zoom", () => {
-        this.graph.attr("transform", d3.event.transform)
-      })
-    );
+    this.svg.call(d3.zoom()
+      .on('zoom', () => {this.graph.attr('transform', d3.event.transform)})
+    ).on('dblclick.zoom', null);
 
-    simulation.on("tick", () => {
+    simulation.on('tick', () => {
       this.graph.call(updateGraph);
     });
   }
@@ -90,8 +89,9 @@ class ForceLayout extends React.Component{
           .on('start', dragstarted)
           .on('drag', dragged)
           .on('end', dragended))
-        .on('mouseover', this._mouseover)
-        .on('mouseout', this._mouseout);
+        .on('mouseover', this.mouseover)
+        .on('mouseout', this.mouseout)
+        .on('dblclick', this.nodeDoubleClick);;
 
       simulation.nodes(newNodes);
       simulation.force('link').links(newLinks);
@@ -110,11 +110,16 @@ class ForceLayout extends React.Component{
     );
   }
 
-  _mouseover(d){
+  nodeDoubleClick(d){
+    console.log('hi from forcelayout ' + JSON.stringify(d, null, 3));
+    this.props.nodeDoubleClick(d.id);
+  }
+
+  mouseover(d){
     this.graph.selectAll('.link-line')
       .transition().duration(250)
       .style('stroke-opacity', (o) => {
-        return o.source === d || o.target === d ? 0.6 : 0.3;
+        return o.source === d || o.target === d ? 0.75 : 0.25;
       });
     this.graph.selectAll('.link-label')
       .transition().duration(250)
@@ -135,13 +140,13 @@ class ForceLayout extends React.Component{
       });
   }
 
-  _mouseout(d){
+  mouseout(d){
     this.graph.selectAll('.link-line')
-      .transition().duration(250).style('stroke-opacity', 0.6);
+      .transition().duration(250).style('stroke-opacity', 0.75);
     this.graph.selectAll('.link-label')
       .transition().duration(250).style('fill-opacity', 1);
     this.graph.selectAll('.node-circle')
-      .transition().duration(250).style('fill', '#EAEAEA');
+      .transition().duration(250).style('fill', '#E9E9E9');
     this.graph.selectAll('.node-text')
       .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
   }
@@ -153,14 +158,13 @@ var enterNode = (selection) => {
     .append('circle')
       .attr('class', 'node-circle')
       .attr('r', function(d){return 45})
-      .style('fill', '#EAEAEA');
+      .style('fill', '#E9E9E9');
   selection
     .append('text')
       .attr('class', 'node-text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
-      // .style('font-weight', (d) => {return (d.submitted) ? 'bold' : 'normal'})
       .text(d => d.id)
       .call(wrap, 86);
 };
@@ -196,7 +200,7 @@ var enterLinkLine = (selection) => {
     .style('stroke', (d) => color(d.type))
     .style('stroke-width', 5)
     .style('stroke-linecap', 'round')
-    .style('stroke-opacity', 0.6);
+    .style('stroke-opacity', 0.75);
 };
 
 var enterLinkLabel = (selection) => {
