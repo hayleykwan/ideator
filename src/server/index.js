@@ -1,12 +1,8 @@
 var debug = require('debug')('ideator:server');
 var http = require('http');
 var app = require('./app');
-var dataLoader = require('./data-loader');
-var graphUpdate = require('./graph-update');
+var ideator = require('./ideator');
 var config = require('./config');
-var utils = require('./utils');
-
-var datamuse = require('datamuse');
 
 /**
  * Get port from environment and store in Express.
@@ -36,25 +32,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(submitted, currentGraphJSON){
-    var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
-
-    var queryWord = submitted.word;
-    var queryDeg = submitted.degConnection;
-    var queryNum = submitted.numSuggestion;
-
-    // debug('Query: ' + queryWord + ', ' + queryNum);
-
-    var allRelations = dataLoader.search(queryWord);
-    debug('Result from data loader: ' + allRelations);
-
-    datamuse.words({
-      ml: queryWord,
-      max: queryNum
-    })
-    .then((allRelations) => {
-      // debug(allRelations);
-      var newGraph = graphUpdate(currentGraph, submitted, allRelations);
-      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+    ideator.process(submitted, currentGraphJSON).then(newGraph => {
       socket.emit('response', JSON.stringify(newGraph));
     });
   });
