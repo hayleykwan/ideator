@@ -15,7 +15,6 @@ var linkedByIndex = {};
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
-
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -70,6 +69,10 @@ class ForceLayout extends React.Component{
              .attr('class', 'link-label')
              .call(enterLinkLabel);
 
+      newLinks.forEach(function(d) {
+        linkedByIndex[d.source+ "," + d.target] = 1;
+      });
+
       var nodes = this.graph.selectAll('.node')
            .data(newNodes, function(d) {return d.id});
       nodes.exit()
@@ -85,9 +88,11 @@ class ForceLayout extends React.Component{
              .on('end', dragended))
            .on('mouseover', (d) => {
              this.graph.selectAll('.link-line').style('stroke-opacity', (o) => {
-               o.source === d || o.target === d ? 1 : 0.1;
+               console.log(o.source.id + ' ' + o.target.id + ' ' + d.id);
+               return o.source === d || o.target === d ? 1 : 0.1;
              });
              this.graph.selectAll('.node').style("stroke-opacity", function(o) {
+               console.log(d.id + ' ' + o.id + ' ' + isConnected(d,o));
                var thisOpacity = isConnected(d, o) ? 1 : 0.1;
                this.setAttribute('fill-opacity', thisOpacity);
                return thisOpacity;
@@ -102,11 +107,7 @@ class ForceLayout extends React.Component{
                this.setAttribute('fill-opacity', thisOpacity);
                return thisOpacity;
              });
-           })
-
-      newLinks.forEach(function(d) {
-        linkedByIndex[d.source.index + "," + d.target.index] = 1;
-      });
+           });
 
       this.graph.selectAll('.node')
         .style('stroke', (d) => {
@@ -235,8 +236,8 @@ function dragended(d) {
 }
 
 function isConnected(a, b) {
-  return linkedByIndex[a.index + "," + b.index] ||
-         linkedByIndex[b.index + "," + a.index] ||
+  return linkedByIndex[a.id + "," + b.id] ||
+         linkedByIndex[b.id + "," + a.id] ||
          a.index == b.index;
 }
 

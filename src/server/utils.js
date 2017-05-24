@@ -4,7 +4,7 @@ module.exports = {
 
   removeD3Extras: function(currentGraph) {
     currentGraph.nodes.forEach(function(d){
-      delete d.index;
+      // delete d.index;
       delete d.x;
       delete d.y;
       delete d.vx;
