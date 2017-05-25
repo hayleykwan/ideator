@@ -7,23 +7,19 @@ function DataLoader(){
   debug('Data loader ready to work');
 }
 
-DataLoader.prototype.search = function(queryWord){
+DataLoader.prototype.search = function(submittedWord){
 
-  var existsPromise = graphenedb.exists(queryWord);
-
-  existsPromise.then(function(exists) {
+  return graphenedb.existsWord(submittedWord).then((exists) => {
     debug(exists);
-    if(!exists){
-      dataExplorer.query(queryWord);
-      // if results.length === 0 th en return
-      // write all to database
-      // return results
-    } else {
+    // if(!exists){
+      return dataExplorer.query(submittedWord);
+      //return 0 if no results
+      //else return all results, written to database
+    // } else {
       // read all results from database
       //return results
-    }
+    // }
   })
-  return 0;
 }
 
 DataLoader.prototype.exit = function(){

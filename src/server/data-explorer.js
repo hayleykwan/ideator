@@ -3,10 +3,10 @@ const datamuseUtils = require('./datamuse-utils');
 const graphenedb = require('./graphenedb');
 
 function DataExplorer() {
-  this.results = [];
+
 }
 
-DataExplorer.prototype.query = function(word){
+DataExplorer.prototype.query = function(submittedWord){
 /* 1. get suggestions by
  *    a. query datamuse
  *    b. web crawling
@@ -16,39 +16,40 @@ DataExplorer.prototype.query = function(word){
 
   graphenedb.clearAllWords();
 
-  datamuseUtils.query(word).then(results => {
+  return datamuseUtils.query(submittedWord).then(results => {
     if(results.length > 0){
       // debug(results);
       // no need for web crawling ?
-      var newDataCypher = writeNewDataQuery(results);
+      var newDataCypher = writeNewDataQuery(submittedWord, results);
       // graphenedb.write(newDataCypher);
       // draft query to database
       // write to database
       return results;
     } else {
-      return '';
+      return 0;
     }
   });
-
-
 }
 
-function writeNewDataQuery(resultsArray){
+function writeNewDataQuery(submittedWord, resultsArray){
   // for each result
   // check if exist in database
   // if not create
   // else update
+  // submittedWord does not exist, write to database
+  var query = 'CREATE ('+ submittedWord + ':Word {word: ' + submittedWord + '}) \n';
 
-  var stat = 'hi';
   for(var r = 0 ; r < resultsArray.length ; r++){
-    var result = resultsArray[r];
-    var check = 'MATCH (' + result.word + ':Word {word: ' + result.word + '}) RETURN ' + result.word + '; \n';
-    stat += check;
+    debug(resultsArray[r]);
+    var result = resultsArray[r];  // all words in array are unique
+    var check = 'MERGE (' + result.word + ':Word {word: ' + result.word + '}); \n';
+    // var oncreate = 'ON CREATE SET ' + result.word + '.definition={' + result.defs + '} \n'
+    var createLink = 'CREATE UNIQUE (' + submittedWord + ')-[:LINK {' + result.param + '}]-(' + result.word + ')\n';
+    query += check  + createLink ;
   }
-  debug(stat);
-  return stat
+  // debug(query);
+  return query
 }
-
 
 
 module.exports = new DataExplorer();

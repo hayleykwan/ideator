@@ -1,6 +1,5 @@
 var debug = require('debug')('ideator:server:datamuse-utils');
 const datamuse = require('datamuse');
-const graphenedb = require('./graphenedb');
 
 function DatamuseQuery(){
   this.params = {
@@ -36,8 +35,6 @@ function indexOfWordInResults(array, obj){
 
 DatamuseQuery.prototype.query = function(word){
 
-  graphenedb.writeNewWord(word);
-
   let promises = [];
   for(let p in this.params){
     promises.push(query(word, p, this.params[p]));
@@ -69,9 +66,16 @@ var query = function(word, param, meaning){
   query[param] = word;
   query['md'] = 'fpd';
   return datamuse.words(query).then((data) => {
-    debug(param + ' has results: ' + data.length);
+    // debug(param + ' has results: ' + data.length);
     data.forEach((d) => {
       d['param'] = [meaning];
+      // if(d.hasOwnProperty('defs')) {
+      //   d.defs.forEach(def => {
+      //     if (def.length > 0) {
+      //       def.replace('/', ': ')
+      //     }
+      //   });
+      // }
       delete d.score;
       delete d.numSyllables;
     })

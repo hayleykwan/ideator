@@ -66,7 +66,7 @@ GrapheneDB.prototype.read = function(){
 
 }
 
-GrapheneDB.prototype.exists = function(word) {
+GrapheneDB.prototype.existsWord = function(word) {
   debug('check if word exists');
   const session = this.driver.session();
   const promise = session.run(

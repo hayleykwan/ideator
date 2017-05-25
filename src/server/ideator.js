@@ -18,8 +18,16 @@ Ideator.prototype.process = function (submitted, currentGraphJSON){
 
   debug('Query: ' + queryWord + ', ' + queryNum);
 
-  var allRelations = dataLoader.search(queryWord);
-  debug('Result from data loader: ' + allRelations);
+  dataLoader.search(queryWord).then(results => {
+    // if(results.length > 0){
+      debug(results);
+    // }else {
+      // debug('No Results');
+    // }
+  })
+  .catch(error => {
+    debug(error);
+  });
 
   return datamuse.words({
     ml: queryWord,
