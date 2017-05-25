@@ -4,24 +4,24 @@ const graphenedb = require('./graphenedb');
 
 function DatamuseQuery(){
   this.params = {
-    'spells_like':  'sp',
-    'means like':   'ml',
-    'adj_to_noun':  'rel_jja',
-    'noun_to_adj':  'rel_jjb',
-    'synonym':      'rel_syn',
-    'antonym':      'rel_ant',
-    'trigger':      'rel_trg',
-    'is type of':   'rel_spc',
-    'specific be':  'rel_gen',
-    'comprise of':  'rel_com',
-    'is part of':   'rel_par',
-    'followed by':  'rel_bga',
-    'preceeded by': 'rel_bgb',
-    'rhymes perfect':  'rel_rhy',
-    'rhymes kind of': 'rel_nry',
-    'sounds like':  'sl',
-    'known_homophones': 'rel_hom',
-    'consonant_match': 'rel_cns'
+    'sp':      'spells like'  ,
+    'ml':      'means like' ,
+    'rel_jja': 'adj to noun'  ,
+    'rel_jjb': 'description' ,
+    'rel_syn': 'synonym'    ,
+    'rel_ant': 'antonym'    ,
+    'rel_trg': 'trigger'    ,
+    'rel_spc': 'is type of' ,
+    'rel_gen': 'specific be'  ,
+    'rel_com': 'comprise of'  ,
+    'rel_par': 'is part of'   ,
+    'rel_bga': 'followed by'  ,
+    'rel_bgb': 'preceeded by' ,
+    'rel_rhy': 'rhymes perfect'  ,
+    'rel_nry': 'rhymes kind of'  ,
+    'sl':      'sounds like'  ,
+    'rel_hom': 'known_homophones' ,
+    'rel_cns': 'consonant_match'
   }
 }
 
@@ -40,12 +40,12 @@ DatamuseQuery.prototype.query = function(word){
 
   let promises = [];
   for(let p in this.params){
-    promises.push(query(word, this.params[p]));
+    promises.push(query(word, p, this.params[p]));
   }
 
   return Promise.all(promises).then(allResults => {
     var onearray = [];
-    debug(allResults.reduce((acc, val) => {return acc + val.length}, 0));
+    // debug(allResults.reduce((acc, val) => {return acc + val.length}, 0));
     allResults.forEach(results => {
       if (results.length > 0) {
         results.forEach(resultItem => {
@@ -53,24 +53,24 @@ DatamuseQuery.prototype.query = function(word){
           if(i == -1){
             onearray.push(resultItem);
           } else {
-            debug(resultItem.param);
+            // debug(resultItem.param);
             onearray[i].param.concat(resultItem.param);
           }
         })
       }
     });
-    debug(onearray);
+    // debug(onearray.length);
     return onearray
   });
 }
 
-var query = function(word, param){
+var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
   return datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
     data.forEach((d) => {
-      d['param'] = [param];
+      d['param'] = [meaning];
     })
     return data;
   }).catch(error => {
