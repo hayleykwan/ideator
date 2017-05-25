@@ -9,7 +9,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20);
 var simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id).distance(150))
     .force('charge', d3.forceManyBody().strength(-120))
-    .force('collide', d3.forceCollide(40).strength(0.5));
+    .force('collide', d3.forceCollide(40).strength(0.7));
 
 var linkedByIndex = {};
 
@@ -119,7 +119,7 @@ class ForceLayout extends React.Component{
     this.graph.selectAll('.link-line')
       .transition().duration(250)
       .style('stroke-opacity', (o) => {
-        return o.source === d || o.target === d ? 0.75 : 0.25;
+        return o.source === d || o.target === d ? 0.9 : 0.25;
       });
     this.graph.selectAll('.link-label')
       .transition().duration(250)
@@ -129,7 +129,7 @@ class ForceLayout extends React.Component{
     this.graph.selectAll('.node-circle')
       .transition().duration(250)
       .style('fill', function (o) {
-        return isConnected(d, o) ? '#EAEAEA': '#F6F6F6';
+        return isConnected(d, o) ? '#E2E2E2': '#F6F6F6';
       });
     this.graph.selectAll('.node-text')
       .transition().duration(250)
