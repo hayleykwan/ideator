@@ -16,6 +16,20 @@ function GrapheneDB(){
 
 }
 
+GrapheneDB.prototype.write = function(query){
+  const session = this.driver.sesion();
+  session.run(query)
+  .then(result => {
+    session.close();
+    result.records.forEach(function(record){
+      console.log('record: ' + record);
+      const node = record.get(0);
+      console.log('node.properties.word: ' + node.properties.word);
+    });
+  })
+  .catch((error) => { console.log(error); })
+}
+
 GrapheneDB.prototype.writeNewWord = function(word){
   debug('Write new word');
   const session = this.driver.session();
@@ -24,16 +38,14 @@ GrapheneDB.prototype.writeNewWord = function(word){
     {'word': word}
   );
   resultPromise.then(result => {
+    session.close();
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
       console.log('node.properties.word: ' + node.properties.word);
     });
-    session.close();
   });
-  resultPromise.catch(function (error) {
-    console.log(error);
-  })
+  resultPromise.catch((error) => { console.log(error); })
 }
 
 GrapheneDB.prototype.read = function(){

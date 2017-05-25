@@ -67,10 +67,13 @@ DatamuseQuery.prototype.query = function(word){
 var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
+  query['md'] = 'fpd';
   return datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
     data.forEach((d) => {
       d['param'] = [meaning];
+      delete d.score;
+      delete d.numSyllables;
     })
     return data;
   }).catch(error => {
