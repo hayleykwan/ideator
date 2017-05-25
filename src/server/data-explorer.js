@@ -17,7 +17,7 @@ DataExplorer.prototype.query = function(word){
   graphenedb.clearAllWords();
 
   datamuseUtils.query(word).then(results => {
-    debug(results);
+    // debug(results);
   });
 
 

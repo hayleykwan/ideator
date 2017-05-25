@@ -90,12 +90,13 @@ function update(currentGraph, submitted, datamuseRe){
 //if present, return index
 //else return -1
 function indexOfWordInGraph(currentGraph, obj){
-  // currentGraph.nodes.forEach(function(d) {
+  // currentGraph.nodes.forEach(function(d, i) {
   //   if(d.id === obj.word){
-  //     return d;
+  //     return i;
   //   }
-  //   return -1;
   // })
+  // return -1;
+
   for(let i = 0 ; i < currentGraph.nodes.length ; i++){
     if(currentGraph.nodes[i].id === obj.word){
       return i;

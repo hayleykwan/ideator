@@ -25,28 +25,41 @@ function DatamuseQuery(){
   }
 }
 
+function indexOfWordInResults(array, obj){
+  for(var i = 0 ; i < array.length ; i++){
+    if(array[i].word === obj.word){
+      return i;
+    }
+  }
+  return -1;
+}
+
 DatamuseQuery.prototype.query = function(word){
-  
+
   graphenedb.writeNewWord(word);
 
   let promises = [];
   for(let p in this.params){
     promises.push(query(word, this.params[p]));
   }
-  debug(promises);
-  return Promise.all(promises).then(results => {
-    debug(results);
-    // check and merge duplicates
+
+  return Promise.all(promises).then(allResults => {
     var onearray = [];
-    results.forEach(res => {
-      res.forEach(wordObject => {
-        onearray.push(wordObject);
-      })
+    debug(allResults.reduce((acc, val) => {return acc + val.length}, 0));
+    allResults.forEach(results => {
+      if (results.length > 0) {
+        results.forEach(resultItem => {
+          var i = indexOfWordInResults(onearray, resultItem);
+          if(i == -1){
+            onearray.push(resultItem);
+          } else {
+            debug(resultItem.param);
+            onearray[i].param.concat(resultItem.param);
+          }
+        })
+      }
     });
-
-    // break down arrays
-
-    // change params into the
+    debug(onearray);
     return onearray
   });
 }
@@ -57,7 +70,7 @@ var query = function(word, param){
   return datamuse.words(query).then((data) => {
     debug(param + ' has results: ' + data.length);
     data.forEach((d) => {
-      d['param'] = param;
+      d['param'] = [param];
     })
     return data;
   }).catch(error => {

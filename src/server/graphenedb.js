@@ -3,8 +3,8 @@ var neo4j = require('neo4j-driver').v1;
 var config = require('./config');
 
 function GrapheneDB(){
-  //constructor
-  this.driver = neo4j.driver(config.GRAPHENEDB_URL, neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
+  this.driver = neo4j.driver(config.GRAPHENEDB_URL,
+    neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
 
   this.driver.onCompleted = function(metadata) {
     debug(metadata);

@@ -32,8 +32,8 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('request', function(submitted, currentGraphJSON){
-    ideator.process(submitted, currentGraphJSON).then(newGraph => {
-      socket.emit('response', JSON.stringify(newGraph));
+    ideator.process(submitted, currentGraphJSON).then(newGraphJSON => {
+      socket.emit('response', newGraphJSON);
     });
   });
 

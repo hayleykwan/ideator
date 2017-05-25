@@ -9,8 +9,6 @@ function DataLoader(){
 
 DataLoader.prototype.search = function(queryWord){
 
-  debug('looking for word: ' + queryWord);
-
   var existsPromise = graphenedb.exists(queryWord);
 
   existsPromise.then(function(exists) {
