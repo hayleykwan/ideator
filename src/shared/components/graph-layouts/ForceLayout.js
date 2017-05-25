@@ -8,7 +8,8 @@ var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id).distance(150))
-    .force('charge', d3.forceManyBody().strength(-120));
+    .force('charge', d3.forceManyBody().strength(-120))
+    .force('collide', d3.forceCollide(30));
 
 var linkedByIndex = {};
 
