@@ -37,15 +37,18 @@ function writeNewDataQuery(submittedWord, resultsArray){
   // if not create
   // else update
   // submittedWord does not exist, write to database
-  var query = 'CREATE ('+ submittedWord + ':Word {word: ' + submittedWord + '}) \n';
+  var query = 'CREATE ('+ submittedWord + ':Word {wordid: ' + submittedWord + ', queryCount: 1, suggestionCount: 0}) \n';
 
   for(var r = 0 ; r < resultsArray.length ; r++){
-    debug(resultsArray[r]);
+    // debug(resultsArray[r]);
     var result = resultsArray[r];  // all words in array are unique
-    var check = 'MERGE (' + result.word + ':Word {word: ' + result.word + '}); \n';
-    // var oncreate = 'ON CREATE SET ' + result.word + '.definition={' + result.defs + '} \n'
-    var createLink = 'CREATE UNIQUE (' + submittedWord + ')-[:LINK {' + result.param + '}]-(' + result.word + ')\n';
-    query += check  + createLink ;
+    // debug(result);
+    var checkNode = 'MERGE (' + result.word + ':Word {wordid: "' + result.word + '"}) \n';
+    if(result.hasOwnProperty('defs')) {
+      checkNode += 'ON CREATE SET ' + result.word + '.defs=[' + result.defs + '] \n';
+    }
+    var checkRel = 'MERGE (' + submittedWord + ')-[:LINK {' + result.param + '}]-(' + result.word + ')\n';
+    query += checkNode + checkRel ;
   }
   // debug(query);
   return query

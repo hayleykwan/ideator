@@ -6,11 +6,8 @@ function GrapheneDB(){
   this.driver = neo4j.driver(config.GRAPHENEDB_URL,
     neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
 
-  this.driver.onCompleted = function(metadata) {
-    debug(metadata);
-  };
-
-  this.driver.onError = function(error) {
+  this.driver.onCompleted = (metadata) => { debug(metadata); };
+  this.driver.onError = (error) => {
     console.log('Driver instantiation failed. Error: '+ error);
   };
 
@@ -30,11 +27,27 @@ GrapheneDB.prototype.write = function(query){
   .catch((error) => { console.log(error); })
 }
 
+GrapheneDB.prototype.read = function(query){
+  const session = this.driver.session();
+  session.run(query)
+  .then(result => {
+    session.close();
+    result.records.forEach(function(record){
+      console.log('record: ' + record);
+      const node = record.get(0);
+      console.log('node: ' + node);
+      console.log('node.properties.word: ' + node.properties.word);
+      return record;
+    });
+
+  })
+}
+
 GrapheneDB.prototype.writeNewWord = function(word){
   debug('Write new word');
   const session = this.driver.session();
   const resultPromise = session.run(
-    'CREATE (w:Word {word: $word}) RETURN w',
+    'CREATE (w:Word {wordid: $word}) RETURN w',
     {'word': word}
   );
   resultPromise.then(result => {
@@ -48,11 +61,12 @@ GrapheneDB.prototype.writeNewWord = function(word){
   resultPromise.catch((error) => { console.log(error); })
 }
 
-GrapheneDB.prototype.read = function(){
+
+
+GrapheneDB.prototype.readWord = function(word){
   const session = this.driver.session();
   const resultPromise = session.run(
-    'MATCH (w:Word {word: $word}) RETURN w',
-    {'word': 'hello'}
+    'MATCH (w:Word {wordid: ' + word + '}) RETURN w'
   );
   resultPromise.then(result => {
     result.records.forEach(function(record){
@@ -70,7 +84,7 @@ GrapheneDB.prototype.existsWord = function(word) {
   debug('check if word exists');
   const session = this.driver.session();
   const promise = session.run(
-    'MATCH (w:Word {word: $word}) RETURN w',
+    'MATCH (w:Word {wordid: $word}) RETURN w',
     {'word': word}
   );
 

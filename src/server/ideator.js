@@ -20,7 +20,7 @@ Ideator.prototype.process = function (submitted, currentGraphJSON){
 
   dataLoader.search(queryWord).then(results => {
     // if(results.length > 0){
-      debug(results);
+      // debug(results.length);
     // }else {
       // debug('No Results');
     // }

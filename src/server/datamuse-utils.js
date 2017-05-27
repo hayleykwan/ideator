@@ -41,16 +41,15 @@ DatamuseQuery.prototype.query = function(word){
   }
 
   return Promise.all(promises).then(allResults => {
+    debug(allResults);
     var onearray = [];
-    // debug(allResults.reduce((acc, val) => {return acc + val.length}, 0));
     allResults.forEach(results => {
-      if (results.length > 0) {
+      if (typeof results !== 'undefined' && results.length > 0) {
         results.forEach(resultItem => {
           var i = indexOfWordInResults(onearray, resultItem);
           if(i == -1){
             onearray.push(resultItem);
           } else {
-            // debug(resultItem.param);
             onearray[i].param.concat(resultItem.param);
           }
         })
@@ -65,27 +64,33 @@ var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
   query['md'] = 'fpd';
-  return datamuse.words(query).then((data) => {
+  return datamuse.words(query).then( data => {
     // debug(param + ' has results: ' + data.length);
-    data.forEach((d) => {
+    data.forEach( d => {
+      // debug(d);
+      d['wordid'] = d.word;
+      d['display'] = d.word.replace(/\s/g, '_');
+      delete d.word;
       d['param'] = [meaning];
-      // if(d.hasOwnProperty('defs')) {
-      //   d.defs.forEach(def => {
-      //     if (def.length > 0) {
-      //       def.replace('/', ': ')
-      //     }
-      //   });
-      // }
+      if(d.hasOwnProperty('defs')) {
+        var newDefs = [];
+        d.defs.forEach(str => {newDefs.push(str.replace(/\t/g, ": "))});
+        delete d.defs;
+        d['defs'] = newDefs;
+        // debug(d.defs);
+      }
       delete d.score;
       delete d.numSyllables;
-    })
+      // debug(d);
+    });
     return data;
   }).catch(error => {
     console.log(error);
   });
 }
 
-var draftMultiParamsQuery = function(word, params){
+
+function draftMultiParamsQuery(word, params){
   var query = {};
   for(var i = 0 ; i < params.length ; i++){
     var p = params[i];
