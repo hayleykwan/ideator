@@ -19,18 +19,9 @@ function DatamuseQuery(){
     'rel_rhy': 'rhymes perfect'  ,
     'rel_nry': 'rhymes kind of'  ,
     'sl':      'sounds like'  ,
-    'rel_hom': 'known_homophones' ,
-    'rel_cns': 'consonant_match'
+    'rel_hom': 'known homophones' ,
+    'rel_cns': 'consonant match'
   }
-}
-
-function indexOfWordInResults(array, obj){
-  for(var i = 0 ; i < array.length ; i++){
-    if(array[i].word === obj.word){
-      return i;
-    }
-  }
-  return -1;
 }
 
 DatamuseQuery.prototype.query = function(word){
@@ -41,10 +32,9 @@ DatamuseQuery.prototype.query = function(word){
   }
 
   return Promise.all(promises).then(allResults => {
-    debug(allResults);
     var onearray = [];
     allResults.forEach(results => {
-      if (typeof results !== 'undefined' && results.length > 0) {
+      if (results.length > 0) { //typeof results !== 'undefined' &&
         results.forEach(resultItem => {
           var i = indexOfWordInResults(onearray, resultItem);
           if(i == -1){
@@ -67,28 +57,39 @@ var query = function(word, param, meaning){
   return datamuse.words(query).then( data => {
     // debug(param + ' has results: ' + data.length);
     data.forEach( d => {
-      // debug(d);
-      d['wordid'] = d.word;
+      d['wordId'] = d.word;
       d['display'] = d.word.replace(/\s/g, '_');
       delete d.word;
+      d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
+      if(d.tags.length > 0) {
+        var tags = [];
+        d.tags.forEach(tag => {tags.push('"' + tag + '"')});
+        d['type'] = tags;
+      }
+      delete d.tags;
       d['param'] = [meaning];
       if(d.hasOwnProperty('defs')) {
         var newDefs = [];
-        d.defs.forEach(str => {newDefs.push(str.replace(/\t/g, ": "))});
+        d.defs.forEach(str => {newDefs.push('"' + str.replace(/\t/g, ": ") + '"')});
         delete d.defs;
         d['defs'] = newDefs;
-        // debug(d.defs);
       }
       delete d.score;
       delete d.numSyllables;
-      // debug(d);
     });
+    // debug(data);
     return data;
-  }).catch(error => {
-    console.log(error);
-  });
+  }).catch(error => {console.log(error); });
 }
 
+function indexOfWordInResults(array, obj){
+  for(var i = 0 ; i < array.length ; i++){
+    if(array[i].wordId === obj.word){
+      return i;
+    }
+  }
+  return -1;
+}
 
 function draftMultiParamsQuery(word, params){
   var query = {};
@@ -97,10 +98,6 @@ function draftMultiParamsQuery(word, params){
     query[p] = word;
   }
   return query;
-}
-
-DatamuseQuery.prototype.hasNoResults = function(array){
-  return array.length > 0 ;
 }
 
 module.exports = new DatamuseQuery();

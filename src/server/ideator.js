@@ -21,6 +21,9 @@ Ideator.prototype.process = function (submitted, currentGraphJSON){
   dataLoader.search(queryWord).then(results => {
     // if(results.length > 0){
       // debug(results.length);
+      // process with data selector
+      // then graphUpdate
+      // then return JSON.stringify(newGraph)
     // }else {
       // debug('No Results');
     // }
