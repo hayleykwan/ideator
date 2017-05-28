@@ -14,7 +14,7 @@ function GrapheneDB(){
 }
 
 GrapheneDB.prototype.write = function(query){
-  // debug(query);
+  debug('GOING TO WRITE');
   const session = this.driver.session();
   session.run(query)
   .then(result => {
@@ -32,7 +32,7 @@ GrapheneDB.prototype.read = function(query){
   const session = this.driver.session();
   session.run(query)
   .then(result => {
-    session.close();
+    session.close(() => {debug('Finish reading the query')});
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
@@ -52,7 +52,7 @@ GrapheneDB.prototype.writeNewWord = function(word){
     {'word': word}
   );
   resultPromise.then(result => {
-    session.close();
+    session.close(() => {console.log('Finish writing new word: ' + word)});
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
@@ -70,13 +70,14 @@ GrapheneDB.prototype.readWord = function(word){
     'MATCH (w:Word {wordid: ' + word + '}) RETURN w'
   );
   resultPromise.then(result => {
+    session.close(() => {console.log('Finish reading given word')});
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
       console.log('node: ' + node);
       console.log('node.properties.word: ' + node.properties.word);
     });
-    session.close();
+
   })
 
 }
@@ -90,7 +91,7 @@ GrapheneDB.prototype.existsWord = function(word) {
   );
 
   var exists = promise.then(result => {
-    session.close();
+    session.close(() => {console.log('Finish checking if word exists')});
 
     if(result.records.length === 0){
       return false;
@@ -112,7 +113,7 @@ GrapheneDB.prototype.clearAllWords = function(){
     'MATCH (n:Word) DETACH DELETE n'
   )
   .then(result => {
-    session.close();
+    session.close(() => {console.log('Finish clearing all nodes and relationships')});
     console.log('Should cleared all words: ' + result);
   })
   .catch(error => {console.log(error);});

@@ -47,13 +47,14 @@ DatamuseQuery.prototype.query = function(word){
     });
     debug(onearray.length);
     return onearray
-  });
+  })
+  .catch(e => {debug(e)});
 }
 
 var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
-  query['max'] = 50;
+  query['max'] = 60;
   query['md'] = 'fpd';
   return datamuse.words(query).then( data => {
     debug(param + ' has results: ' + data.length);
@@ -89,7 +90,7 @@ var query = function(word, param, meaning){
     });
     // debug(data);
     return data;
-  }).catch(error => {console.log(error); });
+  }).catch(error => {debug(word); console.log(error); });
 }
 
 function indexOfWordInResults(array, obj){

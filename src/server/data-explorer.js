@@ -6,7 +6,7 @@ function DataExplorer() {
 
 }
 
-DataExplorer.prototype.query = function(submittedWord){
+DataExplorer.prototype.explore = function(submittedWord){
 /* 1. get suggestions by
  *    a. query datamuse
  *    b. web crawling
@@ -16,21 +16,22 @@ DataExplorer.prototype.query = function(submittedWord){
 
   graphenedb.clearAllWords();
 
-  return datamuseUtils.query(submittedWord).then(results => {
-    if(results.length > 0){
-      var newDataCypher = writeDatamuseResultsToDatabase(submittedWord, results);
-      // debug(newDataCypher);
-      // graphenedb.writeNewWord(submittedWord);
-      graphenedb.write(newDataCypher);
-      return results;
+  return datamuseUtils.query(submittedWord).then(datamuseResults => {
+    if(datamuseResults.length > 0){
+      var query = draftDatamuseResultsQuery(submittedWord, datamuseResults);
+      graphenedb.write(query);
+      return datamuseResults;
     } else {
-      // go web crawling
       return 0;
+      // var webResults = spider.crawl(submittedWord);
+      // var query = draftWebCrawlResultsQuery(submittedWord, webResults);
+      // graphenedb.write(query);
+      // return webResults;
     }
   });
 }
 
-function writeDatamuseResultsToDatabase(submittedWord, resultsArray){
+function draftDatamuseResultsQuery(submittedWord, resultsArray){
 
   var submitted = 'submittedWordHere';
   var query = 'CREATE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';

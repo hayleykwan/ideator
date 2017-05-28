@@ -9,7 +9,7 @@ function Ideator(){
   debug('ideator service ready');
 }
 
-Ideator.prototype.process = function (submitted, currentGraphJSON){
+Ideator.prototype.process = function(submitted, currentGraphJSON) {
   var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
 
   var queryWord = submitted.word;
@@ -18,19 +18,33 @@ Ideator.prototype.process = function (submitted, currentGraphJSON){
 
   debug('Query: ' + queryWord + ', ' + queryNum);
 
-  dataLoader.search(queryWord).then(results => {
-    // if(results.length > 0){
-      // debug(results.length);
-      // process with data selector
-      // then graphUpdate
-      // then return JSON.stringify(newGraph)
-    // }else {
-      // debug('No Results');
-    // }
+  var dataLoaderPromise = dataLoader.search(queryWord).then(results => {
+    if(results.length > 0){
+      debug(results.length);
+      return results;
+    }else {
+      debug(results);
+      return 0;
+    }
   })
   .catch(error => {
     debug(error);
   });
+
+  var updatePromise = dataLoaderPromise.then(results => {
+    if(results == 0 ){
+      debug('HERE')
+      return 0;
+    }else {
+      debug(results.length);
+      //process with data selector
+      //graph update
+      //return JSON.stringify(newGraph);
+    }
+  });
+
+  // return updatePromise;
+
 
   return datamuse.words({
     ml: queryWord,
