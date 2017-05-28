@@ -14,14 +14,15 @@ function GrapheneDB(){
 }
 
 GrapheneDB.prototype.write = function(query){
-  const session = this.driver.sesion();
+  // debug(query);
+  const session = this.driver.session();
   session.run(query)
   .then(result => {
-    session.close();
+    session.close(() => {debug('DONE!!!!');});
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
-      console.log('node.properties.word: ' + node.properties.word);
+      console.log('node.properties.word: ' + node.properties.wordId);
     });
   })
   .catch((error) => { console.log(error); })
@@ -44,10 +45,10 @@ GrapheneDB.prototype.read = function(query){
 }
 
 GrapheneDB.prototype.writeNewWord = function(word){
-  debug('Write new word');
+  debug('Write new word: ' + word);
   const session = this.driver.session();
   const resultPromise = session.run(
-    'CREATE (w:Word {wordid: $word}) RETURN w',
+    'CREATE (w:Word {wordId: $word}) RETURN w',
     {'word': word}
   );
   resultPromise.then(result => {
@@ -55,7 +56,7 @@ GrapheneDB.prototype.writeNewWord = function(word){
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
-      console.log('node.properties.word: ' + node.properties.word);
+      console.log('node.properties.word: ' + node.properties.wordId);
     });
   });
   resultPromise.catch((error) => { console.log(error); })

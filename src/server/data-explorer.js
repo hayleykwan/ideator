@@ -19,9 +19,9 @@ DataExplorer.prototype.query = function(submittedWord){
   return datamuseUtils.query(submittedWord).then(results => {
     if(results.length > 0){
       var newDataCypher = writeDatamuseResultsToDatabase(submittedWord, results);
-      // graphenedb.write(newDataCypher);
-      // draft query to database
-      // write to database
+      // debug(newDataCypher);
+      // graphenedb.writeNewWord(submittedWord);
+      graphenedb.write(newDataCypher);
       return results;
     } else {
       // go web crawling
@@ -31,9 +31,10 @@ DataExplorer.prototype.query = function(submittedWord){
 }
 
 function writeDatamuseResultsToDatabase(submittedWord, resultsArray){
-  // submittedWord does not exist, write to database
-  var query = 'CREATE ('+ submittedWord.replace(/\s/g, '_') +
-    ':Word {wordId: "' + submittedWord + '"}) \n';
+
+  var submitted = 'submittedWordHere';
+  var query = 'CREATE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
+  query += 'SET '+ submitted + '.queryCount = 1 \n';
 
   resultsArray.forEach( result => {
     // debug(result);
@@ -42,24 +43,33 @@ function writeDatamuseResultsToDatabase(submittedWord, resultsArray){
         freq = result.freq,
         type = result.type,
         arrayParams = result.param;
+
     query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
-    query += 'ON CREATE SET ' + display + '.freq=' + freq + ', ' +
-      display + '.type=[' + type + '], ' ;
-      // display + '.suggestionCount: ' + display + '.suggestionCount + 1, ';
-    if(result.hasOwnProperty('defs')) { //array of strings
-      query += display + '.defs=[' + result.defs + '] \n';
-      //COALESCE()
+    query += 'ON CREATE SET ' ;
+    if(result.hasOwnProperty('defs')) {
+      query += display + '.defs=[' + result.defs + '], ';
     }
     if(result.hasOwnProperty('defHeadWord')){
-      query += display + '.defHeadWord="' + result.defHeadWord + '" \n';
+      query += display + '.defHeadWord="' + result.defHeadWord + '", ';
     }
-    query += 'ON MATCH SET ' + display + '.suggestionCount=' + display + '.suggestionCount + 1 \n';
+    query += display + '.freq=' + freq + ', ' +
+      display + '.type=[' + type + '], ' +
+      display + '.queryCount=0, ' +
+      display + '.suggestionCount=0 \n' ;
+
+    query += 'ON MATCH SET ' +
+      display + '.freq=' + freq + ', ' +
+      display + '.type=[' + type + '], ' ;
+    if(result.hasOwnProperty('defs')) { //array of strings
+      query += display + '.defs=[' + result.defs + '], ';
+    }
+    query += display + '.suggestionCount=' +display+'.suggestionCount + 1 \n' ;
+
     for(var p = 0 ; p < arrayParams.length ; p++){
-      query += 'MERGE (' + submittedWord.replace(/\s/g, '_') +
-        ')-[:LINK {type: "' + arrayParams[p] + '"}]-(' + display + ')\n';
+      query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
     }
   })
-  debug(query);
+  // debug(query);
   return query
 }
 

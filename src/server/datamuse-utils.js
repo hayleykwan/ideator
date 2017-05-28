@@ -3,7 +3,7 @@ const datamuse = require('datamuse');
 
 function DatamuseQuery(){
   this.params = {
-    'sp':      'spells like'  ,
+    // 'sp':      'spells like'  ,
     'ml':      'means like' ,
     'rel_jja': 'adj to noun'  ,
     'rel_jjb': 'description' ,
@@ -18,7 +18,7 @@ function DatamuseQuery(){
     'rel_bgb': 'preceeded by' ,
     'rel_rhy': 'rhymes perfect'  ,
     'rel_nry': 'rhymes kind of'  ,
-    'sl':      'sounds like'  ,
+    // 'sl':      'sounds like'  ,
     'rel_hom': 'known homophones' ,
     'rel_cns': 'consonant match'
   }
@@ -45,7 +45,7 @@ DatamuseQuery.prototype.query = function(word){
         })
       }
     });
-    // debug(onearray.length);
+    debug(onearray.length);
     return onearray
   });
 }
@@ -53,29 +53,39 @@ DatamuseQuery.prototype.query = function(word){
 var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
+  query['max'] = 50;
   query['md'] = 'fpd';
   return datamuse.words(query).then( data => {
-    // debug(param + ' has results: ' + data.length);
+    debug(param + ' has results: ' + data.length);
     data.forEach( d => {
+      delete d.score;
+      delete d.numSyllables;
+
       d['wordId'] = d.word;
-      d['display'] = d.word.replace(/\s/g, '_');
+      d['display'] = '_' + d.word.replace(/[^A-Za-z0-9]/g, '_');
       delete d.word;
+
+      d['param'] = [meaning];
+
+      if(d.hasOwnProperty('defs')) {
+        var newDefs = [];
+        d.defs.forEach(str => {
+          var s = str.replace(/\t/g, ": ");
+          newDefs.push('"' + s.replace(/["'-\\]/g, "") + '"')
+        });
+        delete d.defs;
+        d['defs'] = newDefs;
+      }
+
       d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
       if(d.tags.length > 0) {
         var tags = [];
         d.tags.forEach(tag => {tags.push('"' + tag + '"')});
         d['type'] = tags;
+      }else {
+        d['type'] = [""];
       }
       delete d.tags;
-      d['param'] = [meaning];
-      if(d.hasOwnProperty('defs')) {
-        var newDefs = [];
-        d.defs.forEach(str => {newDefs.push('"' + str.replace(/\t/g, ": ") + '"')});
-        delete d.defs;
-        d['defs'] = newDefs;
-      }
-      delete d.score;
-      delete d.numSyllables;
     });
     // debug(data);
     return data;
@@ -84,7 +94,7 @@ var query = function(word, param, meaning){
 
 function indexOfWordInResults(array, obj){
   for(var i = 0 ; i < array.length ; i++){
-    if(array[i].wordId === obj.word){
+    if(array[i].wordId === obj.wordId){
       return i;
     }
   }
