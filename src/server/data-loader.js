@@ -13,8 +13,7 @@ DataLoader.prototype.search = function(submittedWord){
     debug(exists);
     // if(!exists){
       return dataExplorer.explore(submittedWord);
-      //return 0 if no results
-      //else return all results, written to database
+      //return 0 or return all results, written to database
     // } else {
       // read all results from database
       //return results
