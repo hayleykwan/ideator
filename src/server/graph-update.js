@@ -1,25 +1,22 @@
-function update(currentGraph, submitted, datamuseRe){
-
-  // submitted is one object: word, num, deg
+function update(currentGraph, submittedWord, datamuseRe){
   // datamuseRe is array of objects: wordId, link
 
-  //if datamuseResponse is empty, return same graph
-  if(datamuseRe.length === 0){
-    console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
-    return currentGraph;  //should send error
-  }
+  // //if datamuseResponse is empty, return same graph
+  // if(datamuseRe.length === 0){
+  //   console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
+  //   return currentGraph;  //should send error
+  // }
 
   //check if the submittedObject is in currentGraph
-  const centreIndex = indexOfWordInGraph(currentGraph, submitted);
+  const centreIndex = indexOfWordInGraph(currentGraph, submittedWord);
   if(centreIndex !== -1){ //source is present, only need to add links
-    currentGraph.nodes[centreIndex].score = 80;
     currentGraph.nodes[centreIndex].submitted = true;
     //for each response object
     //check if target exists in currentGraph
     //if it does, link centreIndex (src) and this index (target) up
     //if not, append new node, link centreIndex and this up
     for(let i = 0 ; i < datamuseRe.length ; i++){
-      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i].wordId);
       if(targetIndex !== -1){ //it exists in currentGraph
         // console.log('existLink checking');
         var r = existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id);
@@ -38,7 +35,6 @@ function update(currentGraph, submitted, datamuseRe){
         //it does not exist in currentGraph
         var node = {     //create new node
           "id": datamuseRe[i].wordId,
-          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
@@ -52,8 +48,7 @@ function update(currentGraph, submitted, datamuseRe){
   } else {
     // not present, need to add new centre
     var centre = {
-      "id": submitted.word,
-      "score": 1,
+      "id": submittedWord,
       "submitted": true
     };
     currentGraph.nodes.push(centre);
@@ -63,7 +58,7 @@ function update(currentGraph, submitted, datamuseRe){
       //if it does, link centreIndex (src) and this index (target) up
       //if not, append new node, link centreIndex and this up
     for(let i = 0 ; i < datamuseRe.length ; i++){
-      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
+      const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i].wordId);
       if(targetIndex!== -1){  //it exists in currentGraph
         var link = {
           "source": centre.id,
@@ -75,7 +70,6 @@ function update(currentGraph, submitted, datamuseRe){
         //it does not exist in currentGraph
         var node = {
           "id": datamuseRe[i].wordId,
-          "score": 1
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
@@ -93,16 +87,9 @@ function update(currentGraph, submitted, datamuseRe){
 
 //if present, return index
 //else return -1
-function indexOfWordInGraph(currentGraph, obj){
-  // currentGraph.nodes.forEach(function(d, i) {
-  //   if(d.id === obj.word){
-  //     return i;
-  //   }
-  // })
-  // return -1;
-
+function indexOfWordInGraph(currentGraph, word){
   for(let i = 0 ; i < currentGraph.nodes.length ; i++){
-    if(currentGraph.nodes[i].id === obj.wordId){
+    if(currentGraph.nodes[i].id === word){
       return i;
     }
   }

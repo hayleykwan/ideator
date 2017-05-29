@@ -99,6 +99,17 @@ GrapheneDB.prototype.clearAllWords = function(){
   .catch(error => {console.log(error);});
 }
 
+GrapheneDB.prototype.countWords = function(){
+  console.log('Called to clear all words and relationships');
+  const session = this.driver.session();
+  session.run('MATCH (n:Word) RETURN count(n)')
+  .then(result => {
+    session.close(() => {console.log('Number of words in database: ' + result)});
+    // console.log('Should cleared all words: ' + result);
+  })
+  .catch(error => {console.log(error);});
+}
+
 GrapheneDB.prototype.close = function(){
   console.log('db closing');
   this.driver.close();

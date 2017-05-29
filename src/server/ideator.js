@@ -24,7 +24,7 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
     } else {
       var selected = results.slice(0,queryNum);
       debug(selected);
-      var newGraph = graphUpdate(currentGraph, submitted, selected);
+      var newGraph = graphUpdate(currentGraph, queryWord, selected);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
     }
