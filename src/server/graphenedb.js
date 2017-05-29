@@ -6,7 +6,7 @@ function GrapheneDB(){
   this.driver = neo4j.driver(config.GRAPHENEDB_URL,
     neo4j.auth.basic(config.GRAPHENEDB_USER, config.GRAPHENEDB_PASS));
 
-  this.driver.onCompleted = (metadata) => { debug(metadata); };
+  // this.driver.onCompleted = (metadata) => { debug(metadata); };
   this.driver.onError = (error) => {
     console.log('Driver instantiation failed. Error: '+ error);
   };
@@ -32,13 +32,14 @@ GrapheneDB.prototype.read = function(query){
     session.close(() => {
       debug('Finish reading query: ' + query);
     });
-    result.records.forEach(function(record){
-      console.log('record: ' + record);
-      const node = record.get(0);
-      console.log('node: ' + node);
-      console.log('node.properties.wordId: ' + node.properties.wordId);
-      return record;
-    });
+    return result;
+    // result.records.forEach(function(record){
+    //   console.log('record: ' + record);
+    //   const node = record.get(0);
+    //   console.log('node: ' + node);
+    //   console.log('node.properties.wordId: ' + node.properties.wordId);
+    //   return record;
+    // });
 
   })
 }
@@ -71,7 +72,6 @@ GrapheneDB.prototype.existsWord = function(word) {
 
   var exists = promise.then(result => {
     session.close(() => {console.log('Finish checking if word exists')});
-    debug(result);
     if(result.records.length === 0){
       return false;
     } else if (result.records.length > 1){

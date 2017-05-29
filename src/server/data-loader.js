@@ -18,13 +18,19 @@ DataLoader.prototype.search = function(submittedWord){
     } else {
       debug('Going to read from database');
       var query = 'MATCH (n:Word {wordId:"' + submittedWord +'"})-[r]-(w:Word) RETURN r,w'
-      graphenedb.read(query).then(res => {
-        debug(res);
+      return graphenedb.read(query).then(res => {
+        debug(res.records.length);
+        var results = [];
+        if(res.records.length > 0){
+          res.records.forEach(d => {
+            var r = {};
+            r['link'] = d.get(0).properties.type;
+            r['suggestion'] = d.get(1).properties.wordId;
+            results.push(r);
+          })
+        }
+        return results;
       });
-
-      return 0;
-      // read all results from database
-      //return results
     }
   })
   .catch(e => {console.log(e)});

@@ -22,14 +22,16 @@ function update(currentGraph, submitted, datamuseRe){
       const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
       if(targetIndex !== -1){ //it exists in currentGraph
         // console.log('existLink checking');
-        if(!existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id)){
+        var r = existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id);
+        // console.log(r + ': ' +currentGraph.nodes[centreIndex].id + ', '+ currentGraph.nodes[targetIndex].id);
+        if(!r){
           // console.log('there doesnt exist a link');
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
             "type": "test"
           };
-          console.log(link);
+          // console.log(link);
           currentGraph.links.push(link);
         }
       } else {
@@ -111,14 +113,14 @@ function existLink(currentGraph, sourceId, targetId){
   //for each link in currentGraph
   // no link with sourceId as src and targetId as target
   // no link with targetId as src and sourceId as target
-  currentGraph.links.forEach(function(d){
-    var curSrc = d.source;
-    var curTar = d.target;
-    if((curSrc.id === sourceId && curTar.id === targetId) ||
-       (curSrc.id === targetId && curTar.id === sourceId)){
+  for(var i = 0 ; i < currentGraph.links.length ; i++) {
+    var curSrcId = currentGraph.links[i].source;
+    var curTarId = currentGraph.links[i].target;
+    if((curSrcId == sourceId && curTarId == targetId) ||
+       (curSrcId == targetId && curTarId == sourceId)){
          return true;
-    };
-  })
+    }
+  }
   return false;
 }
 

@@ -19,10 +19,10 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
   debug('Query: ' + queryWord + ', ' + queryNum);
 
   dataLoader.search(queryWord).then(results => {
-    if(results === 0){
+    if(results === 0 || results.length <= 0){
       return 0;
     } else {
-      debug(results.length);
+      debug(results);
       //process with data selector
       //graph update
       //return JSON.stringify(newGraph);
@@ -40,7 +40,7 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
   .then((allRelations) => {
     debug(allRelations);
     var newGraph = graphUpdate(currentGraph, submitted, allRelations);
-    // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+    debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
     return JSON.stringify(newGraph);
   })
 }
