@@ -82,7 +82,9 @@ export default class App extends Component {
 
     var self = this;
     this.socket.on('response', function(newGraphJSON){
-      self.updateData(newGraphJSON);
+      if(newGraphJSON !== 0){
+        self.updateData(newGraphJSON);
+      }
     });
   }
 

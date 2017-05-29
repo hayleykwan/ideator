@@ -29,7 +29,7 @@ function update(currentGraph, submitted, datamuseRe){
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
-            "type": "test"
+            "type": datamuseRe[i].link
           };
           // console.log(link);
           currentGraph.links.push(link);
@@ -44,7 +44,7 @@ function update(currentGraph, submitted, datamuseRe){
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
           "target": node.id,
-          "type": "hello"
+          "type": datamuseRe[i].link
         };
         currentGraph.links.push(link);
       }
@@ -68,7 +68,7 @@ function update(currentGraph, submitted, datamuseRe){
         var link = {
           "source": centre.id,
           "target": currentGraph.nodes[targetIndex].id,
-          "type": "test"
+          "type": datamuseRe[i].link
         };
         currentGraph.links.push(link);
       } else {
@@ -81,7 +81,7 @@ function update(currentGraph, submitted, datamuseRe){
         var link = {     //create new link
           "source": centre.id,
           "target": node.id,
-          "type": "test"
+          "type": datamuseRe[i].link
         };
         currentGraph.links.push(link);
       }

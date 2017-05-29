@@ -18,31 +18,32 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
 
   debug('Query: ' + queryWord + ', ' + queryNum);
 
-  dataLoader.search(queryWord).then(results => {
+  return dataLoader.search(queryWord).then(results => {
     if(results === 0 || results.length <= 0){
       return 0;
     } else {
-      debug(results);
-      //process with data selector
-      //graph update
-      //return JSON.stringify(newGraph);
-      return results;
+      var selected = results.slice(0,5);
+      debug(selected);
+      var newGraph = graphUpdate(currentGraph, submitted, selected);
+      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      return JSON.stringify(newGraph);
+      // return results;
     }
   })
   .catch(error => {
     debug(error);
   });
 
-  return datamuse.words({
-    ml: queryWord,
-    max: queryNum
-  })
-  .then((allRelations) => {
-    debug(allRelations);
-    var newGraph = graphUpdate(currentGraph, submitted, allRelations);
-    debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
-    return JSON.stringify(newGraph);
-  })
+  // return datamuse.words({
+  //   ml: queryWord,
+  //   max: queryNum
+  // })
+  // .then((allRelations) => {
+  //   debug(allRelations);
+  //   var newGraph = graphUpdate(currentGraph, submitted, allRelations);
+  //   // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+  //   return JSON.stringify(newGraph);
+  // })
 }
 
 module.exports = new Ideator();
