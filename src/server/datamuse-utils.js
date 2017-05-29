@@ -3,7 +3,6 @@ const datamuse = require('datamuse');
 
 function DatamuseQuery(){
   this.params = {
-    // 'sp':      'spells like'  ,
     'ml':      'means like' ,
     'rel_jja': 'adj to noun'  ,
     'rel_jjb': 'description' ,
@@ -16,10 +15,11 @@ function DatamuseQuery(){
     'rel_par': 'is part of'   ,
     'rel_bga': 'followed by'  ,
     'rel_bgb': 'preceeded by' ,
+    'sp':      'spells like'  ,
+    'sl':      'sounds like'  ,
     'rel_rhy': 'rhymes perfect'  ,
     'rel_nry': 'rhymes kind of'  ,
-    // 'sl':      'sounds like'  ,
-    'rel_hom': 'known homophones' ,
+    // 'rel_hom': 'known homophones' ,
     'rel_cns': 'consonant match'
   }
 }

@@ -21,9 +21,9 @@ function update(currentGraph, submitted, datamuseRe){
     for(let i = 0 ; i < datamuseRe.length ; i++){
       const targetIndex = indexOfWordInGraph(currentGraph, datamuseRe[i]);
       if(targetIndex !== -1){ //it exists in currentGraph
-        console.log('existLink checking');
+        // console.log('existLink checking');
         if(!existLink(currentGraph, currentGraph.nodes[centreIndex].id, currentGraph.nodes[targetIndex].id)){
-          console.log('there doesnt exist a link');
+          // console.log('there doesnt exist a link');
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,

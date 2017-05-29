@@ -14,13 +14,12 @@ function GrapheneDB(){
 }
 
 GrapheneDB.prototype.write = function(query){
-  debug('GOING TO WRITE');
   const session = this.driver.session();
   session.run(query)
   .then(result => {
     session.close(() => {
-      debug('DONE!!!!');
-      // debug(result); 
+      // debug('Finish with writing query: ' + query);
+      // debug(result);
     });
   })
   .catch((error) => { console.log(error); })
@@ -28,14 +27,16 @@ GrapheneDB.prototype.write = function(query){
 
 GrapheneDB.prototype.read = function(query){
   const session = this.driver.session();
-  session.run(query)
-  .then(result => {
-    session.close(() => {debug('Finish reading the query')});
+  var readPromise = session.run(query);
+  return readPromise.then(result => {
+    session.close(() => {
+      debug('Finish reading query: ' + query);
+    });
     result.records.forEach(function(record){
       console.log('record: ' + record);
       const node = record.get(0);
       console.log('node: ' + node);
-      console.log('node.properties.word: ' + node.properties.word);
+      console.log('node.properties.wordId: ' + node.properties.wordId);
       return record;
     });
 
@@ -60,37 +61,17 @@ GrapheneDB.prototype.writeNewWord = function(word){
   resultPromise.catch((error) => { console.log(error); })
 }
 
-
-
-GrapheneDB.prototype.readWord = function(word){
-  const session = this.driver.session();
-  const resultPromise = session.run(
-    'MATCH (w:Word {wordid: ' + word + '}) RETURN w'
-  );
-  resultPromise.then(result => {
-    session.close(() => {console.log('Finish reading given word')});
-    result.records.forEach(function(record){
-      console.log('record: ' + record);
-      const node = record.get(0);
-      console.log('node: ' + node);
-      console.log('node.properties.word: ' + node.properties.word);
-    });
-
-  })
-
-}
-
 GrapheneDB.prototype.existsWord = function(word) {
-  debug('check if word exists');
+  console.log('Called to check if given word, ' + word + ' exists');
   const session = this.driver.session();
   const promise = session.run(
-    'MATCH (w:Word {wordid: $word}) RETURN w',
-    {'word': word}
+    'MATCH (w:Word {wordId: $word}) RETURN w',
+    {word: word}
   );
 
   var exists = promise.then(result => {
     session.close(() => {console.log('Finish checking if word exists')});
-
+    debug(result);
     if(result.records.length === 0){
       return false;
     } else if (result.records.length > 1){
@@ -106,13 +87,14 @@ GrapheneDB.prototype.existsWord = function(word) {
 }
 
 GrapheneDB.prototype.clearAllWords = function(){
+  console.log('Called to clear all words and relationships');
   const session = this.driver.session();
   session.run(
     'MATCH (n:Word) DETACH DELETE n'
   )
   .then(result => {
     session.close(() => {console.log('Finish clearing all nodes and relationships')});
-    console.log('Should cleared all words: ' + result);
+    // console.log('Should cleared all words: ' + result);
   })
   .catch(error => {console.log(error);});
 }
