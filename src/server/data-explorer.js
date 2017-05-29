@@ -14,14 +14,15 @@ DataExplorer.prototype.explore = function(submittedWord){
  * 3. store in database
  */
 
-  graphenedb.clearAllWords();
+  // graphenedb.clearAllWords();
 
   return datamuseUtils.query(submittedWord).then(datamuseResults => {
     if(datamuseResults.length > 0){
-      var query = draftDatamuseResultsQuery(submittedWord, datamuseResults);
-      graphenedb.write(query);
+      // batchAllResults(submittedWord, datamuseResults);
+      writeResults(submittedWord, datamuseResults);
       return datamuseResults;
     } else {
+      //datamuse has no results, resort to web crawling
       return 0;
       // var webResults = spider.crawl(submittedWord);
       // var query = draftWebCrawlResultsQuery(submittedWord, webResults);
@@ -29,6 +30,52 @@ DataExplorer.prototype.explore = function(submittedWord){
       // return webResults;
     }
   });
+}
+
+function writeResults(submittedWord, resultsArray) {
+  resultsArray.forEach (result => {
+    var submitted = 'submittedWordHere';
+    var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
+    query += 'ON CREATE SET '+ submitted + '.queryCount = 1 \n';
+
+    var wordId = result.wordId,
+        display = result.display,
+        freq = result.freq,
+        type = result.type,
+        arrayParams = result.param;
+
+    query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
+    query += 'ON CREATE SET ' ;
+    if(result.hasOwnProperty('defs')) {
+      query += display + '.defs=[' + result.defs + '], ';
+    }
+    if(result.hasOwnProperty('defHeadWord')){
+      query += display + '.defHeadWord="' + result.defHeadWord + '", ';
+    }
+    query += display + '.freq=' + freq + ', ' +
+      display + '.type=[' + type + '], ' +
+      display + '.queryCount=0, ' +
+      display + '.suggestionCount=0 \n' ;
+
+    query += 'ON MATCH SET ' +
+      display + '.freq=' + freq + ', ' +
+      display + '.type=[' + type + '], ' ;
+    if(result.hasOwnProperty('defs')) { //array of strings
+      query += display + '.defs=[' + result.defs + '], ';
+    }
+    query += display + '.suggestionCount=' +display+'.suggestionCount + 1 \n' ;
+
+    for(var p = 0 ; p < arrayParams.length ; p++){
+      query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
+    }
+    // debug(query);
+    graphenedb.write(query);
+  })
+}
+
+function batchAllResults(submittedWord, resultsArray){
+  var query = draftDatamuseResultsQuery(submittedWord, resultsArray);
+  graphenedb.write(query);
 }
 
 function draftDatamuseResultsQuery(submittedWord, resultsArray){

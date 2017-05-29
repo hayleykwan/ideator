@@ -40,7 +40,7 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
   .then((allRelations) => {
     debug(allRelations);
     var newGraph = graphUpdate(currentGraph, submitted, allRelations);
-    debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+    // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
     return JSON.stringify(newGraph);
   })
 }

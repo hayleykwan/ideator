@@ -18,11 +18,9 @@ GrapheneDB.prototype.write = function(query){
   const session = this.driver.session();
   session.run(query)
   .then(result => {
-    session.close(() => {debug('DONE!!!!');});
-    result.records.forEach(function(record){
-      console.log('record: ' + record);
-      const node = record.get(0);
-      console.log('node.properties.word: ' + node.properties.wordId);
+    session.close(() => {
+      debug('DONE!!!!');
+      // debug(result); 
     });
   })
   .catch((error) => { console.log(error); })

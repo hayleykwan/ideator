@@ -11,13 +11,15 @@ DataLoader.prototype.search = function(submittedWord){
 
   return graphenedb.existsWord(submittedWord).then((exists) => {
     debug(exists);
-    // if(!exists){
+    if(!exists){
       return dataExplorer.explore(submittedWord);
       //return 0 or return all results, written to database
-    // } else {
+    } else {
+      debug('SHOULD READ FROM DATABASE');
+      return 0;
       // read all results from database
       //return results
-    // }
+    }
   })
   .catch(e => {console.log(e)});
 }
