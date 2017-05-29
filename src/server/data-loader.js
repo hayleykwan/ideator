@@ -25,7 +25,7 @@ DataLoader.prototype.search = function(submittedWord){
           res.records.forEach(d => {
             var r = {};
             r['link'] = d.get(0).properties.type;
-            r['word'] = d.get(1).properties.wordId;
+            r['wordId'] = d.get(1).properties.wordId;
             results.push(r);
           })
         }

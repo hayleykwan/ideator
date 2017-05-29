@@ -42,7 +42,7 @@ function writeResults(submittedWord, resultsArray) {
         display = result.display,
         freq = result.freq,
         type = result.type,
-        arrayParams = result.param;
+        arrayParams = result.link;
 
     query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
     query += 'ON CREATE SET ' ;

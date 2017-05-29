@@ -40,7 +40,7 @@ DatamuseQuery.prototype.query = function(word){
           if(i == -1){
             onearray.push(resultItem);
           } else {
-            onearray[i].param.concat(resultItem.param);
+            onearray[i].link.concat(resultItem.param);
           }
         })
       }
@@ -66,7 +66,7 @@ var query = function(word, param, meaning){
       d['display'] = '_' + d.word.replace(/[^A-Za-z0-9]/g, '_');
       delete d.word;
 
-      d['param'] = [meaning];
+      d['link'] = [meaning];
 
       if(d.hasOwnProperty('defs')) {
         var newDefs = [];

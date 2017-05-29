@@ -22,12 +22,11 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
     if(results === 0 || results.length <= 0){
       return 0;
     } else {
-      var selected = results.slice(0,5);
+      var selected = results.slice(0,queryNum);
       debug(selected);
       var newGraph = graphUpdate(currentGraph, submitted, selected);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
-      // return results;
     }
   })
   .catch(error => {

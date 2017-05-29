@@ -1,7 +1,7 @@
 function update(currentGraph, submitted, datamuseRe){
 
   // submitted is one object: word, num, deg
-  // datamuseRe is array of objects: word, score
+  // datamuseRe is array of objects: wordId, link
 
   //if datamuseResponse is empty, return same graph
   if(datamuseRe.length === 0){
@@ -37,7 +37,7 @@ function update(currentGraph, submitted, datamuseRe){
       } else {
         //it does not exist in currentGraph
         var node = {     //create new node
-          "id": datamuseRe[i].word,
+          "id": datamuseRe[i].wordId,
           "score": 1
         };
         currentGraph.nodes.push(node);
@@ -74,7 +74,7 @@ function update(currentGraph, submitted, datamuseRe){
       } else {
         //it does not exist in currentGraph
         var node = {
-          "id": datamuseRe[i].word,
+          "id": datamuseRe[i].wordId,
           "score": 1
         };
         currentGraph.nodes.push(node);
@@ -102,7 +102,7 @@ function indexOfWordInGraph(currentGraph, obj){
   // return -1;
 
   for(let i = 0 ; i < currentGraph.nodes.length ; i++){
-    if(currentGraph.nodes[i].id === obj.word){
+    if(currentGraph.nodes[i].id === obj.wordId){
       return i;
     }
   }
