@@ -40,12 +40,12 @@ DatamuseQuery.prototype.query = function(word){
           if(i == -1){
             onearray.push(resultItem);
           } else {
-            onearray[i].link.concat(resultItem.param);
+            onearray[i].link.push(resultItem.link.pop());
           }
         })
       }
     });
-    debug(onearray.length);
+    // debug(onearray.length);
     return onearray
   })
   .catch(e => {debug(e)});

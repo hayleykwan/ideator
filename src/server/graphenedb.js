@@ -17,10 +17,11 @@ GrapheneDB.prototype.write = function(query){
   const session = this.driver.session();
   session.run(query)
   .then(result => {
-    session.close(() => {
-      // debug('Finish with writing query: ' + query);
-      // debug(result);
-    });
+    session.close();
+    //   () => {
+    //   console.log('Finish with writing query');
+    //   // debug(result);
+    // }
   })
   .catch((error) => { console.log(error); })
 }
@@ -30,7 +31,7 @@ GrapheneDB.prototype.read = function(query){
   var readPromise = session.run(query);
   return readPromise.then(result => {
     session.close(() => {
-      debug('Finish reading query: ' + query);
+      console.log('Finish reading query: ' + query);
     });
     return result;
     // result.records.forEach(function(record){

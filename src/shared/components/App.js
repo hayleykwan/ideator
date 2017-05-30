@@ -72,7 +72,7 @@ export default class App extends Component {
 
     if(submitted.word.length > 0 && typeof submitted.word === 'string') {
       const currentGraphJSON = JSON.stringify(this.state.data);
-      this.socket.emit('request', submitted, currentGraphJSON);
+      this.socket.emit('search', submitted, currentGraphJSON);
     };
 
     //clear text input

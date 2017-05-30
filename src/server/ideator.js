@@ -3,13 +3,13 @@ var dataLoader = require('./data-loader');
 var graphUpdate = require('./graph-update');
 var utils = require('./utils');
 
-var datamuse = require('datamuse');
+// var datamuse = require('datamuse');
 
 function Ideator(){
   debug('ideator service ready');
 }
 
-Ideator.prototype.process = function(submitted, currentGraphJSON) {
+Ideator.prototype.search = function(submitted, currentGraphJSON) {
   var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
 
   var queryWord = submitted.word;
@@ -22,10 +22,11 @@ Ideator.prototype.process = function(submitted, currentGraphJSON) {
     if(results === 0 || results.length <= 0){
       return 0;
     } else {
+      debug(results.length);
       var selected = results.slice(0,queryNum);
-      debug(selected);
+      // debug(selected);
       var newGraph = graphUpdate(currentGraph, queryWord, selected);
-      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
     }
   })

@@ -31,9 +31,9 @@ server.on('listening', onListening);
 io.on('connection', function(socket) { //listen on the connection event for incoming sockets
   console.log('Client Connection: %s', socket.id);
 
-  socket.on('request', function(submitted, currentGraphJSON){
-    ideator.process(submitted, currentGraphJSON).then(newGraphJSON => {
-      debug(newGraphJSON); // either 0 or graphjson
+  socket.on('search', function(submitted, currentGraphJSON){
+    ideator.search(submitted, currentGraphJSON).then(newGraphJSON => {
+      // debug(newGraphJSON); // either 0 or graphjson
       socket.emit('response', newGraphJSON);
     });
   });

@@ -33,7 +33,7 @@ DataExplorer.prototype.explore = function(submittedWord){
 }
 
 function writeResults(submittedWord, resultsArray) {
-  resultsArray.forEach (result => {
+  resultsArray.forEach ((result) => {
     var submitted = 'submittedWordHere';
     var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
     query += 'ON CREATE SET '+ submitted + '.queryCount = 1 \n';
