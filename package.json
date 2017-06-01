@@ -6,7 +6,10 @@
     "type": "git",
     "url": "https://github.com/hayleykwan/ideator.git"
   },
-
+  "engines": {
+    "node": "6.10.0",
+    "npm": "4.6.0"
+  },
   "private": true,
   "scripts": {
     "start": "node ./src/server/index.js",

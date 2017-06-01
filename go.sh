@@ -6,8 +6,3 @@
 
 npm run build
 npm run dev
-
-#"engines": {
-#  "node": "6.10.0",
-#  "npm": "5.0.1"
-#},
