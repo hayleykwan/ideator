@@ -22,6 +22,7 @@ DataExplorer.prototype.explore = function(submittedWord){
       writeResults(submittedWord, datamuseResults);
       return datamuseResults;
     } else {
+      debug('no results from datamuse');
       //datamuse has no results, resort to web crawling
       return 0;
       // var webResults = spider.crawl(submittedWord);

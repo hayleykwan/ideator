@@ -3,8 +3,6 @@ var dataLoader = require('./data-loader');
 var graphUpdate = require('./graph-update');
 var utils = require('./utils');
 
-// var datamuse = require('datamuse');
-
 function Ideator(){
   debug('ideator service ready');
 }
@@ -16,8 +14,6 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
   var queryDeg = submitted.degConnection;
   var queryNum = submitted.numSuggestion;
 
-  debug('Query: ' + queryWord + ', ' + queryNum);
-
   return dataLoader.search(queryWord).then(results => {
     if(results === 0 || results.length <= 0){
       return 0;
@@ -26,24 +22,12 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
       var selected = results.slice(0,queryNum);
       // debug(selected);
       var newGraph = graphUpdate(currentGraph, queryWord, selected);
-      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
     }
   })
-  .catch(error => {
-    debug(error);
-  });
+  .catch(error => { debug(error); });
 
-  // return datamuse.words({
-  //   ml: queryWord,
-  //   max: queryNum
-  // })
-  // .then((allRelations) => {
-  //   debug(allRelations);
-  //   var newGraph = graphUpdate(currentGraph, submitted, allRelations);
-  //   // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
-  //   return JSON.stringify(newGraph);
-  // })
 }
 
 module.exports = new Ideator();

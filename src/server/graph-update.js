@@ -1,12 +1,6 @@
 function update(currentGraph, submittedWord, datamuseRe){
   // datamuseRe is array of objects: wordId, link
 
-  // //if datamuseResponse is empty, return same graph
-  // if(datamuseRe.length === 0){
-  //   console.log('Datamuse returns nothing. Returning same graph' + currentGraph);
-  //   return currentGraph;  //should send error
-  // }
-
   //check if the submittedObject is in currentGraph
   const centreIndex = indexOfWordInGraph(currentGraph, submittedWord);
   if(centreIndex !== -1){ //source is present, only need to add links
