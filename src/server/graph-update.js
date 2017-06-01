@@ -29,6 +29,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         //it does not exist in currentGraph
         var node = {     //create new node
           "id": datamuseRe[i].wordId,
+          "isPinned": false
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
@@ -43,7 +44,8 @@ function update(currentGraph, submittedWord, datamuseRe){
     // not present, need to add new centre
     var centre = {
       "id": submittedWord,
-      "submitted": true
+      "submitted": true,
+      "isPinned": false
     };
     currentGraph.nodes.push(centre);
 
@@ -64,6 +66,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         //it does not exist in currentGraph
         var node = {
           "id": datamuseRe[i].wordId,
+          "isPinned": false
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link

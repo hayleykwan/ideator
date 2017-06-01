@@ -16,9 +16,11 @@ var linkedByIndex = {};
 class ForceLayout extends React.Component{
   constructor(props){
     super(props);
-    this.mouseover = this.mouseover.bind(this);
-    this.mouseout = this.mouseout.bind(this);
+    this.nodeMouseover = this.nodeMouseover.bind(this);
+    this.nodeMouseout = this.nodeMouseout.bind(this);
     this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
+    this.linkMouseover = this.linkMouseover.bind(this);
+    this.linkMouseout = this.linkMouseout.bind(this);
   }
 
   componentDidMount(){ //only find the ref graph after rendering
@@ -61,7 +63,10 @@ class ForceLayout extends React.Component{
       links.enter()
         .insert('line', '.node')
         .attr('class', 'link-line')
-        .call(enterLinkLine);
+        .call(enterLinkLine)
+        .merge(links)
+        .on('click', this.linkMouseover)
+        // .on('mouseout', this.linkMouseout);
 
       var linkLabels = this.graph.selectAll('.link-label')
         .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
@@ -90,9 +95,25 @@ class ForceLayout extends React.Component{
           .on('start', dragstarted)
           .on('drag', dragged)
           .on('end', dragended))
-        .on('mouseover', this.mouseover)
-        .on('mouseout', this.mouseout)
-        .on('dblclick', this.nodeDoubleClick);;
+        .on('mouseover', this.nodeMouseover)
+        .on('mouseout', this.nodeMouseout)
+        .on("click", function(d){
+        if(!d.isPinned){
+          d.fx = d.x;
+          d.fy = d.y;
+          d.isPinned = true
+          // change circle to dark grey
+        } else {
+          d.fx = null;
+          d.fy = null;
+          d.isPinned = false;
+          // change circle to light grey
+        }
+        d3.select(this)
+          .select('.node-circle')
+            .style('fill', '#FF9800');
+        })
+        .on('dblclick', this.nodeDoubleClick);
 
       simulation.nodes(newNodes);
       simulation.force('link').links(newLinks);
@@ -115,40 +136,58 @@ class ForceLayout extends React.Component{
     this.props.nodeDoubleClick(d.id);
   }
 
-  mouseover(d){
-    this.graph.selectAll('.link-line')
-      .transition().duration(250)
-      .style('stroke-opacity', (o) => {
-        return o.source === d || o.target === d ? 0.9 : 0.25;
-      });
-    this.graph.selectAll('.link-label')
-      .transition().duration(250)
-      .style('fill-opacity', (o) => {
-        return o.source === d || o.target === d ? 1 : 0.3;
-      });
-    this.graph.selectAll('.node-circle')
-      .transition().duration(250)
-      .style('fill', function (o) {
-        return isConnected(d, o) ? '#E2E2E2': '#F6F6F6';
-      });
-    this.graph.selectAll('.node-text')
-      .transition().duration(250)
-      .style('fill-opacity', function (o) {
-        var opacity = isConnected(d, o) ? 1 : 0.3;
-        this.setAttribute('stroke-opacity', opacity);
-        return opacity;
-      });
+  linkMouseover(d){
+    console.log(d.type);
   }
 
-  mouseout(d){
+  linkMouseout(d){
+    console.log('hi');
+  }
+  nodeMouseover(d){
     this.graph.selectAll('.link-line')
-      .transition().duration(250).style('stroke-opacity', 0.75);
+      .transition().duration(150)
+      .style('stroke-opacity', (o) => {
+        return o.source === d || o.target === d ? 1 : 0.7;
+      });
     this.graph.selectAll('.link-label')
-      .transition().duration(250).style('fill-opacity', 1);
+      .transition().duration(150)
+      .style('fill-opacity', (o) => {
+        return o.source === d || o.target === d ? 1 : 0;
+      });
     this.graph.selectAll('.node-circle')
-      .transition().duration(250).style('fill', '#E9E9E9');
-    this.graph.selectAll('.node-text')
-      .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
+      .transition().duration(150)
+      .style('fill', function (o) {
+        return isConnected(d, o) ? '#A9A9A9': '#D0D0D0';
+      })
+      .style('stroke', function (o) {
+        return isConnected(d, o) ? '#FF9800': '#FFFFFF';
+      })
+      .style('stroke-opacity', function (o) {
+        return isConnected(d, o) ? 0.7: 0;
+      })
+      .style('stroke-width', function (o) {
+        return isConnected(d, o) ? 3: 0;
+      });
+    // this.graph.selectAll('.node-text')
+    //   .transition().duration(250)
+    //   .style('fill-opacity', function (o) {
+    //     var opacity = isConnected(d, o) ? 1 : 0.3;
+    //     this.setAttribute('stroke-opacity', opacity);
+    //     return opacity;
+    //   });
+  }
+
+  nodeMouseout(d){
+    this.graph.selectAll('.link-line')
+      .transition().duration(150).style('stroke-opacity', 0.7);
+    this.graph.selectAll('.link-label')
+      .transition().duration(150).style('fill-opacity', 0);
+    this.graph.selectAll('.node-circle')
+      .transition().duration(150)
+        .style('fill', '#D0D0D0')
+        .style('stroke-width', 0);
+    // this.graph.selectAll('.node-text')
+    //   .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
   }
 }
 
@@ -158,13 +197,15 @@ var enterNode = (selection) => {
     .append('circle')
       .attr('class', 'node-circle')
       .attr('r', function(d){return 45})
-      .style('fill', '#E9E9E9');
+      .style('fill', '#D0D0D0')
+      .style('stroke-width', 0);
   selection
     .append('text')
       .attr('class', 'node-text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
       .style('font-size', '13px')
+      .style('fill', '#FFFFFF')
       .text(d => d.id)
       .call(wrap, 86);
 };
@@ -198,18 +239,19 @@ var wrap = (text, width) => {
 var enterLinkLine = (selection) => {
   selection
     .style('stroke', (d) => color(d.type))
-    .style('stroke-width', 5)
+    .style('stroke-width', 7)
     .style('stroke-linecap', 'round')
-    .style('stroke-opacity', 0.75);
+    .style('stroke-opacity', 0.7);
 };
 
 var enterLinkLabel = (selection) => {
   selection
     .attr('fill', 'Black')
-    .style('font', 'normal 12px Arial')
+    .style('font-size', '11px')
     .attr('dy', '.35em')
     .attr('text-anchor', 'middle')
-    .text((d) => d.type);
+    .text((d) => d.type)
+    .style('fill-opacity', 0);
 }
 
 var updateNode = (selection) => {
