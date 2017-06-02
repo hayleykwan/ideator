@@ -15,7 +15,7 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
   var queryNum = submitted.numSuggestion;
 
   return dataLoader.search(queryWord).then(results => {
-    if(results === 0 || results.length <= 0){
+    if(results === 0 || results.length <= 0 ){ //|| typeof(results) === 'undefined' 
       return 0;
     } else {
       debug(results.length);

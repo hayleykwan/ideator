@@ -65,7 +65,7 @@ class ForceLayout extends React.Component{
         .attr('class', 'link-line')
         .call(enterLinkLine)
         .merge(links)
-        .on('click', this.linkMouseover)
+        // .on('click', this.linkMouseover)
         // .on('mouseout', this.linkMouseout);
 
       var linkLabels = this.graph.selectAll('.link-label')
@@ -97,23 +97,26 @@ class ForceLayout extends React.Component{
           .on('end', dragended))
         .on('mouseover', this.nodeMouseover)
         .on('mouseout', this.nodeMouseout)
+        .on('dblclick', this.nodeDoubleClick)
         .on("click", function(d){
-        if(!d.isPinned){
-          d.fx = d.x;
-          d.fy = d.y;
-          d.isPinned = true
-          // change circle to dark grey
-        } else {
-          d.fx = null;
-          d.fy = null;
-          d.isPinned = false;
-          // change circle to light grey
-        }
-        d3.select(this)
-          .select('.node-circle')
-            .style('fill', '#FF9800');
-        })
-        .on('dblclick', this.nodeDoubleClick);
+          console.log(d.fx);
+          console.log(d.fy);
+          if(!d.isPinned){
+            d.fx = d.x;
+            d.fy = d.y;
+            d.isPinned = true;
+            d3.select(this)
+              .select('.node-circle').style('fill', '#FF9800');
+          } else {
+            d.fx = null;
+            d.fy = null;
+            d.isPinned = false;
+            d3.select(this)
+              .select('.node-circle').style('fill', '#D0D0D0');
+          }
+          console.log(d.fx);
+          console.log(d.fy);
+        });
 
       simulation.nodes(newNodes);
       simulation.force('link').links(newLinks);
@@ -157,7 +160,10 @@ class ForceLayout extends React.Component{
     this.graph.selectAll('.node-circle')
       .transition().duration(150)
       .style('fill', function (o) {
-        return isConnected(d, o) ? '#A9A9A9': '#D0D0D0';
+        if(o.isPinned) {
+          return '#FF9800'
+        }
+        return isConnected(d, o)  ? '#A9A9A9': '#D0D0D0';
       })
       .style('stroke', function (o) {
         return isConnected(d, o) ? '#FF9800': '#FFFFFF';
@@ -184,7 +190,7 @@ class ForceLayout extends React.Component{
       .transition().duration(150).style('fill-opacity', 0);
     this.graph.selectAll('.node-circle')
       .transition().duration(150)
-        .style('fill', '#D0D0D0')
+        .style('fill', (d) => {return d.isPinned ? '#FF9800': '#D0D0D0'})
         .style('stroke-width', 0);
     // this.graph.selectAll('.node-text')
     //   .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
