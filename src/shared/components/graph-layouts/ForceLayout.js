@@ -31,18 +31,18 @@ class ForceLayout extends React.Component{
 
     simulation.force("center", d3.forceCenter(width/2, height/2));
 
-    this.svg = d3.select('svg');
-    this.svg.attr('viewBox', '0 0 '+ width + ' ' + height)
+    var svg = d3.select('svg');
+    svg.attr('viewBox', '0 0 '+ width + ' ' + height)
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
-    this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
-    this.svg.call(d3.zoom()
-      .on('zoom', () => {this.graph.attr('transform', d3.event.transform)})
+    svg.call(d3.zoom()
+      .on('zoom', () => {graph.attr('transform', d3.event.transform)})
     ).on('dblclick.zoom', null);
 
     simulation.on('tick', () => {
-      this.graph.call(updateGraph);
+      graph.call(updateGraph);
     });
   }
 
@@ -55,9 +55,9 @@ class ForceLayout extends React.Component{
       var newNodes = nextProps.nodes.slice();
       var newLinks = nextProps.links.slice();
 
-      this.graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+      var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
 
-      var links = this.graph.selectAll('.link-line')
+      var links = graph.selectAll('.link-line')
         .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       links.exit().remove();
       links.enter()
@@ -68,7 +68,7 @@ class ForceLayout extends React.Component{
         // .on('click', this.linkMouseover)
         // .on('mouseout', this.linkMouseout);
 
-      var linkLabels = this.graph.selectAll('.link-label')
+      var linkLabels = graph.selectAll('.link-label')
         .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
       linkLabels.exit().remove();
       linkLabels.enter()
@@ -80,7 +80,8 @@ class ForceLayout extends React.Component{
         linkedByIndex[d.source+ "," + d.target] = 1;
       });
 
-      var nodes = this.graph.selectAll('.node')
+      var self = this;
+      var nodes = graph.selectAll('.node')
         .data(newNodes, function(d) {return d.id});
       nodes.exit()
         .transition().attr('r', 0)
@@ -95,27 +96,41 @@ class ForceLayout extends React.Component{
           .on('start', dragstarted)
           .on('drag', dragged)
           .on('end', dragended))
-        .on('mouseover', this.nodeMouseover)
-        .on('mouseout', this.nodeMouseout)
-        .on('dblclick', this.nodeDoubleClick)
-        .on("click", function(d){
-          console.log(d.fx);
-          console.log(d.fy);
-          if(!d.isPinned){
-            d.fx = d.x;
-            d.fy = d.y;
-            d.isPinned = true;
-            d3.select(this)
-              .select('.node-circle').style('fill', '#FF9800');
-          } else {
-            d.fx = null;
-            d.fy = null;
-            d.isPinned = false;
-            d3.select(this)
-              .select('.node-circle').style('fill', '#D0D0D0');
-          }
-          console.log(d.fx);
-          console.log(d.fy);
+      // nodes.select('.node-main')
+          .on("mouseover", function (d) {
+            d3.select(this) //.parentNode
+              .select('.node-option-remove')
+              .style("visibility", "visible");
+            d3.select(this) //.parentNode
+              .select('.node-option-reload')
+              .style("visibility", "visible");
+            self.nodeMouseover(d);
+          })
+          .on('mouseout', function(d) {
+            d3.select(this) //.parentNode
+              .select('.node-option-remove')
+              .style("visibility", "hidden");
+            d3.select(this) //.parentNode
+              .select('.node-option-reload')
+              .style("visibility", "hidden");
+            self.nodeMouseout(d);
+          })
+          .on('dblclick', this.nodeDoubleClick)
+          .on("click", function(d){
+            if(!d.isPinned){
+              d.fx = d.x;
+              d.fy = d.y;
+              d.isPinned = true;
+              d3.select(this).select('.node-circle').style('fill', '#FFB74D');
+            } else {
+              d.fx = null;
+              d.fy = null;
+              d.isPinned = false;
+              d3.select(this).select('.node-circle').style('fill', '#D0D0D0');
+            }
+          })
+        .select('.node-text').style('fill', function (d){
+          return (d.submitted) ? '#000000' : '#FFFFFF'
         });
 
       simulation.nodes(newNodes);
@@ -147,21 +162,22 @@ class ForceLayout extends React.Component{
     console.log('hi');
   }
   nodeMouseover(d){
-    this.graph.selectAll('.link-line')
+    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    graph.selectAll('.link-line')
       .transition().duration(150)
       .style('stroke-opacity', (o) => {
         return o.source === d || o.target === d ? 1 : 0.7;
-      });
-    this.graph.selectAll('.link-label')
+    });
+    graph.selectAll('.link-label')
       .transition().duration(150)
       .style('fill-opacity', (o) => {
         return o.source === d || o.target === d ? 1 : 0;
-      });
-    this.graph.selectAll('.node-circle')
+    });
+    graph.selectAll('.node-circle')
       .transition().duration(150)
       .style('fill', function (o) {
         if(o.isPinned) {
-          return '#FF9800'
+          return '#FFB74D'
         }
         return isConnected(d, o)  ? '#A9A9A9': '#D0D0D0';
       })
@@ -173,40 +189,32 @@ class ForceLayout extends React.Component{
       })
       .style('stroke-width', function (o) {
         return isConnected(d, o) ? 3: 0;
-      });
-    // this.graph.selectAll('.node-text')
-    //   .transition().duration(250)
-    //   .style('fill-opacity', function (o) {
-    //     var opacity = isConnected(d, o) ? 1 : 0.3;
-    //     this.setAttribute('stroke-opacity', opacity);
-    //     return opacity;
-    //   });
+    });
   }
 
   nodeMouseout(d){
-    this.graph.selectAll('.link-line')
+    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    graph.selectAll('.link-line')
       .transition().duration(150).style('stroke-opacity', 0.7);
-    this.graph.selectAll('.link-label')
+    graph.selectAll('.link-label')
       .transition().duration(150).style('fill-opacity', 0);
-    this.graph.selectAll('.node-circle')
+    graph.selectAll('.node-circle')
       .transition().duration(150)
-        .style('fill', (d) => {return d.isPinned ? '#FF9800': '#D0D0D0'})
+        .style('fill', (d) => {return d.isPinned ? '#FFB74D': '#D0D0D0'})
         .style('stroke-width', 0);
-    // this.graph.selectAll('.node-text')
-    //   .transition().duration(250).style('fill-opacity', 1).style('stroke-opacity', 1);
   }
 }
 
 
 var enterNode = (selection) => {
-  selection
-    .append('circle')
+  // var main = selection.append('g').attr('class', 'node-main');
+  selection.append('circle')
       .attr('class', 'node-circle')
-      .attr('r', function(d){return 45})
+      .attr('r', 45)
       .style('fill', '#D0D0D0')
       .style('stroke-width', 0);
-  selection
-    .append('text')
+
+  selection.append('text')
       .attr('class', 'node-text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em') // vertically centre text regardless of font size
@@ -214,6 +222,33 @@ var enterNode = (selection) => {
       .style('fill', '#FFFFFF')
       .text(d => d.id)
       .call(wrap, 86);
+
+  selection
+    .append('circle')
+      .attr('class', 'node-option-remove')
+      .attr('r', 15)
+      .attr('cx', 23)
+      .attr('cy', -38)
+      .style('fill', '#f44336')
+      .style("visibility", "hidden")
+      .on('click', function (d) {
+        d3.event.stopPropagation();
+        console.log('remove');
+      })
+      .on('dblclick', function (d) {d3.event.stopPropagation() });
+  selection
+    .append('circle')
+      .attr('class', 'node-option-reload')
+      .attr('r', 15)
+      .attr('cx', 45)
+      .attr('cy', -15)
+      .style('fill', '#8BC34A')
+      .style("visibility", "hidden")
+      .on('click', function (d) {
+        d3.event.stopPropagation();
+        console.log('reload');
+      })
+      .on('dblclick', function (d) {d3.event.stopPropagation() });
 };
 
 var wrap = (text, width) => {
@@ -309,7 +344,5 @@ function isConnected(a, b) {
          linkedByIndex[b.id + "," + a.id] ||
          a.index == b.index;
 }
-
-
 
 export default ForceLayout;
