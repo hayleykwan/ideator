@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import './styles.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {cyan500} from 'material-ui/styles/colors';
@@ -28,6 +27,7 @@ export default class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateData = this.updateData.bind(this);
     this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
+    this.removeNode = this.removeNode.bind(this);
   }
 
   componentWillMount(){
@@ -96,6 +96,12 @@ export default class App extends Component {
     this.handleSubmit(nodeWord);
   }
 
+  removeNode(newNodes, newLinks){
+    var data = {nodes: newNodes, links: newLinks};
+    this.setState({data: data});
+    // console.log(this.state.data);
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -108,6 +114,7 @@ export default class App extends Component {
               width="1000" //should be screen size
               height="420"
               nodeDoubleClick={this.nodeDoubleClick}
+              removeNode={this.removeNode}
             />
           </div>
           <IdeaToolBar style={styles.toolbar}

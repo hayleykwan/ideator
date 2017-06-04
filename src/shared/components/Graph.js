@@ -17,7 +17,8 @@ export default class Graph extends React.Component{
             links={this.props.data.links}
             width={this.props.width}
             height={this.props.height}
-            nodeDoubleClick={this.props.nodeDoubleClick}/>
+            nodeDoubleClick={this.props.nodeDoubleClick}
+            removeNode={this.props.removeNode}/>
       );
     }
   }
