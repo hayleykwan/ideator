@@ -8,7 +8,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id).distance(150))
-    .force('charge', d3.forceManyBody().strength(-120))
+    .force('charge', d3.forceManyBody().strength(-300))
     .force('collide', d3.forceCollide(46).strength(0.3));
 
 var linkedByIndex = {};
@@ -170,8 +170,6 @@ class ForceLayout extends React.Component{
   }
 
   nodeMouseover(d){
-    console.log(d);
-
     var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
     graph.selectAll('.link-line')
       .transition().duration(150)
@@ -231,32 +229,42 @@ class ForceLayout extends React.Component{
         .call(wrap, 86);
 
     var self = this;
-    selection
-      .append('circle')
-        .attr('class', 'node-option-remove')
+    var remove = selection.append('g')
+      .attr('class', 'node-option-remove')
+      .style("visibility", "hidden")
+      .on('click', function (d) {
+          d3.event.stopPropagation();
+          self.removeNode(d);
+      })
+      .on('dblclick', function (d) {d3.event.stopPropagation() });
+    remove.append('circle')
         .attr('r', 15)
         .attr('cx', 23)
         .attr('cy', -38)
-        .style('fill', '#f44336')
-        .style("visibility", "hidden")
-        .on('click', function (d) {
-          d3.event.stopPropagation();
-          self.removeNode(d);
-        })
-        .on('dblclick', function (d) {d3.event.stopPropagation() });
-    selection
-      .append('circle')
-        .attr('class', 'node-option-reload')
+        .style('fill', '#f44336');
+    remove.append("image")
+        .attr("xlink:href", "../../../static/images/clear_24px.svg")
+        .attr("x", 11)
+        .attr("y", -49);
+
+    var reload = selection.append('g')
+      .attr('class', 'node-option-reload')
+      .style("visibility", "hidden")
+      .on('click', function (d) {
+        d3.event.stopPropagation();
+        console.log('reload');
+      })
+      .on('dblclick', function (d) {d3.event.stopPropagation() });
+    reload.append('circle')
         .attr('r', 15)
         .attr('cx', 45)
         .attr('cy', -15)
-        .style('fill', '#8BC34A')
-        .style("visibility", "hidden")
-        .on('click', function (d) {
-          d3.event.stopPropagation();
-          console.log('reload');
-        })
-        .on('dblclick', function (d) {d3.event.stopPropagation() });
+        .style('fill', '#8BC34A');
+    reload.append("image")
+        .attr("xlink:href", "../../../static/images/autorenew_24px.svg")
+        .attr("x", 33)
+        .attr("y", -27);
+
   }
 
   removeNode(d) {

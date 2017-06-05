@@ -20,7 +20,8 @@ function update(currentGraph, submittedWord, datamuseRe){
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
-            "type": datamuseRe[i].link
+            "type": datamuseRe[i].link,
+            "notes": ''
           };
           // console.log(link);
           currentGraph.links.push(link);
@@ -29,13 +30,17 @@ function update(currentGraph, submittedWord, datamuseRe){
         //it does not exist in currentGraph
         var node = {     //create new node
           "id": datamuseRe[i].wordId,
-          "isPinned": false
+          "isPinned": false,
+          "submitted": false,
+          "imageSrc": '',
+          "notes": ''
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
           "target": node.id,
-          "type": datamuseRe[i].link
+          "type": datamuseRe[i].link,
+          "notes": ''
         };
         currentGraph.links.push(link);
       }
@@ -45,7 +50,9 @@ function update(currentGraph, submittedWord, datamuseRe){
     var centre = {
       "id": submittedWord,
       "submitted": true,
-      "isPinned": false
+      "isPinned": false,
+      "imageSrc": '',
+      "notes": ''
     };
     currentGraph.nodes.push(centre);
 
@@ -59,20 +66,25 @@ function update(currentGraph, submittedWord, datamuseRe){
         var link = {
           "source": centre.id,
           "target": currentGraph.nodes[targetIndex].id,
-          "type": datamuseRe[i].link
+          "type": datamuseRe[i].link,
+          "notes": ''
         };
         currentGraph.links.push(link);
       } else {
         //it does not exist in currentGraph
         var node = {
           "id": datamuseRe[i].wordId,
-          "isPinned": false
+          "isPinned": false,
+          "submitted": false,
+          "imageSrc": '',
+          "notes": ''
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": centre.id,
           "target": node.id,
-          "type": datamuseRe[i].link
+          "type": datamuseRe[i].link,
+          "notes": ''
         };
         currentGraph.links.push(link);
       }
