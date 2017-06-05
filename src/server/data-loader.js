@@ -8,6 +8,7 @@ function DataLoader(){
 }
 
 DataLoader.prototype.search = function(submittedWord){
+  // graphenedb.clearAllWords();
 
   return graphenedb.existsWord(submittedWord).then((exists) => {
     debug(exists);
@@ -19,7 +20,7 @@ DataLoader.prototype.search = function(submittedWord){
       debug('Going to read from database');
       var query = 'MATCH (n:Word {wordId:"' + submittedWord +'"})-[r]-(w:Word) RETURN r,w'
       return graphenedb.read(query).then(res => {
-        
+
         var results = [];
         if(res.records.length > 0){
           res.records.forEach(d => {

@@ -14,7 +14,7 @@ DataExplorer.prototype.explore = function(submittedWord){
  * 3. store in database
  */
 
-  // graphenedb.clearAllWords();
+  
 
   return datamuseUtils.query(submittedWord).then(datamuseResults => {
     if(datamuseResults.length > 0){

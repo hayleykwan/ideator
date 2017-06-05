@@ -1,5 +1,7 @@
 var debug = require('debug')('ideator:server:datamuse-utils');
 const datamuse = require('datamuse');
+var blacklist = require('./data-blacklist');
+var utils = require('./utils');
 
 function DatamuseQuery(){
   this.params = {
@@ -17,10 +19,10 @@ function DatamuseQuery(){
     'rel_bgb': 'preceeded by' ,
     'sp':      'spells like'  ,
     'sl':      'sounds like'  ,
-    'rel_rhy': 'rhymes perfect'  ,
-    'rel_nry': 'rhymes kind of'  ,
+    'rel_rhy': 'rhymes perfectly'  ,
+    // 'rel_nry': 'rhymes kind of'  ,
     // 'rel_hom': 'known homophones' ,
-    'rel_cns': 'consonant match'
+    // 'rel_cns': 'consonant match'
   }
 }
 
@@ -57,40 +59,47 @@ var query = function(word, param, meaning){
   query['max'] = 60;
   query['md'] = 'fpd';
   return datamuse.words(query).then( data => {
-    debug(param + ' has results: ' + data.length);
-    data.forEach( d => {
-      delete d.score;
-      delete d.numSyllables;
+    var i = 0;
+    while(i < data.length){
+      var d = data[i];
+      if (utils.contains(blacklist, d.word)) {
+        debug(d.word);
+        data.splice(i, 1);
+      } else {
+        delete d.score;
+        delete d.numSyllables;
 
-      d['wordId'] = d.word;
-      d['display'] = '_' + d.word.replace(/[^A-Za-z0-9]/g, '_');
-      delete d.word;
+        d['wordId'] = d.word;
+        d['display'] = '_' + d.word.replace(/[^A-Za-z0-9]/g, '_');
+        delete d.word;
 
-      d['link'] = [meaning];
+        d['link'] = [meaning];
 
-      if(d.hasOwnProperty('defs')) {
-        var newDefs = [];
-        d.defs.forEach(str => {
-          var s = str.replace(/\t/g, ": ");
-          newDefs.push('"' + s.replace(/["'-\\]/g, "") + '"')
-        });
-        delete d.defs;
-        d['defs'] = newDefs;
+        if(d.hasOwnProperty('defs')) {
+          var newDefs = [];
+          d.defs.forEach(str => {
+            var s = str.replace(/\t/g, ": ");
+            newDefs.push('"' + s.replace(/["'-\\]/g, "") + '"')
+          });
+          delete d.defs;
+          d['defs'] = newDefs;
+        }
+
+        d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
+        if(d.tags.length > 0) {
+          var tags = [];
+          d.tags.forEach(tag => {tags.push('"' + tag + '"')});
+          d['type'] = tags;
+        }else {
+          d['type'] = [""];
+        }
+        delete d.tags;
+        i++;
       }
-
-      d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
-      if(d.tags.length > 0) {
-        var tags = [];
-        d.tags.forEach(tag => {tags.push('"' + tag + '"')});
-        d['type'] = tags;
-      }else {
-        d['type'] = [""];
-      }
-      delete d.tags;
-    });
-    // debug(data);
+    }
     return data;
-  }).catch(error => {debug(word); console.log(error); });
+  })
+  .catch(error => {debug(word); console.log(error); });
 }
 
 function indexOfWordInResults(array, obj){

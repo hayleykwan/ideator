@@ -26,6 +26,16 @@ module.exports = {
     debug('importing and exporting right');
   },
 
+  contains: function(array, needle) {
+    var l = array.length;
+    while(l--){
+      if(array[l] === needle) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 
 
 }
