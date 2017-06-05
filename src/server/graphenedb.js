@@ -63,28 +63,21 @@ GrapheneDB.prototype.writeNewWord = function(word){
   resultPromise.catch((error) => { console.log(error); })
 }
 
-GrapheneDB.prototype.existsWord = function(word) {
-  console.log('Called to check if given word, ' + word + ' exists');
+GrapheneDB.prototype.hasResults = function(word){
+  console.log('Check if given word, ' + word + ', has results');
   const session = this.driver.session();
   const promise = session.run(
-    'MATCH (w:Word {wordId: $word}) RETURN w',
-    {word: word}
+    'MATCH (w:Word {wordId: "'+ word + '"}) \n' +
+    'MATCH (w)-[l:Link]-(r) RETURN count(DISTINCT r)'
   );
-
-  var exists = promise.then(result => {
-    session.close(() => {console.log('Finish checking if word exists')});
-    if(result.records.length === 0){
-      return false;
-    } else if (result.records.length > 1){
-      // duplicate nodes!
-      return 'duplicate!';
-    } else if (result.records.length === 1){
+  return promise.then(result => {
+    session.close(() => {console.log('Finish checking if word has results')});
+    var num = result.records[0]._fields[0].low;
+    if(num >= 50){
       return true;
     }
+    return false;
   })
-
-  return exists;
-
 }
 
 GrapheneDB.prototype.clearAllWords = function(){
