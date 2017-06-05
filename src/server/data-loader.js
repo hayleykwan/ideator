@@ -4,20 +4,19 @@ var dataExplorer = require('./data-explorer');
 var utils = require('./utils')
 
 function DataLoader(){
-  debug('Data loader ready to work');
 }
 
-DataLoader.prototype.search = function(submittedWord){
+DataLoader.prototype.search = function(word){
   // graphenedb.clearAllWords();
 
-  return graphenedb.hasResults(submittedWord).then((exists) => {
+  return graphenedb.hasResults(word).then((exists) => {
     if(!exists){
       debug('Going to explore');
-      return dataExplorer.explore(submittedWord);
+      return dataExplorer.explore(word);
       //return 0 or return all results, written to database
     } else {
       debug('Going to read from database');
-      return graphenedb.getResults(submittedWord).then(res =>{
+      return graphenedb.getResults(word).then(res =>{
         var results = [];
         if(res.records.length > 0){
           res.records.forEach(d => {

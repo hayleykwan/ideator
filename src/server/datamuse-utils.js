@@ -38,19 +38,20 @@ DatamuseQuery.prototype.query = function(word){
     allResults.forEach(results => {
       if (results.length > 0) { //typeof results !== 'undefined' &&
         results.forEach(resultItem => {
-          var i = indexOfWordInResults(onearray, resultItem);
-          if(i == -1){
-            onearray.push(resultItem);
-          } else {
-            onearray[i].link.push(resultItem.link.pop());
-          }
+          onearray.push(resultItem);
+          // var i = indexOfWordInResults(onearray, resultItem);
+          // if(i == -1){
+          //   onearray.push(resultItem);
+          // } else {
+          //   onearray[i].link.push(resultItem.link.pop());
+          // }
         })
       }
     });
     // debug(onearray.length);
     return onearray
   })
-  .catch(e => {debug(e)});
+  .catch(e => {console.log(e)});
 }
 
 var query = function(word, param, meaning){
@@ -62,7 +63,8 @@ var query = function(word, param, meaning){
     var i = 0;
     while(i < data.length){
       var d = data[i];
-      if (utils.contains(blacklist, d.word) || /[^A-Za-z\-]/.test(d.word)) { //0-9.*+?!^@#$%&{}()|[\]]
+      if (utils.contains(blacklist, d.word) || /[^A-Za-z\-\s]/.test(d.word)) { //0-9.*+?!^@#$%&{}()|[\]]
+        // debug(d.word);
         data.splice(i, 1);
       } else {
         delete d.score;
@@ -72,7 +74,8 @@ var query = function(word, param, meaning){
         d['display'] = '_' + d.word.replace(/[^A-Za-z0-9]/g, '_');
         delete d.word;
 
-        d['link'] = [meaning];
+        // d['link'] = [meaning]; //no filtering duplicates
+        d['link'] = meaning;
 
         if(d.hasOwnProperty('defs')) {
           var newDefs = [];
@@ -98,7 +101,7 @@ var query = function(word, param, meaning){
     }
     return data;
   })
-  .catch(error => {debug(word); console.log(error); });
+  .catch(error => {console.log(error); });
 }
 
 function indexOfWordInResults(array, obj){

@@ -6,36 +6,36 @@ function DataExplorer() {
 
 }
 
-DataExplorer.prototype.explore = function(submittedWord){
+DataExplorer.prototype.explore = function(word){
 
-  return datamuseUtils.query(submittedWord).then(datamuseResults => {
+  return datamuseUtils.query(word).then(datamuseResults => {
     if(datamuseResults.length > 0){
-      writeResults(submittedWord, datamuseResults);
+      writeResults(word, datamuseResults);
       return datamuseResults;
     } else {
       debug('no results from datamuse');
       //datamuse has no results, resort to web crawling
       return 0;
-      // var webResults = spider.crawl(submittedWord);
-      // var query = draftWebCrawlResultsQuery(submittedWord, webResults);
+      // var webResults = spider.crawl(word);
+      // var query = draftWebCrawlResultsQuery(word, webResults);
       // graphenedb.write(query);
       // return webResults;
     }
   });
 }
 
-function writeResults(submittedWord, resultsArray) {
-  for(var i = 0 ; i < resultsArray.length ; i+=5) {
-    var max = Math.min(i+5, resultsArray.length);
+function writeResults(word, resultsArray) {
+  for(var i = 0 ; i < resultsArray.length ; i+=4) {
+    var max = Math.min(i+4, resultsArray.length);
     var partResult = resultsArray.slice(i, max);
-    var query = draftDatamuseResults(submittedWord, partResult);
+    var query = draftDatamuseResults(word, partResult);
     graphenedb.write(query);
   }
 }
 
-function draftDatamuseResults(submittedWord, array){
+function draftDatamuseResults(word, array){
   var submitted = 'submittedWordHere';
-  var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
+  var query = 'MERGE (' + submitted + ':Word {wordId: "' + word + '"}) \n';
 
   for(var i = 0 ; i < array.length ; i++) {
     var result = array[i];
@@ -65,9 +65,10 @@ function draftDatamuseResults(submittedWord, array){
     query += display + '.freq=' + freq + ', ' +
             display + '.type=[' + type + '] \n' ;
 
-    for(var p = 0 ; p < arrayParams.length ; p++){
-      query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
-    }
+    query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams+'"}]-('+display+')\n';
+    // for(var p = 0 ; p < arrayParams.length ; p++){
+    //   query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
+    // }
   }
 
   return query;

@@ -189,7 +189,7 @@ class ForceLayout extends React.Component{
         if(o.isPinned) {
           return '#FFB74D'
         }
-        return isConnected(d, o) ? '#A9A9A9': '#D0D0D0';
+        return isConnected(d, o) ? '#AEAEAE': '#D0D0D0';
       })
       .style('stroke', function (o) {
         return isConnected(d, o) ? '#FF9800': '#FFFFFF';

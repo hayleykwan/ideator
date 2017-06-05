@@ -12,17 +12,17 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
   // catch if currentGraphJSON is null;
   var currentGraph = utils.removeD3Extras(JSON.parse(currentGraphJSON));
 
-  var queryWord = submitted.word;
-  var queryDeg = submitted.degConnection;
-  var queryNum = submitted.numSuggestion;
+  var word = submitted.word;
+  var deg = submitted.degConnection;
+  var num = submitted.numSuggestion;
 
-  return dataLoader.search(queryWord).then(results => {
+  return dataLoader.search(word).then(results => {
     if(results === 0 || results.length <= 0 ){ //|| typeof(results) === 'undefined'
       return 0;
     } else {
       debug(results.length);
-      var selected = dataSelector.select(queryDeg, queryNum, results);
-      var newGraph = graphUpdate(currentGraph, queryWord, selected);
+      var selected = dataSelector.select(deg, num, results);
+      var newGraph = graphUpdate(currentGraph, word, selected);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
     }

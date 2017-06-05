@@ -18,10 +18,6 @@ GrapheneDB.prototype.write = function(query){
   session.run(query)
   .then(result => {
     session.close();
-    //   () => {
-    //   console.log('Finish with writing query');
-    //   // debug(result);
-    // }
   })
   .catch((error) => { console.log(error); })
 }
