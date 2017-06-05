@@ -62,7 +62,7 @@ var query = function(word, param, meaning){
     var i = 0;
     while(i < data.length){
       var d = data[i];
-      if (utils.contains(blacklist, d.word)) {
+      if (utils.contains(blacklist, d.word) || /[^A-Za-z\-]/.test(d.word)) { //0-9.*+?!^@#$%&{}()|[\]]
         data.splice(i, 1);
       } else {
         delete d.score;

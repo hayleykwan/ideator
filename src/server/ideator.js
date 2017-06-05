@@ -1,5 +1,6 @@
 var debug = require('debug')('ideator:server:ideator');
 var dataLoader = require('./data-loader');
+var dataSelector = require('./data-selector');
 var graphUpdate = require('./graph-update');
 var utils = require('./utils');
 
@@ -20,8 +21,7 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
       return 0;
     } else {
       debug(results.length);
-      var selected = results.slice(0,queryNum);
-      // debug(selected);
+      var selected = dataSelector.select(queryDeg, queryNum, results);
       var newGraph = graphUpdate(currentGraph, queryWord, selected);
       debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);

@@ -45,22 +45,16 @@ GrapheneDB.prototype.read = function(query){
   })
 }
 
-GrapheneDB.prototype.writeNewWord = function(word){
-  debug('Write new word: ' + word);
+GrapheneDB.prototype.getResults = function(word) {
   const session = this.driver.session();
-  const resultPromise = session.run(
-    'CREATE (w:Word {wordId: $word}) RETURN w',
-    {'word': word}
+  var promise = session.run(
+    'MATCH (n:Word {wordId:"' + word +'"})-[r]-(w:Word) RETURN r,w'
   );
-  resultPromise.then(result => {
-    session.close(() => {console.log('Finish writing new word: ' + word)});
-    result.records.forEach(function(record){
-      console.log('record: ' + record);
-      const node = record.get(0);
-      console.log('node.properties.word: ' + node.properties.wordId);
-    });
-  });
-  resultPromise.catch((error) => { console.log(error); })
+  return promise.then(result => {
+    session.close(() => {console.log('Finish getting all results')});
+    console.log(result.records.length);
+    return result;
+  })
 }
 
 GrapheneDB.prototype.hasResults = function(word){
@@ -73,6 +67,7 @@ GrapheneDB.prototype.hasResults = function(word){
   return promise.then(result => {
     session.close(() => {console.log('Finish checking if word has results')});
     var num = result.records[0]._fields[0].low;
+    console.log(num);
     if(num >= 50){
       return true;
     }
@@ -102,6 +97,24 @@ GrapheneDB.prototype.countWords = function(){
     // console.log('Should cleared all words: ' + result);
   })
   .catch(error => {console.log(error);});
+}
+
+GrapheneDB.prototype.writeNewWord = function(word){
+  debug('Write new word: ' + word);
+  const session = this.driver.session();
+  const resultPromise = session.run(
+    'CREATE (w:Word {wordId: $word}) RETURN w',
+    {'word': word}
+  );
+  resultPromise.then(result => {
+    session.close(() => {console.log('Finish writing new word: ' + word)});
+    result.records.forEach(function(record){
+      console.log('record: ' + record);
+      const node = record.get(0);
+      console.log('node.properties.word: ' + node.properties.wordId);
+    });
+  });
+  resultPromise.catch((error) => { console.log(error); })
 }
 
 GrapheneDB.prototype.close = function(){

@@ -12,14 +12,12 @@ DataLoader.prototype.search = function(submittedWord){
 
   return graphenedb.hasResults(submittedWord).then((exists) => {
     if(!exists){
-      debug('going to explore');
+      debug('Going to explore');
       return dataExplorer.explore(submittedWord);
       //return 0 or return all results, written to database
     } else {
       debug('Going to read from database');
-      var query = 'MATCH (n:Word {wordId:"' + submittedWord +'"})-[r]-(w:Word) RETURN r,w'
-      return graphenedb.read(query).then(res => {
-
+      return graphenedb.getResults(submittedWord).then(res =>{
         var results = [];
         if(res.records.length > 0){
           res.records.forEach(d => {

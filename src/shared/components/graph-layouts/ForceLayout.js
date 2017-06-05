@@ -170,11 +170,13 @@ class ForceLayout extends React.Component{
   }
 
   nodeMouseover(d){
+    console.log(d);
+
     var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
     graph.selectAll('.link-line')
       .transition().duration(150)
       .style('stroke-opacity', (o) => {
-        return o.source === d || o.target === d ? 1 : 0.7;
+        return o.source.id === d.id || o.target.id === d.id ? 1 : 0.5;
     });
     graph.selectAll('.link-label')
       .transition().duration(150)
@@ -187,7 +189,7 @@ class ForceLayout extends React.Component{
         if(o.isPinned) {
           return '#FFB74D'
         }
-        return isConnected(d, o)  ? '#A9A9A9': '#D0D0D0';
+        return isConnected(d, o) ? '#A9A9A9': '#D0D0D0';
       })
       .style('stroke', function (o) {
         return isConnected(d, o) ? '#FF9800': '#FFFFFF';
@@ -203,7 +205,7 @@ class ForceLayout extends React.Component{
   nodeMouseout(d){
     var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
     graph.selectAll('.link-line')
-      .transition().duration(150).style('stroke-opacity', 0.7);
+      .transition().duration(150).style('stroke-opacity', 0.5);
     graph.selectAll('.link-label')
       .transition().duration(150).style('fill-opacity', 0);
     graph.selectAll('.node-circle')
@@ -312,7 +314,7 @@ var enterLinkLine = (selection) => {
     .style('stroke', (d) => color(d.type))
     .style('stroke-width', 7)
     .style('stroke-linecap', 'round')
-    .style('stroke-opacity', 0.7);
+    .style('stroke-opacity', 0.5);
 };
 
 var enterLinkLabel = (selection) => {
@@ -372,7 +374,7 @@ function dragended(d) {
 function isConnected(a, b) {
   return linkedByIndex[a.id + "," + b.id] ||
          linkedByIndex[b.id + "," + a.id] ||
-         a.index == b.index;
+         a.id == b.id;
 }
 
 export default ForceLayout;
