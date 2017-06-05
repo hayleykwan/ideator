@@ -14,11 +14,8 @@ DataExplorer.prototype.explore = function(submittedWord){
  * 3. store in database
  */
 
-  
-
   return datamuseUtils.query(submittedWord).then(datamuseResults => {
     if(datamuseResults.length > 0){
-      // batchAllResults(submittedWord, datamuseResults);
       writeResults(submittedWord, datamuseResults);
       return datamuseResults;
     } else {
@@ -34,64 +31,64 @@ DataExplorer.prototype.explore = function(submittedWord){
 }
 
 function writeResults(submittedWord, resultsArray) {
-  resultsArray.forEach ((result) => {
-    var submitted = 'submittedWordHere';
-    var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
-    query += 'ON CREATE SET '+ submitted + '.queryCount = 1 \n';
-
-    var wordId = result.wordId,
-        display = result.display,
-        freq = result.freq,
-        type = result.type,
-        arrayParams = result.link;
-
-    query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
-    query += 'ON CREATE SET ' ;
-    if(result.hasOwnProperty('defs')) {
-      query += display + '.defs=[' + result.defs + '], ';
-    }
-    if(result.hasOwnProperty('defHeadWord')){
-      query += display + '.defHeadWord="' + result.defHeadWord + '", ';
-    }
-    query += display + '.freq=' + freq + ', ' +
-      display + '.type=[' + type + '], ' +
-      display + '.queryCount=0, ' +
-      display + '.suggestionCount=0 \n' ;
-
-    query += 'ON MATCH SET ' +
-      display + '.freq=' + freq + ', ' +
-      display + '.type=[' + type + '], ' ;
-    if(result.hasOwnProperty('defs')) { //array of strings
-      query += display + '.defs=[' + result.defs + '], ';
-    }
-    query += display + '.suggestionCount=' +display+'.suggestionCount + 1 \n' ;
-
-    for(var p = 0 ; p < arrayParams.length ; p++){
-      query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
-    }
+  for(var i = 0 ; i < resultsArray.length ; i+=5) {
+    var max = Math.min(i+5, resultsArray.length);
+    var partResult = resultsArray.slice(i, max);
+    var query = draftDatamuseResults(submittedWord, partResult);
     // debug(query);
     graphenedb.write(query);
-  })
+  }
+  // resultsArray.forEach ((result) => {
+  //   var submitted = 'submittedWordHere';
+  //   var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
+  //   query += 'ON CREATE SET '+ submitted + '.queryCount = 1 \n';
+  //
+  //   var wordId = result.wordId,
+  //       display = result.display,
+  //       freq = result.freq,
+  //       type = result.type,
+  //       arrayParams = result.link;
+  //
+  //   query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
+  //   query += 'ON CREATE SET ' ;
+  //   if(result.hasOwnProperty('defs')) {
+  //     query += display + '.defs=[' + result.defs + '], ';
+  //   }
+  //   if(result.hasOwnProperty('defHeadWord')){
+  //     query += display + '.defHeadWord="' + result.defHeadWord + '", ';
+  //   }
+  //   query += display + '.freq=' + freq + ', ' +
+  //     display + '.type=[' + type + '], ' +
+  //     display + '.queryCount=0, ' +
+  //     display + '.suggestionCount=0 \n' ;
+  //
+  //   query += 'ON MATCH SET ' +
+  //     display + '.freq=' + freq + ', ' +
+  //     display + '.type=[' + type + '], ' ;
+  //   if(result.hasOwnProperty('defs')) { //array of strings
+  //     query += display + '.defs=[' + result.defs + '], ';
+  //   }
+  //   query += display + '.suggestionCount=' +display+'.suggestionCount + 1 \n' ;
+  //
+  //   for(var p = 0 ; p < arrayParams.length ; p++){
+  //     query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
+  //   }
+  //   // debug(query);
+  //   graphenedb.write(query);
+  // })
 }
 
-function batchAllResults(submittedWord, resultsArray){
-  var query = draftDatamuseResultsQuery(submittedWord, resultsArray);
-  graphenedb.write(query);
-}
-
-function draftDatamuseResultsQuery(submittedWord, resultsArray){
-
+function draftDatamuseResults(submittedWord, array){
   var submitted = 'submittedWordHere';
-  var query = 'CREATE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
-  query += 'SET '+ submitted + '.queryCount = 1 \n';
+  var query = 'MERGE (' + submitted + ':Word {wordId: "' + submittedWord + '"}) \n';
 
-  resultsArray.forEach( result => {
-    // debug(result);
+  for(var i = 0 ; i < array.length ; i++) {
+    var result = array[i];
     var wordId = result.wordId,
-        display = result.display,
-        freq = result.freq,
-        type = result.type,
-        arrayParams = result.param;
+       display = result.display,
+          freq = result.freq,
+          type = result.type,
+          arrayParams = result.link;
 
     query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
     query += 'ON CREATE SET ' ;
@@ -102,13 +99,13 @@ function draftDatamuseResultsQuery(submittedWord, resultsArray){
       query += display + '.defHeadWord="' + result.defHeadWord + '", ';
     }
     query += display + '.freq=' + freq + ', ' +
-      display + '.type=[' + type + '], ' +
-      display + '.queryCount=0, ' +
-      display + '.suggestionCount=0 \n' ;
+            display + '.type=[' + type + '], ' +
+            display + '.queryCount=0, ' +
+            display + '.suggestionCount=0 \n' ;
 
     query += 'ON MATCH SET ' +
-      display + '.freq=' + freq + ', ' +
-      display + '.type=[' + type + '], ' ;
+            display + '.freq=' + freq + ', ' +
+            display + '.type=[' + type + '], ' ;
     if(result.hasOwnProperty('defs')) { //array of strings
       query += display + '.defs=[' + result.defs + '], ';
     }
@@ -117,10 +114,9 @@ function draftDatamuseResultsQuery(submittedWord, resultsArray){
     for(var p = 0 ; p < arrayParams.length ; p++){
       query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
     }
-  })
-  // debug(query);
-  return query
-}
+  }
 
+  return query;
+}
 
 module.exports = new DataExplorer();

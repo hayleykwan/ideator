@@ -8,7 +8,7 @@ function DataLoader(){
 }
 
 DataLoader.prototype.search = function(submittedWord){
-  // graphenedb.clearAllWords();
+  graphenedb.clearAllWords(); 
 
   return graphenedb.existsWord(submittedWord).then((exists) => {
     debug(exists);

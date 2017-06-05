@@ -63,7 +63,6 @@ var query = function(word, param, meaning){
     while(i < data.length){
       var d = data[i];
       if (utils.contains(blacklist, d.word)) {
-        debug(d.word);
         data.splice(i, 1);
       } else {
         delete d.score;
