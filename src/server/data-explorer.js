@@ -43,7 +43,8 @@ function draftDatamuseResults(word, array){
        display = result.display,
           freq = result.freq,
           type = result.type,
-          arrayParams = result.link;
+          arrayParams = result.link,
+          deg  = result.deg;
 
     query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
     query += 'ON CREATE SET ' ;
@@ -54,9 +55,8 @@ function draftDatamuseResults(word, array){
       query += display + '.defHeadWord="' + result.defHeadWord + '", ';
     }
     query += display + '.freq=' + freq + ', ' +
-            display + '.type=[' + type + '], ' +
-            display + '.queryCount=0, ' +
-            display + '.suggestionCount=0 \n' ;
+             display + '.type=[' + type + '], ' +
+             display + '.queryCount=0 \n ';
 
     query += 'ON MATCH SET ' ;
     if(result.hasOwnProperty('defs')) { //array of strings
@@ -65,7 +65,8 @@ function draftDatamuseResults(word, array){
     query += display + '.freq=' + freq + ', ' +
             display + '.type=[' + type + '] \n' ;
 
-    query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams+'"}]-('+display+')\n';
+    query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams+'", deg: "'+deg+'"}]-('+display+')\n';
+    // query += 'ON CREATE SET usageCount=0 \n'
     // for(var p = 0 ; p < arrayParams.length ; p++){
     //   query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
     // }

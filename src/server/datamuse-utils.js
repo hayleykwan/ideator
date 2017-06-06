@@ -17,8 +17,8 @@ function DatamuseQuery(){
     'rel_par': 'is part of'   ,
     'rel_bga': 'followed by'  ,
     'rel_bgb': 'preceeded by' ,
-    'sp':      'spells like'  ,
-    'sl':      'sounds like'  ,
+    // 'sp':      'spells like'  ,
+    // 'sl':      'sounds like'  ,
     'rel_rhy': 'rhymes perfectly'  ,
     // 'rel_nry': 'rhymes kind of'  ,
     // 'rel_hom': 'known homophones' ,
@@ -77,11 +77,13 @@ var query = function(word, param, meaning){
         // d['link'] = [meaning]; //no filtering duplicates
         d['link'] = meaning;
 
+        d['deg'] = contains(['ml','rel_syn','rel_ant','rel_spc','rel_gen'], param) ? 1 : 0;
+
         if(d.hasOwnProperty('defs')) {
           var newDefs = [];
           d.defs.forEach(str => {
             var s = str.replace(/\t/g, ": ");
-            newDefs.push('"' + s.replace(/["'-\\]/g, "") + '"')
+            newDefs.push('"' + s.replace(/["'-]/, "")+ '"') 
           });
           delete d.defs;
           d['defs'] = newDefs;
@@ -104,13 +106,14 @@ var query = function(word, param, meaning){
   .catch(error => {console.log(error); });
 }
 
-function indexOfWordInResults(array, obj){
+
+function contains(array, obj){
   for(var i = 0 ; i < array.length ; i++){
-    if(array[i].wordId === obj.wordId){
-      return i;
+    if(array[i] === obj){
+      return true;
     }
   }
-  return -1;
+  return false;
 }
 
 function draftMultiParamsQuery(word, params){

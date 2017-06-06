@@ -22,7 +22,9 @@ DataLoader.prototype.search = function(word){
           res.records.forEach(d => {
             var r = {};
             r['link'] = d.get(0).properties.type;
+            r['deg'] = parseFloat(d.get(0).properties.deg);
             r['wordId'] = d.get(1).properties.wordId;
+
             results.push(r);
           })
         }
