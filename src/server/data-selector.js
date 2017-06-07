@@ -1,9 +1,9 @@
 var debug = require('debug')('ideator:server:data-selector');
 var graphenedb = require('./graphenedb');
 var utils = require('./utils');
-// var natural = require('natural');
-// var soundex = natural.SoundEx;
-// var metaphone = natural.Metaphone;
+var natural = require('natural');
+var soundex = natural.SoundEx;
+var metaphone = natural.Metaphone;
 
 function DataSelector(){
   var submittedWord;
@@ -28,12 +28,12 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
    * 3. Select:
    *     a/ based on number of sug required
    */
-  debug(allRelations);
+  // debug(allRelations);
   var nodups = mergeDuplicates(allRelations);
-  // var filtered = filterAll(nodups);
+  var filtered = filterAll(nodups);
 
   // var ordered = filtered.order();
-  var selected = nodups.slice(0,num);
+  var selected = filtered.slice(0,num);
   //update queryCount, lastQueried, usageCount
   return selected;
 
@@ -42,21 +42,26 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
 var filterAll = function(nodups){
   var filterNode = nodups.filter(filterGraph);
   var filterWord = filterNode.filter(filterSubmitted);
-  var filterSugg = filterWord.reduce(function(acc, val){
-    if(match){
-      return acc;
-    } else {
-      return acc.push(val);
-    }
-  }, []);
+  var filterSugg = filterWord.reduce(
+    function(acc, val){
+      if(!match){
+        return acc;
+      } else {
+        return acc.concat(val);
+      }
+    },
+    []
+  );
+  debug('final result after filtering');
   debug(filterSugg);
-  return filterWord;
+  return filterSugg;
 }
 
 var match = function(acc, val){
   for(var i = 0 ; i< acc.length ; i++){
     if(soundex.compare(acc[i].wordId, val.wordId) ||
       natural.JaroWinklerDistance(acc[i].wordId, val.wordId) > 0.8){
+        debug('matching suggestions')
         debug(val.wordId);
         return true;
       }
