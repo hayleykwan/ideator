@@ -1,9 +1,9 @@
 var debug = require('debug')('ideator:server:data-selector');
 var graphenedb = require('./graphenedb');
 var utils = require('./utils');
-var natural = require('natural');
-var soundex = natural.SoundEx;
-var metaphone = natural.Metaphone;
+// var natural = require('natural');
+// var soundex = natural.SoundEx;
+// var metaphone = natural.Metaphone;
 
 function DataSelector(){
   var submittedWord;
@@ -30,7 +30,7 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
    */
   debug(allRelations);
   var nodups = mergeDuplicates(allRelations);
-  var filtered = filterAll(nodups);
+  // var filtered = filterAll(nodups);
 
   // var ordered = filtered.order();
   var selected = nodups.slice(0,num);
@@ -42,14 +42,14 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
 var filterAll = function(nodups){
   var filterNode = nodups.filter(filterGraph);
   var filterWord = filterNode.filter(filterSubmitted);
-  // var filterSugg = filterWord.reduce(function(acc, val){
-  //   if(match){
-  //     return acc;
-  //   } else {
-  //     return acc.push(val);
-  //   }
-  // }, []);
-  // debug(filterSugg);
+  var filterSugg = filterWord.reduce(function(acc, val){
+    if(match){
+      return acc;
+    } else {
+      return acc.push(val);
+    }
+  }, []);
+  debug(filterSugg);
   return filterWord;
 }
 
