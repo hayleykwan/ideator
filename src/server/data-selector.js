@@ -7,13 +7,15 @@ var metaphone = natural.Metaphone;
 
 function DataSelector(){
   var submittedWord;
+  var deg;
+  var num;
   var nodes;
 }
 
 DataSelector.prototype.select = function(submitted, currentGraph, allRelations) {
   submittedWord = submitted.word;
-  var deg = submitted.degConnection;
-  var num = submitted.numSuggestion;
+  deg = submitted.degConnection;
+  num = submitted.numSuggestion;
   nodes = currentGraph.nodes;
 
   /* 0. Merge duplicates, update degs
@@ -28,15 +30,84 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
    * 3. Select:
    *     a/ based on number of sug required
    */
-  // debug(allRelations);
   var nodups = mergeDuplicates(allRelations);
   var filtered = filterAll(nodups);
-
-  // var ordered = filtered.order();
-  var selected = filtered.slice(0,num);
+  var ordered = sortAll(filtered);
+  var selected = ordered.slice(0,num);
   //update queryCount, lastQueried, usageCount
+
+  // for(var i = 0 ; i < selected.length ; i++){
+  //   graphenedb.updateQueryCount(selected[i].wordId);
+  //   graphenedb.updateLink(selected[i].word)
+  // }
   return selected;
 
+}
+
+var sortAll = function(array){
+  var degree = sortByDegreeCloseness(array);
+  var degDone = degree.slice(0,100);
+
+  // var popularWord = sortByWordPopularity(degDone);
+
+  var mostLinks = sortByMostLinks(degDone);
+  var linkDone = mostLinks.slice(0,50);
+
+  var popularLink = sortByLinkPopularity(linkDone);
+  var result = popularLink.slice(0,25);
+
+  var degreeAgain = sortByDegreeCloseness(result);
+  debug(degreeAgain);
+  return degreeAgain;
+}
+
+var sortByDegreeCloseness = function(array){
+  var mapped = array.map(function(val, i){
+    return {index: i, value: Math.abs(val.deg - deg)}
+  })
+  mapped.sort(function(a,b){
+    return a.value - b.value;
+  });
+  var result = mapped.map(function(val){
+    return array[val.index]
+  });
+  return result;
+}
+
+var sortByLinkPopularity = function(array){
+  array.sort(function(a,b){
+    if(a.usageCount > b.usageCount){
+      return -1;
+    } else if (a.usageCount < b.usageCount){
+      return 1;
+    }
+    return 0;
+  });
+  return array;
+}
+
+var sortByWordPopularity = function(array){
+  array.sort(function(a,b){
+    if(a.queryCount > b.queryCount){
+      return -1;
+    } else if (a.queryCount < b.queryCount){
+      return 1;
+    }
+    return 0;
+  });
+  return array;
+}
+
+var sortByMostLinks = function(array){
+  array.sort(function(a,b){
+    if(a.link.length > b.link.length){
+      return -1;
+    } else if (a.link.length < b.link.length){
+      return 1;
+    }
+    return 0;
+  });
+  return array;
 }
 
 var filterAll = function(nodups){
@@ -52,8 +123,6 @@ var filterAll = function(nodups){
     },
     []
   );
-  debug('final result after filtering');
-  debug(filterSugg);
   return filterSugg;
 }
 

@@ -23,8 +23,9 @@ DataLoader.prototype.search = function(word){
             var r = {};
             r['link'] = d.get(0).properties.type;
             r['deg'] = parseFloat(d.get(0).properties.deg);
+            r['usageCount'] = parseFloat(d.get(0).properties.usageCount);
             r['wordId'] = d.get(1).properties.wordId;
-
+            r['queryCount'] = parseFloat(d.get(1).properties.queryCount);
             results.push(r);
           })
         }

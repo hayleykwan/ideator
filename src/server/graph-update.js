@@ -20,7 +20,7 @@ function update(currentGraph, submittedWord, datamuseRe){
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
-            "type": datamuseRe[i].link,
+            "type": datamuseRe[i].link[0],
             "notes": ''
           };
           // console.log(link);
@@ -39,7 +39,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
           "target": node.id,
-          "type": datamuseRe[i].link,
+          "type": datamuseRe[i].link[0],
           "notes": ''
         };
         currentGraph.links.push(link);
@@ -66,7 +66,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         var link = {
           "source": centre.id,
           "target": currentGraph.nodes[targetIndex].id,
-          "type": datamuseRe[i].link,
+          "type": datamuseRe[i].link[0],
           "notes": ''
         };
         currentGraph.links.push(link);
@@ -83,7 +83,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         var link = {     //create new link
           "source": centre.id,
           "target": node.id,
-          "type": datamuseRe[i].link,
+          "type": datamuseRe[i].link[0],
           "notes": ''
         };
         currentGraph.links.push(link);

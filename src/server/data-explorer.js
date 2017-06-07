@@ -25,8 +25,8 @@ DataExplorer.prototype.explore = function(word){
 }
 
 function writeResults(word, resultsArray) {
-  for(var i = 0 ; i < resultsArray.length ; i+=4) {
-    var max = Math.min(i+4, resultsArray.length);
+  for(var i = 0 ; i < resultsArray.length ; i+=2) {
+    var max = Math.min(i+2, resultsArray.length);
     var partResult = resultsArray.slice(i, max);
     var query = draftDatamuseResults(word, partResult);
     graphenedb.write(query);
@@ -58,15 +58,16 @@ function draftDatamuseResults(word, array){
              display + '.type=[' + type + '], ' +
              display + '.queryCount=0 \n ';
 
-    query += 'ON MATCH SET ' ;
-    // if(result.hasOwnProperty('defs')) { //array of strings
-    //   query += display + '.defs=[' + result.defs + '], ';
-    // }
-    query += display + '.freq=' + freq + ', ' +
-            display + '.type=[' + type + '] \n' ;
+    // query += 'ON MATCH SET ' ;
+    // // if(result.hasOwnProperty('defs')) { //array of strings
+    // //   query += display + '.defs=[' + result.defs + '], ';
+    // // }
+    // query += display + '.freq=' + freq + ', ' +
+    //         display + '.type=[' + type + '] \n' ;
 
-    query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams+'", deg: "'+deg+'"}]-('+display+')\n';
-    // query += 'ON CREATE SET usageCount=0 \n'
+    query += 'MERGE ('+ submitted +')-['+submitted+'_'+display+
+      ':Link {type: "'+arrayParams+'", deg: "'+deg+'"}]-('+display+')\n';
+    query += 'ON CREATE SET '+submitted+'_'+display+'.usageCount=0 \n';
     // for(var p = 0 ; p < arrayParams.length ; p++){
     //   query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';
     // }
