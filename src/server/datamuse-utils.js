@@ -58,7 +58,8 @@ var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
   query['max'] = 60;
-  query['md'] = 'fpd';
+  query['md'] = 'fp';
+  // query['md'] = 'fpd';
   return datamuse.words(query).then( data => {
     var i = 0;
     while(i < data.length){
@@ -79,15 +80,15 @@ var query = function(word, param, meaning){
 
         d['deg'] = contains(['ml','rel_syn','rel_ant','rel_spc','rel_gen'], param) ? 1 : 0;
 
-        if(d.hasOwnProperty('defs')) {
-          var newDefs = [];
-          d.defs.forEach(str => {
-            var s = str.replace(/\t/g, ": ");
-            newDefs.push('"' + s.replace(/["'-]/, "")+ '"') 
-          });
-          delete d.defs;
-          d['defs'] = newDefs;
-        }
+        // if(d.hasOwnProperty('defs')) {
+        //   var newDefs = [];
+        //   d.defs.forEach(str => {
+        //     var s = str.replace(/\t/g, ": ");
+        //     newDefs.push("'" + s.replace(/["'`-]/, "")+ "'");
+        //   });
+        //   delete d.defs;
+        //   d['defs'] = newDefs;
+        // }
 
         d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
         if(d.tags.length > 0) {

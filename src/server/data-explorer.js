@@ -48,20 +48,20 @@ function draftDatamuseResults(word, array){
 
     query += 'MERGE (' + display + ':Word {wordId: "' + wordId + '"}) \n';
     query += 'ON CREATE SET ' ;
-    if(result.hasOwnProperty('defs')) {
-      query += display + '.defs=[' + result.defs + '], ';
-    }
-    if(result.hasOwnProperty('defHeadWord')){
-      query += display + '.defHeadWord="' + result.defHeadWord + '", ';
-    }
+    // if(result.hasOwnProperty('defs')) {
+    //   query += display + '.defs=[' + result.defs + '], ';
+    // }
+    // if(result.hasOwnProperty('defHeadWord')){
+    //   query += display + '.defHeadWord="' + result.defHeadWord + '", ';
+    // }
     query += display + '.freq=' + freq + ', ' +
              display + '.type=[' + type + '], ' +
              display + '.queryCount=0 \n ';
 
     query += 'ON MATCH SET ' ;
-    if(result.hasOwnProperty('defs')) { //array of strings
-      query += display + '.defs=[' + result.defs + '], ';
-    }
+    // if(result.hasOwnProperty('defs')) { //array of strings
+    //   query += display + '.defs=[' + result.defs + '], ';
+    // }
     query += display + '.freq=' + freq + ', ' +
             display + '.type=[' + type + '] \n' ;
 

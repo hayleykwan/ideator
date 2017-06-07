@@ -34,8 +34,33 @@ module.exports = {
       }
     }
     return false;
+  },
+
+  containMatchWordId: function(array, obj){
+    for(var i = 0 ; i < array.length ; i++){
+      if(array[i].wordId === obj){
+        return i;
+      }
+    }
+    return -1;
+  },
+
+  containMatchNodeId: function(array, obj){
+    for(var i = 0 ; i < array.length; i++){
+      if(array[i].id === obj){
+        return true;
+      }
+    }
+    return false;
+  },
+
+  containMatchObject: function(array, obj){
+    for(var i = 0 ; i < array.length ; i++){
+      if(array[i] === obj){
+        return true;
+      }
+    }
+    return false;
   }
-
-
 
 }

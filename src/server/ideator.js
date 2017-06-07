@@ -21,9 +21,9 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
       return 0;
     } else {
       debug(results.length);
-      var selected = dataSelector.select(submitted, results);
+      var selected = dataSelector.select(submitted, currentGraph, results);
       var newGraph = graphUpdate(currentGraph, word, selected);
-      debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       return JSON.stringify(newGraph);
     }
   })
