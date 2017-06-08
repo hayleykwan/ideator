@@ -18,18 +18,6 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
   num = submitted.numSuggestion;
   nodes = currentGraph.nodes;
 
-  /* 0. Merge duplicates, update degs
-   * 1. Filter: submittedWord vs suggestion, suggestion vs suggestion
-   *     a/ no words that are similar to given word in spelling and pronounciation
-   *     b/ no current nodes
-   * 2. Order:
-   *     a/ word with most number of params
-   *     b/ deg in the relation based on the params (set in data explorer)
-   *     c/ word with highest number of queryCount
-   *     d/ link with highest number of usageCount
-   * 3. Select:
-   *     a/ based on number of sug required
-   */
   var nodups = mergeDuplicates(allRelations);
   var filtered = filterAll(nodups);
   var ordered = sortAll(filtered);
@@ -45,19 +33,27 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
 }
 
 var sortAll = function(array){
+  debug(array.length);
   var degree = sortByDegreeCloseness(array);
-  var degDone = degree.slice(0,100);
+  var degreeDone = degree.slice(0, Math.round(degree.length*0.8));
 
-  // var popularWord = sortByWordPopularity(degDone);
+  var mostLinks = sortByMostLinks(degreeDone);
+  var mostLinksDone = mostLinks.slice(0, Math.round(mostLinks.length*0.8));
 
-  var mostLinks = sortByMostLinks(degDone);
-  var linkDone = mostLinks.slice(0,50);
+  var freq = sortByFreq(mostLinksDone);
+  var freqDone = freq.slice(0, Math.round(freq.length*0.8));
 
-  var popularLink = sortByLinkPopularity(linkDone);
-  var result = popularLink.slice(0,25);
+  var popularWord = sortByWordPopularity(freqDone);
+  var wordDone = popularWord.slice(0, Math.round(popularWord.length*0.8));
 
-  var degreeAgain = sortByDegreeCloseness(result);
-  debug(degreeAgain);
+  var popularLink = sortByLinkPopularity(wordDone);
+  var linkDone = popularLink.slice(0, Math.round(popularLink.length*0.8));
+
+  var mostLinks = sortByMostLinks(linkDone);
+  var mostLinksDone = mostLinks.slice(0, Math.round(mostLinks.length*0.8));
+
+  var degreeAgain = sortByDegreeCloseness(mostLinksDone);
+  debug(degreeAgain.length);
   return degreeAgain;
 }
 
@@ -74,11 +70,11 @@ var sortByDegreeCloseness = function(array){
   return result;
 }
 
-var sortByLinkPopularity = function(array){
+var sortByFreq = function(array){
   array.sort(function(a,b){
-    if(a.usageCount > b.usageCount){
+    if(a.freq > b.freq){
       return -1;
-    } else if (a.usageCount < b.usageCount){
+    } else if (a.freq < b.freq){
       return 1;
     }
     return 0;
@@ -86,15 +82,31 @@ var sortByLinkPopularity = function(array){
   return array;
 }
 
+var sortByLinkPopularity = function(array){
+  if(array[0].hasOwnProperty('usageCount')){
+    array.sort(function(a,b){
+      if(a.usageCount > b.usageCount){
+        return -1;
+      } else if (a.usageCount < b.usageCount){
+        return 1;
+      }
+      return 0;
+    });
+  }
+  return array;
+}
+
 var sortByWordPopularity = function(array){
-  array.sort(function(a,b){
-    if(a.queryCount > b.queryCount){
-      return -1;
-    } else if (a.queryCount < b.queryCount){
-      return 1;
-    }
-    return 0;
-  });
+  if(array[0].hasOwnProperty('queryCount')){
+    array.sort(function(a,b){
+      if(a.queryCount > b.queryCount){
+        return -1;
+      } else if (a.queryCount < b.queryCount){
+        return 1;
+      }
+      return 0;
+    });
+  }
   return array;
 }
 

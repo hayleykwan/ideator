@@ -26,6 +26,7 @@ DataLoader.prototype.search = function(word){
             r['usageCount'] = parseFloat(d.get(0).properties.usageCount);
             r['wordId'] = d.get(1).properties.wordId;
             r['queryCount'] = parseFloat(d.get(1).properties.queryCount);
+            r['freq'] = parseFloat(d.get(1).properties.freq);
             results.push(r);
           })
         }
