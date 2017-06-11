@@ -270,19 +270,33 @@ class ForceLayout extends React.Component{
   }
 
   removeNode(d) {
-    if(!d.submitted){
-      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
-      var i = 0;
-      while(i < this.newLinks.length){
-        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-          this.newLinks.splice(i, 1);
-        } else {
-          i++;
+    this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+    if(d.submitted){
+      for(var i = 0 ; i < this.newLinks.length ; i++){
+        if(this.newLinks[i].source.id === d.id){
+          var index = indexOfWord(this.newNodes, this.newLinks[i].target.id);
+          if(!this.newNodes[index].submitted){
+            this.newNodes.splice(index, 1);
+          }
+        }else if (this.newLinks[i].target.id === d.id){
+          var index = indexOfWord(this.newNodes, this.newLinks[i].source.id);
+          if(!this.newNodes[index].submitted){
+            this.newNodes.splice(index, 1);
+          }
         }
       }
-    }else {
-      // TODO: remove all linked nodes
     }
+    var i = 0;
+    while(i < this.newLinks.length){
+      if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
+        this.newLinks.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    console.log(this.newNodes);
+    console.log(this.newLinks);
 
     this.redraw(this.newNodes, this.newLinks);
     this.props.removeNode(this.newNodes, this.newLinks);
