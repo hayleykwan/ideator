@@ -16,6 +16,7 @@ export default class Graph extends React.Component{
             nodes={this.props.data.nodes}
             links={this.props.data.links}
             backUpData={this.props.backUpData}
+            history={this.props.history}
             width={this.props.width}
             height={this.props.height}
             nodeDoubleClick={this.props.nodeDoubleClick}

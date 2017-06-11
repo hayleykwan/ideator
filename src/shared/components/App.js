@@ -14,7 +14,8 @@ export default class App extends Component {
 
     this.state = {
       data: {nodes: [], links: []},
-      backUpData: [],
+      backUpData: {},
+      history: [],
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -77,7 +78,10 @@ export default class App extends Component {
       this.socket.emit('search', submitted, currentGraphJSON);
     };
 
-    //clear text input
+    var history = this.state.history;
+    history.push(submitted);
+    this.setState({history: history});
+
     var req = this.state.request;
     req.text = '';
     this.setState({request: req});
@@ -91,7 +95,9 @@ export default class App extends Component {
         // show notif that no results
       }
       if(backUpData.length > 0){
-        self.setState({backUpData: backUpData});
+        var backUp = self.state.backUpData;
+        backUp[submitted.word] = backUpData;
+        self.setState({backUpData: backUp});
       }
     });
   }
@@ -126,6 +132,7 @@ export default class App extends Component {
               graphType="force"
               data={this.state.data}
               backUpData={this.state.backUpData}
+              history={this.state.history}
               width="1000" //should be screen size
               height="420"
               nodeDoubleClick={this.nodeDoubleClick}

@@ -104,7 +104,6 @@ class ForceLayout extends React.Component{
     var nodes = graph.selectAll('.node')
       .data(newNodes, function(d) {return d.id});
     nodes.exit()
-      .transition().attr('r', 0)
       .remove();
     nodes.enter()
       .append('g')
@@ -124,8 +123,8 @@ class ForceLayout extends React.Component{
           d3.select(this)
             .select('.node-option-reload')
             .style("visibility", "visible");
-          self.nodeMouseover(d);
         }
+        self.nodeMouseover(d);
       })
       .on('mouseout', function(d) {
         d3.select(this)
@@ -271,33 +270,45 @@ class ForceLayout extends React.Component{
   }
 
   removeNode(d) {
-    this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
-    var i = 0;
-    while(i < this.newLinks.length){
-      if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-        this.newLinks.splice(i, 1);
-      } else {
-        i++;
+    if(!d.submitted){
+      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+      var i = 0;
+      while(i < this.newLinks.length){
+        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
+          this.newLinks.splice(i, 1);
+        } else {
+          i++;
+        }
       }
+    }else {
+      // TODO: remove all linked nodes
     }
+
     this.redraw(this.newNodes, this.newLinks);
     this.props.removeNode(this.newNodes, this.newLinks);
   }
 
   reloadNode(d){
+    // find out how many relationships it has
+
+    // if one, get its submitted source
+    // search submitted source's back up
+
+    // else
+    var history = this.props.history;
+    var submittedWord = history[0].word;
     var backUpData = this.props.backUpData;
-    var newNodeData = backUpData.shift();
+    var newNodeData = backUpData[submittedWord].shift();
 
     var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
     var linkToChange = findLink(this.newLinks, d.id);
-    console.log(linkToChange);
 
     var oldData = {
       wordId: nodeToChange.id,
       imageScr: nodeToChange.imageScr,
       link: linkToChange.type
     };
-    backUpData.push(oldData);
+    backUpData[submittedWord].push(oldData);
 
     var node = {
       "id": newNodeData.wordId,
