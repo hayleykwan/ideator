@@ -32,9 +32,9 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('search', function(submitted, currentGraphJSON){
-    ideator.search(submitted, currentGraphJSON).then(newGraphJSON => {
+    ideator.search(submitted, currentGraphJSON).then(result => {
       // debug(newGraphJSON); // either 0 or graphjson
-      socket.emit('response', newGraphJSON);
+      socket.emit('response', result.newGraphJSON, result.backUpResults);
     });
   });
 

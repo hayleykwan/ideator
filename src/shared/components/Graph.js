@@ -15,10 +15,12 @@ export default class Graph extends React.Component{
           <ForceLayout
             nodes={this.props.data.nodes}
             links={this.props.data.links}
+            backUpData={this.props.backUpData}
             width={this.props.width}
             height={this.props.height}
             nodeDoubleClick={this.props.nodeDoubleClick}
-            removeNode={this.props.removeNode}/>
+            removeNode={this.props.removeNode}
+            reloadNode={this.props.reloadNode}/>
       );
     }
   }

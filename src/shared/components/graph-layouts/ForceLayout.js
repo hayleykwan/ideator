@@ -22,6 +22,7 @@ class ForceLayout extends React.Component{
     this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
     this.enterNode = this.enterNode.bind(this);
     this.removeNode = this.removeNode.bind(this);
+    this.reloadNode = this.reloadNode.bind(this);
     this.linkMouseover = this.linkMouseover.bind(this);
     this.linkMouseout = this.linkMouseout.bind(this);
   }
@@ -119,10 +120,12 @@ class ForceLayout extends React.Component{
         d3.select(this)
           .select('.node-option-remove')
           .style("visibility", "visible");
-        d3.select(this)
-          .select('.node-option-reload')
-          .style("visibility", "visible");
-        self.nodeMouseover(d);
+        if(!d.submitted){
+          d3.select(this)
+            .select('.node-option-reload')
+            .style("visibility", "visible");
+          self.nodeMouseover(d);
+        }
       })
       .on('mouseout', function(d) {
         d3.select(this)
@@ -233,8 +236,8 @@ class ForceLayout extends React.Component{
       .attr('class', 'node-option-remove')
       .style("visibility", "hidden")
       .on('click', function (d) {
-          d3.event.stopPropagation();
-          self.removeNode(d);
+        d3.event.stopPropagation();
+        self.removeNode(d);
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     remove.append('circle')
@@ -252,7 +255,7 @@ class ForceLayout extends React.Component{
       .style("visibility", "hidden")
       .on('click', function (d) {
         d3.event.stopPropagation();
-        console.log('reload');
+        self.reloadNode(d);
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     reload.append('circle')
@@ -280,9 +283,63 @@ class ForceLayout extends React.Component{
     this.redraw(this.newNodes, this.newLinks);
     this.props.removeNode(this.newNodes, this.newLinks);
   }
+
+  reloadNode(d){
+    var backUpData = this.props.backUpData;
+    var newNodeData = backUpData.shift();
+
+    var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+    var linkToChange = findLink(this.newLinks, d.id);
+    console.log(linkToChange);
+
+    var oldData = {
+      wordId: nodeToChange.id,
+      imageScr: nodeToChange.imageScr,
+      link: linkToChange.type
+    };
+    backUpData.push(oldData);
+
+    var node = {
+      "id": newNodeData.wordId,
+      "isPinned": false,
+      "submitted": false,
+      "imageSrc": newNodeData.imageSrc,
+      "notes": ''
+    }
+    this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+    this.newNodes.push(node);
+
+    var link = {
+      "source": linkToChange.source.id === d.id ? newNodeData.wordId : linkToChange.source.id,
+      "target": linkToChange.target.id === d.id ? newNodeData.wordId : linkToChange.target.id,
+      "type": newNodeData.link
+    }
+    this.newLinks.push(link);
+
+    var i = 0;
+    while(i < this.newLinks.length){
+      if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
+        this.newLinks.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    this.redraw(this.newNodes, this.newLinks);
+    this.props.reloadNode(this.newNodes, this.newLinks, backUpData);
+  }
 }
 
-var indexOfWord = (array, word) => {
+function findLink(array, word){
+  for(var i = 0 ; i < array.length; i++){
+    if(array[i].source.id === word || array[i].target.id === word){
+      return array[i];
+    }
+  }
+  return 0;
+}
+
+function indexOfWord(array, word) {
   for(var i = 0 ; i < array.length ; i++){
     if(array[i].id === word){
       return i;
@@ -291,7 +348,7 @@ var indexOfWord = (array, word) => {
   return -1;
 }
 
-var wrap = (text, width) => {
+function wrap(text, width) {
   text.each(function () {
     var text = d3.select(this),
         words = text.text().split(/\s+/).reverse(), //return array
@@ -317,7 +374,7 @@ var wrap = (text, width) => {
   });
 }
 
-var enterLinkLine = (selection) => {
+function enterLinkLine(selection) {
   selection
     .style('stroke', (d) => color(d.type))
     .style('stroke-width', 7)
@@ -325,7 +382,7 @@ var enterLinkLine = (selection) => {
     .style('stroke-opacity', 0.5);
 };
 
-var enterLinkLabel = (selection) => {
+function enterLinkLabel(selection) {
   selection
     .attr('fill', 'Black')
     .style('font-size', '11px')
@@ -335,11 +392,11 @@ var enterLinkLabel = (selection) => {
     .style('fill-opacity', 0);
 }
 
-var updateNode = (selection) => {
+function updateNode(selection) {
   selection.attr('transform', (d) => "translate(" + d.x + "," + d.y + ")");
 };
 
-var updateLink = (selection) => {
+function updateLink(selection) {
   selection
     .attr('x1', (d) => d.source.x)
     .attr('y1', (d) => d.source.y)
@@ -347,13 +404,13 @@ var updateLink = (selection) => {
     .attr('y2', (d) => d.target.y);
 };
 
-var updateLinkLabel = (selection) => {
+function updateLinkLabel(selection) {
   selection
     .attr('x', (d) => (d.source.x + d.target.x)/2 )
     .attr('y', (d) => (d.source.y + d.target.y)/2 );
 }
 
-var updateGraph = (selection) => {
+function updateGraph(selection) {
   selection.selectAll('.node')
     .call(updateNode);
   selection.selectAll('.link-line')

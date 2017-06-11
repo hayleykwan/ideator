@@ -21,19 +21,37 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
   var nodups = mergeDuplicates(allRelations);
   var filtered = filterAll(nodups);
   var ordered = sortAll(filtered);
+  // debug(ordered);
   var selected = ordered.slice(0,num);
-  //update queryCount, lastQueried, usageCount
+  // updateDatabase(selected);
+  return ordered;
+}
 
-  // for(var i = 0 ; i < selected.length ; i++){
-  //   graphenedb.updateQueryCount(selected[i].wordId);
-  //   graphenedb.updateLink(selected[i].word)
-  // }
-  return selected;
+var updateDatabase = function(array){
+  // update query Count and lastQueried for submittedWord
+  var query = 'MATCH (centreWord:Word {wordId:"'+submittedWord+'"}) \n';
+  query += 'SET centreWord.queryCount = centreWord.queryCount + 1, ';
+  query += 'centreWord.lastQueried = timestamp() \n';
+  graphenedb.write(query);
 
+  var length = array.length;
+  array.forEach(a => {
+    var newdeg = ((a.deg * length) + deg ) / (length + 1);
+    a.link.forEach(l => {
+      debug(l);
+      var query = 'MATCH (centreWord:Word {wordId:"'+submittedWord+'"})';
+      query += '-[l:Link {type: "'+l+'"}]';
+      query += '-(result:Word {wordId:"'+a.wordId+'"}) \n';
+      query += 'SET l.usageCount = l.usageCount + 1, ';
+      query += 'l.deg = ((l.deg * length) + deg) / (length + 1) \n';
+      graphenedb.write(query);
+    })
+  })
 }
 
 var sortAll = function(array){
   debug(array.length);
+
   var degree = sortByDegreeCloseness(array);
   var degreeDone = degree.slice(0, Math.round(degree.length*0.8));
 
@@ -42,6 +60,9 @@ var sortAll = function(array){
 
   var freq = sortByFreq(mostLinksDone);
   var freqDone = freq.slice(0, Math.round(freq.length*0.8));
+
+  // var degree = sortByDegreeCloseness(freqDone);
+  // var degreeDone = degree.slice(0, Math.round(degree.length*0.8));
 
   var popularWord = sortByWordPopularity(freqDone);
   var wordDone = popularWord.slice(0, Math.round(popularWord.length*0.8));

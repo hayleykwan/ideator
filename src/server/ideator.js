@@ -21,10 +21,17 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
       return 0;
     } else {
       debug(results.length);
-      var selected = dataSelector.select(submitted, currentGraph, results);
+      var allSelected = dataSelector.select(submitted, currentGraph, results);
+      // find images
+      var selected = allSelected.slice(0,num);
+      var backUp = allSelected.slice(num, allSelected.length);
       var newGraph = graphUpdate(currentGraph, word, selected);
       // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
-      return JSON.stringify(newGraph);
+      var result = {
+        newGraphJSON: JSON.stringify(newGraph),
+        backUpResults: JSON.stringify(backUp)
+      }
+      return result;
     }
   })
   .catch(error => { debug(error); });

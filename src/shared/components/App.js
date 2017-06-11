@@ -14,6 +14,7 @@ export default class App extends Component {
 
     this.state = {
       data: {nodes: [], links: []},
+      backUpData: [],
       request: {
         numSuggestion: 6,
         degConnection: 1,
@@ -28,6 +29,7 @@ export default class App extends Component {
     this.updateData = this.updateData.bind(this);
     this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
     this.removeNode = this.removeNode.bind(this);
+    this.reloadNode = this.reloadNode.bind(this);
   }
 
   componentWillMount(){
@@ -81,9 +83,15 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(newGraphJSON){
+    this.socket.on('response', function(newGraphJSON, backUpDataResults){
+      var backUpData = JSON.parse(backUpDataResults);
       if(newGraphJSON !== 0){
         self.updateData(newGraphJSON);
+      } else {
+        // show notif that no results
+      }
+      if(backUpData.length > 0){
+        self.setState({backUpData: backUpData});
       }
     });
   }
@@ -102,6 +110,12 @@ export default class App extends Component {
     // console.log(this.state.data);
   }
 
+  reloadNode(newNodes, newLinks, backUpData){
+    var data = {nodes: newNodes, links: newLinks};
+    this.setState({data: data});
+    this.setState({backUpData: backUpData});
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -111,10 +125,12 @@ export default class App extends Component {
             <Graph
               graphType="force"
               data={this.state.data}
+              backUpData={this.state.backUpData}
               width="1000" //should be screen size
               height="420"
               nodeDoubleClick={this.nodeDoubleClick}
               removeNode={this.removeNode}
+              reloadNode={this.reloadNode}
             />
           </div>
           <IdeaToolBar style={styles.toolbar}
