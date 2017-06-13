@@ -295,64 +295,154 @@ class ForceLayout extends React.Component{
       }
     }
 
-    console.log(this.newNodes);
-    console.log(this.newLinks);
-
     this.redraw(this.newNodes, this.newLinks);
     this.props.removeNode(this.newNodes, this.newLinks);
   }
 
   reloadNode(d){
-    // find out how many relationships it has
+    var history = this.props.history; // array
+    var backUpData = this.props.backUpData; // object
 
-    // if one, get its submitted source
-    // search submitted source's back up
-
-    // else
-    var history = this.props.history;
-    var submittedWord = history[0].word;
-    var backUpData = this.props.backUpData;
-    var newNodeData = backUpData[submittedWord].shift();
-
-    var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
-    var linkToChange = findLink(this.newLinks, d.id);
-
-    var oldData = {
-      wordId: nodeToChange.id,
-      imageScr: nodeToChange.imageScr,
-      link: linkToChange.type
-    };
-    backUpData[submittedWord].push(oldData);
-
-    var node = {
-      "id": newNodeData.wordId,
-      "isPinned": false,
-      "submitted": false,
-      "imageSrc": newNodeData.imageSrc,
-      "notes": ''
-    }
-    this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
-    this.newNodes.push(node);
-
-    var link = {
-      "source": linkToChange.source.id === d.id ? newNodeData.wordId : linkToChange.source.id,
-      "target": linkToChange.target.id === d.id ? newNodeData.wordId : linkToChange.target.id,
-      "type": newNodeData.link
-    }
-    this.newLinks.push(link);
-
-    var i = 0;
-    while(i < this.newLinks.length){
-      if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-        this.newLinks.splice(i, 1);
-      } else {
-        i++;
+    // find out how many submitted it is connected to
+    var submittedWords = [];
+    for(var i  = 0 ; i < this.newLinks.length ; i++){
+      if(this.newLinks[i].source.id === d.id){
+        var index = indexOfWord(this.newNodes, this.newLinks[i].target.id);
+        if(this.newNodes[index].submitted && inHistory(history, this.newLinks[i].target.id)){
+          submittedWords.push(this.newLinks[i].target.id)
+        }
+      } else if (this.newLinks[i].target.id === d.id){
+        var index = indexOfWord(this.newNodes, this.newLinks[i].source.id);
+        if(this.newNodes[index].submitted && inHistory(history, this.newLinks[i].source.id)){
+          submittedWords.push(this.newLinks[i].source.id)
+        }
       }
+    }
+
+    var relevantBackUp = submittedWords.map(function(word){
+      return {word: word, backup: backUpData[word]};
+    });
+    console.log(relevantBackUp.length);
+
+    if(relevantBackUp.length <= 1){
+
+      var backUp = relevantBackUp.pop();
+      var newNodeData = backUp.backup.shift();
+
+      var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+      var linkToChange = findLink(this.newLinks, d.id);
+
+      var oldData = {
+        wordId: nodeToChange.id,
+        imageScr: nodeToChange.imageScr,
+        link: linkToChange.type
+      };
+      backUpData[backUp.word].push(oldData);
+
+      var node = {
+        "id": newNodeData.wordId,
+        "isPinned": false,
+        "submitted": false,
+        "imageSrc": newNodeData.imageSrc,
+        "notes": ''
+      }
+      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+      this.newNodes.push(node);
+
+      var link = {
+        "source": linkToChange.source.id === d.id ? newNodeData.wordId : linkToChange.source.id,
+        "target": linkToChange.target.id === d.id ? newNodeData.wordId : linkToChange.target.id,
+        "type": newNodeData.link[0]
+      }
+      this.newLinks.push(link);
+
+      var i = 0;
+      while(i < this.newLinks.length){
+        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
+          this.newLinks.splice(i, 1);
+        } else {
+          i++;
+        }
+      }
+    } else {
+      // more than one connected links
+      // find common word in relevantBackUp.backup
+      var commonBackUpWordIds = relevantBackUp.slice().shift().backup.reduce(function(res, v){
+        if(res.indexOf(v.wordId) === -1 && relevantBackUp.every(function(a){
+          for(var i = 0 ; i < a.backup.length; i++){
+            if(a.backup[i].wordId === v.wordId){
+              return true;
+            }
+          }
+          return false;
+        })){
+          res.push(v.wordId);
+        }
+        return res;
+      },
+      []
+      );
+
+      // get data from respective relevantBackUp
+      var newNodeData = relevantBackUp.map(function(item){
+        return {
+          linkedto: item.word,
+          backup: item.backup.filter(function(elem){
+            return commonBackUpWordIds.indexOf(elem.wordId) !== -1;
+          })
+          // .sort(function(a,b){
+          //   if(a.wordId < b.wordId) return -1;
+          //   if(a.wordId > b.wordId) return 1;
+          //   return 0;
+          // })
+        }
+      });
+
+      // var oldData = {
+      //   wordId: nodeToChange.id,
+      //   imageScr: nodeToChange.imageScr,
+      //   link: linkToChange.type
+      // }
+
+      relevantBackUp.forEach(item){
+        // find item that matches newNodeData[0].backup[0].wordId in item.backup
+        // get the link
+        // remove the item
+        // push to end of array
+
+        // push old data to item.backup
+        var index = item.backup.
+      }
+
+      var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+
+      var node = {
+        "id": newNodeData[0].backup[0].wordId,
+        "isPinned": false,
+        "submitted": false,
+        "imageSrc": newNodeData[0].backup[0].imageSrc,
+        "notes": ''
+      }
+      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+      this.newNodes.push(node);
+
+
+
     }
 
     this.redraw(this.newNodes, this.newLinks);
     this.props.reloadNode(this.newNodes, this.newLinks, backUpData);
   }
+}
+
+
+function inHistory(history, word){
+  for(var i = 0 ; i < history.length; i++){
+    if(history[i].word === word){
+      return true;
+    }
+  }
+  return false;
 }
 
 function findLink(array, word){
