@@ -329,12 +329,12 @@ class ForceLayout extends React.Component{
       var backUp = relevantBackUp.pop();
       var newNodeData = backUp.backup.shift();
 
-      var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+      //var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
       var linkToChange = findLink(this.newLinks, d.id);
 
       var oldData = {
-        wordId: nodeToChange.id,
-        imageScr: nodeToChange.imageScr,
+        wordId: d.id,
+        imageScr: d.imageScr,
         link: linkToChange.type
       };
       backUpData[backUp.word].push(oldData);
@@ -390,32 +390,41 @@ class ForceLayout extends React.Component{
           backup: item.backup.filter(function(elem){
             return commonBackUpWordIds.indexOf(elem.wordId) !== -1;
           })
-          // .sort(function(a,b){
-          //   if(a.wordId < b.wordId) return -1;
-          //   if(a.wordId > b.wordId) return 1;
-          //   return 0;
-          // })
         }
       });
 
-      // var oldData = {
-      //   wordId: nodeToChange.id,
-      //   imageScr: nodeToChange.imageScr,
-      //   link: linkToChange.type
-      // }
+      //var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
 
-      relevantBackUp.forEach(item){
-        // find item that matches newNodeData[0].backup[0].wordId in item.backup
-        // get the link
-        // remove the item
-        // push to end of array
+      relevantBackUp.forEach(function(item){
+        // removing new backup for updating graph
+        var backUpArray = backUpData[item.word];
+        var index = indexOfWordId(backUpArray, newNodeData[0].backup[0].wordId);
+        var newWord = backUpArray[index].wordId;
+        var newLinkType = backUpArray[index].link;  // get the link
 
-        // push old data to item.backup
-        var index = item.backup.
-      }
+        // find link between item.word and nodeToChange
+        var linkToChange = findLinkBetween(this.newLinks, d.id, item.word);
 
-      var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+        // create new link between newNodeData[0].backup[0].wordId and item.word
+        var link = {
+          "source": linkToChange.source.id === d.id ? newWord : linkToChange.source.id,
+          "target": linkToChange.target.id === d.id ? newWord : linkToChange.target.id,
+          "type": newLinkType[0]
+        }
+        this.newLinks.push(link);
 
+        backUpArray.splice(index, 1);  // remove the item
+
+        var oldData = {
+          wordId: d.id,
+          imageScr: d.imageScr,
+          link: linkToChange.type
+        }
+        backUpArray.push(oldData);
+
+      });
+
+      // only need to remove one node, and push new node
       var node = {
         "id": newNodeData[0].backup[0].wordId,
         "isPinned": false,
@@ -426,7 +435,14 @@ class ForceLayout extends React.Component{
       this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
       this.newNodes.push(node);
 
-
+      var i = 0;
+      while(i < this.newLinks.length){
+        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
+          this.newLinks.splice(i, 1);
+        } else {
+          i++;
+        }
+      }
 
     }
 
@@ -445,6 +461,16 @@ function inHistory(history, word){
   return false;
 }
 
+function findLinkBetween(array, from, to){
+  for(var i = 0 ; i < array.length; i++){
+    if((array[i].source.id === from && array[i].target.id === to) ||
+      (array[i].source.id === to && array[i].target.id === from)){
+      return array[i];
+    }
+  }
+  return 0;
+}
+
 function findLink(array, word){
   for(var i = 0 ; i < array.length; i++){
     if(array[i].source.id === word || array[i].target.id === word){
@@ -452,6 +478,15 @@ function findLink(array, word){
     }
   }
   return 0;
+}
+
+function indexOfWordId(array, word){
+  for(var i = 0 ; i < array.length ; i++){
+    if(array[i].wordId === word){
+      return i;
+    }
+  }
+  return -1;
 }
 
 function indexOfWord(array, word) {
