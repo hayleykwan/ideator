@@ -13,8 +13,7 @@ export default class Graph extends React.Component{
     if (this.props.graphType === "force"){
       return (
           <ForceLayout
-            nodes={this.props.data.nodes}
-            links={this.props.data.links}
+            data={this.props.data}
             backUpData={this.props.backUpData}
             history={this.props.history}
             width={this.props.width}

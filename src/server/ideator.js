@@ -1,6 +1,7 @@
 var debug = require('debug')('ideator:server:ideator');
 var dataLoader = require('./data-loader');
 var dataSelector = require('./data-selector');
+var imageProcessor = require('./image-processor');
 var graphUpdate = require('./graph-update');
 var utils = require('./utils');
 
@@ -17,14 +18,14 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
   var num = submitted.numSuggestion;
 
   return dataLoader.search(word).then(results => {
-    if(results === 0 || results.length <= 0 || typeof(results) === 'undefined'){ //|| typeof(results) === 'undefined'
+    if(results === 0 || results.length <= 0 || typeof(results) === 'undefined'){
       return 0;
     } else {
       debug(results.length);
       var allSelected = dataSelector.select(submitted, currentGraph, results);
-      // find images
-      var selected = allSelected.slice(0,num);
-      var backUp = allSelected.slice(num, allSelected.length);
+      var allSelectedWithImg = imageProcessor.process(allSelected);
+      var selected = allSelectedWithImg.slice(0,num);
+      var backUp = allSelectedWithImg.slice(num, allSelectedWithImg.length);
       var newGraph = graphUpdate(currentGraph, word, selected);
       // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       var result = {

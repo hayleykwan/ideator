@@ -28,8 +28,8 @@ class ForceLayout extends React.Component{
   }
 
   componentDidMount(){ //only find the ref graph after rendering
-    const nodes = this.props.nodes;
-    const links = this.props.links;
+    const nodes = this.props.data.nodes;
+    const links = this.props.data.links;
     const width = this.props.width;
     const height = this.props.height;
 
@@ -54,12 +54,12 @@ class ForceLayout extends React.Component{
     console.log('shouldComponentUpdate triggered');
 
     //only allow d3 to re-render if the nodes and links props are different
-    if(nextProps.nodes !== this.props.nodes ||
-       nextProps.links !== this.props.links){
-      this.newNodes = nextProps.nodes.slice();
-      this.newLinks = nextProps.links.slice();
+    if(nextProps.data.nodes !== this.props.data.nodes ||
+       nextProps.data.links !== this.props.data.links){
+      this.nodes = nextProps.data.nodes.slice();
+      this.links = nextProps.data.links.slice();
 
-      this.redraw(nextProps.nodes, nextProps.links);
+      this.redraw(this.nodes, this.links);
 
       return false;
     }
@@ -270,33 +270,33 @@ class ForceLayout extends React.Component{
   }
 
   removeNode(d) {
-    this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
+    this.nodes.splice(indexOfWord(this.nodes, d.id), 1);
     if(d.submitted){
-      for(var i = 0 ; i < this.newLinks.length ; i++){
-        if(this.newLinks[i].source.id === d.id){
-          var index = indexOfWord(this.newNodes, this.newLinks[i].target.id);
-          if(!this.newNodes[index].submitted){
-            this.newNodes.splice(index, 1);
+      for(var i = 0 ; i < this.links.length ; i++){
+        if(this.links[i].source.id === d.id){
+          var index = indexOfWord(this.nodes, this.links[i].target.id);
+          if(!this.nodes[index].submitted){
+            this.nodes.splice(index, 1);
           }
-        }else if (this.newLinks[i].target.id === d.id){
-          var index = indexOfWord(this.newNodes, this.newLinks[i].source.id);
-          if(!this.newNodes[index].submitted){
-            this.newNodes.splice(index, 1);
+        }else if (this.links[i].target.id === d.id){
+          var index = indexOfWord(this.nodes, this.links[i].source.id);
+          if(!this.nodes[index].submitted){
+            this.nodes.splice(index, 1);
           }
         }
       }
     }
     var i = 0;
-    while(i < this.newLinks.length){
-      if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-        this.newLinks.splice(i, 1);
+    while(i < this.links.length){
+      if(this.links[i].source.id === d.id || this.links[i].target.id === d.id){
+        this.links.splice(i, 1);
       } else {
         i++;
       }
     }
 
-    this.redraw(this.newNodes, this.newLinks);
-    this.props.removeNode(this.newNodes, this.newLinks);
+    this.redraw(this.nodes, this.links);
+    this.props.removeNode(this.nodes, this.links);
   }
 
   reloadNode(d){
@@ -305,16 +305,16 @@ class ForceLayout extends React.Component{
 
     // find out how many submitted it is connected to
     var submittedWords = [];
-    for(var i  = 0 ; i < this.newLinks.length ; i++){
-      if(this.newLinks[i].source.id === d.id){
-        var index = indexOfWord(this.newNodes, this.newLinks[i].target.id);
-        if(this.newNodes[index].submitted && inHistory(history, this.newLinks[i].target.id)){
-          submittedWords.push(this.newLinks[i].target.id)
+    for(var i  = 0 ; i < this.links.length ; i++){
+      if(this.links[i].source.id === d.id){
+        var index = indexOfWord(this.nodes, this.links[i].target.id);
+        if(this.nodes[index].submitted && inHistory(history, this.links[i].target.id)){
+          submittedWords.push(this.links[i].target.id)
         }
-      } else if (this.newLinks[i].target.id === d.id){
-        var index = indexOfWord(this.newNodes, this.newLinks[i].source.id);
-        if(this.newNodes[index].submitted && inHistory(history, this.newLinks[i].source.id)){
-          submittedWords.push(this.newLinks[i].source.id)
+      } else if (this.links[i].target.id === d.id){
+        var index = indexOfWord(this.nodes, this.links[i].source.id);
+        if(this.nodes[index].submitted && inHistory(history, this.links[i].source.id)){
+          submittedWords.push(this.links[i].source.id)
         }
       }
     }
@@ -329,8 +329,8 @@ class ForceLayout extends React.Component{
       var backUp = relevantBackUp.pop();
       var newNodeData = backUp.backup.shift();
 
-      //var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
-      var linkToChange = findLink(this.newLinks, d.id);
+      //var nodeToChange = this.nodes[indexOfWord(this.nodes, d.id)];
+      var linkToChange = findLink(this.links, d.id);
 
       var oldData = {
         wordId: d.id,
@@ -346,20 +346,20 @@ class ForceLayout extends React.Component{
         "imageSrc": newNodeData.imageSrc,
         "notes": ''
       }
-      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
-      this.newNodes.push(node);
+      this.nodes.splice(indexOfWord(this.nodes, d.id), 1);
+      this.nodes.push(node);
 
       var link = {
         "source": linkToChange.source.id === d.id ? newNodeData.wordId : linkToChange.source.id,
         "target": linkToChange.target.id === d.id ? newNodeData.wordId : linkToChange.target.id,
         "type": newNodeData.link[0]
       }
-      this.newLinks.push(link);
+      this.links.push(link);
 
       var i = 0;
-      while(i < this.newLinks.length){
-        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-          this.newLinks.splice(i, 1);
+      while(i < this.links.length){
+        if(this.links[i].source.id === d.id || this.links[i].target.id === d.id){
+          this.links.splice(i, 1);
         } else {
           i++;
         }
@@ -393,7 +393,7 @@ class ForceLayout extends React.Component{
         }
       });
 
-      //var nodeToChange = this.newNodes[indexOfWord(this.newNodes, d.id)];
+      //var nodeToChange = this.nodes[indexOfWord(this.nodes, d.id)];
 
       relevantBackUp.forEach(function(item){
         // removing new backup for updating graph
@@ -403,7 +403,7 @@ class ForceLayout extends React.Component{
         var newLinkType = backUpArray[index].link;  // get the link
 
         // find link between item.word and nodeToChange
-        var linkToChange = findLinkBetween(this.newLinks, d.id, item.word);
+        var linkToChange = findLinkBetween(this.links, d.id, item.word);
 
         // create new link between newNodeData[0].backup[0].wordId and item.word
         var link = {
@@ -411,7 +411,7 @@ class ForceLayout extends React.Component{
           "target": linkToChange.target.id === d.id ? newWord : linkToChange.target.id,
           "type": newLinkType[0]
         }
-        this.newLinks.push(link);
+        this.links.push(link);
 
         backUpArray.splice(index, 1);  // remove the item
 
@@ -432,13 +432,13 @@ class ForceLayout extends React.Component{
         "imageSrc": newNodeData[0].backup[0].imageSrc,
         "notes": ''
       }
-      this.newNodes.splice(indexOfWord(this.newNodes, d.id), 1);
-      this.newNodes.push(node);
+      this.nodes.splice(indexOfWord(this.nodes, d.id), 1);
+      this.nodes.push(node);
 
       var i = 0;
-      while(i < this.newLinks.length){
-        if(this.newLinks[i].source.id === d.id || this.newLinks[i].target.id === d.id){
-          this.newLinks.splice(i, 1);
+      while(i < this.links.length){
+        if(this.links[i].source.id === d.id || this.links[i].target.id === d.id){
+          this.links.splice(i, 1);
         } else {
           i++;
         }
@@ -446,8 +446,8 @@ class ForceLayout extends React.Component{
 
     }
 
-    this.redraw(this.newNodes, this.newLinks);
-    this.props.reloadNode(this.newNodes, this.newLinks, backUpData);
+    this.redraw(this.nodes, this.links);
+    this.props.reloadNode(this.nodes, this.links, backUpData);
   }
 }
 
