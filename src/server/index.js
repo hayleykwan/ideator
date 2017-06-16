@@ -33,9 +33,8 @@ io.on('connection', function(socket) { //listen on the connection event for inco
 
   socket.on('search', function(submitted, currentGraphJSON){
     ideator.search(submitted, currentGraphJSON).then(result => {
-      debug(result);
-      // debug(newGraphJSON); // either 0 or graphjson
-      socket.emit('response', result.newGraphJSON, result.backUpResults);
+      // socket.emit('response', result.newGraphJSON, result.backUpResults);
+      socket.emit('response', result);
     });
   });
 

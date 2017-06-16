@@ -21,29 +21,31 @@ DataSelector.prototype.select = function(submitted, currentGraph, allRelations) 
   var nodups = mergeDuplicates(allRelations);
   var filtered = filterAll(nodups);
   var ordered = sortAll(filtered);
-  // debug(ordered);
-  var selected = ordered.slice(0,num);
-  // updateDatabase(selected);
+  updateDatabase(ordered);
   return ordered;
 }
 
 var updateDatabase = function(array){
-  // update query Count and lastQueried for submittedWord
   var query = 'MATCH (centreWord:Word {wordId:"'+submittedWord+'"}) \n';
   query += 'SET centreWord.queryCount = centreWord.queryCount + 1, ';
   query += 'centreWord.lastQueried = timestamp() \n';
   graphenedb.write(query);
 
   var length = array.length;
+  debug(array[0]);
   array.forEach(a => {
-    var newdeg = ((a.deg * length) + deg ) / (length + 1);
     a.link.forEach(l => {
-      debug(l);
-      var query = 'MATCH (centreWord:Word {wordId:"'+submittedWord+'"})';
+      var ifZero = deg/(length + 1);
+      var denom = length + 1;
+      var query = 'MATCH (c:Word {wordId:"'+submittedWord+'"})';
       query += '-[l:Link {type: "'+l+'"}]';
       query += '-(result:Word {wordId:"'+a.wordId+'"}) \n';
-      query += 'SET l.usageCount = l.usageCount + 1, ';
-      query += 'l.deg = ((l.deg * length) + deg) / (length + 1) \n';
+      query += 'SET l.usageCount = l.usageCount + 1 \n';
+      query += 'WITH l, \n';
+      query += 'CASE WHEN l.deg = 0 THEN '+ ifZero +'\n';
+      query += 'ELSE ((l.deg*'+length+')+'+deg+')/'+denom+' END AS result \n';
+      query += 'SET l.deg = result \n';
+      // debug(query);
       graphenedb.write(query);
     })
   })
@@ -58,13 +60,13 @@ var sortAll = function(array){
   var mostLinks = sortByMostLinks(degreeDone);
   var mostLinksDone = mostLinks.slice(0, Math.round(mostLinks.length*0.8));
 
-  var freq = sortByFreq(mostLinksDone);
-  var freqDone = freq.slice(0, Math.round(freq.length*0.8));
+  // var freq = sortByFreq(mostLinksDone);
+  // var freqDone = freq.slice(0, Math.round(freq.length*0.8));
 
   // var degree = sortByDegreeCloseness(freqDone);
   // var degreeDone = degree.slice(0, Math.round(degree.length*0.8));
 
-  var popularWord = sortByWordPopularity(freqDone);
+  var popularWord = sortByWordPopularity(mostLinksDone);
   var wordDone = popularWord.slice(0, Math.round(popularWord.length*0.8));
 
   var popularLink = sortByLinkPopularity(wordDone);

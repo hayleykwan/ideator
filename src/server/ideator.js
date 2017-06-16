@@ -19,26 +19,21 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
 
   return dataLoader.search(word).then(results => {
     if(results === 0 || results.length <= 0 || typeof(results) === 'undefined'){
-      return 0;
+      var result = 0;
     } else {
       debug(results.length);
       var allSelected = dataSelector.select(submitted, currentGraph, results);
-      return imageProcessor.process(allSelected).then(d => {
-        debug(d.length);
-        debug(d);
-
-        var selected = d.slice(0,num);
-        var backUp = d.slice(num, d.length);
-        var newGraph = graphUpdate(currentGraph, word, selected);
-        // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
-        var result = {
-          newGraphJSON: JSON.stringify(newGraph),
-          backUpResults: JSON.stringify(backUp)
-        }
-        return result;
-      });
-
+      var selected = allSelected.slice(0,num);
+      var backUp = allSelected.slice(num, allSelected.length);
+      var newGraph = graphUpdate(currentGraph, word, selected);
+      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
+      var result = {
+        newGraphJSON: newGraph,
+        backUpResults: backUp
+      };
     }
+    return JSON.stringify(result);
+
   })
   .catch(error => { debug(error); });
 

@@ -29,6 +29,7 @@ function writeResults(word, resultsArray) {
     var max = Math.min(i+2, resultsArray.length);
     var partResult = resultsArray.slice(i, max);
     var query = draftDatamuseResults(word, partResult);
+    // debug(query);
     graphenedb.write(query);
   }
 }
@@ -66,7 +67,7 @@ function draftDatamuseResults(word, array){
     //         display + '.type=[' + type + '] \n' ;
 
     query += 'MERGE ('+ submitted +')-['+submitted+'_'+display+
-      ':Link {type: "'+arrayParams+'", deg: "'+deg+'"}]-('+display+')\n';
+      ':Link {type: "'+arrayParams+'", deg: '+deg+'}]-('+display+')\n';
     query += 'ON CREATE SET '+submitted+'_'+display+'.usageCount=0 \n';
     // for(var p = 0 ; p < arrayParams.length ; p++){
     //   query += 'MERGE ('+ submitted +')-[:Link {type: "'+arrayParams[p]+'"}]-('+display+')\n';

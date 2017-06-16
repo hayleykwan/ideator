@@ -87,23 +87,24 @@ export default class App extends Component {
     this.setState({request: req});
 
     var self = this;
-    this.socket.on('response', function(newGraphJSON, backUpDataResults){
-      var backUpData = JSON.parse(backUpDataResults);
-      if(newGraphJSON !== 0){
-        self.updateData(newGraphJSON);
+    this.socket.on('response', function(res){
+      var result = JSON.parse(res);
+      if(result !== 0){
+        self.updateData(result.newGraphJSON);
+        var backUpData = result.backUpResults;
+        if(backUpData.length > 0){
+          var backUp = self.state.backUpData;
+          backUp[submitted.word] = backUpData;
+          self.setState({backUpData: backUp});
+        }
       } else {
-        // show notif that no results
-      }
-      if(backUpData.length > 0){
-        var backUp = self.state.backUpData;
-        backUp[submitted.word] = backUpData;
-        self.setState({backUpData: backUp});
+        // show notif
       }
     });
   }
 
-  updateData(newGraphJSON){
-    this.setState({data: JSON.parse(newGraphJSON)});
+  updateData(newGraph){
+    this.setState({data: newGraph});
   }
 
   nodeDoubleClick(nodeWord){

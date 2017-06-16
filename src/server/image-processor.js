@@ -1,7 +1,6 @@
 var debug = require('debug')('ideator:server:image-processor');
 var got = require('got');
 var config = require('./config');
-var utils = require('./utils');
 
 function ImageProcessor(){
 
@@ -41,7 +40,7 @@ var getImageSrc = function (d) {
   var options = {
     protocol: 'https:',
     hostname: 'api.gettyimages.com',
-    path: '/v3/search/images?sort_order=best&phrase=' + d.wordId,
+    path: '/v3/search/images?orientations=square,horizontal,vertical&sort_order=best&phrase=' + d.wordId,
     headers: {
       'Api-Key': config.GETTY_IMAGES_API_KEY
     }

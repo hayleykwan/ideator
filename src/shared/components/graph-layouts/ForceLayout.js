@@ -218,20 +218,22 @@ class ForceLayout extends React.Component{
   }
 
   enterNode(selection) {
-    selection
-    .append('defs').attr('id', 'mdef')
-       .append('pattern').attr('id', 'hi').attr('x', 0).attr('y', 0).attr('width', 10).attr('height', 10)
-       .append('image').attr('x', 5).attr('y', 5).attr('width', 70).attr('height', 70).attr('xlink:href', d => d.imageSrc);
+    selection.append('defs').attr('id', 'mdef')
+      .append('pattern').attr('id', 'hi').attr('x', 0).attr('y', 0)
+        .attr('width', 10).attr('height', 10)
+      .append('image').attr('x', 5).attr('y', 5)
+        .attr('width', 70).attr('height', 70)
+        .attr('xlink:href', d => d.imageSrc);
 
     selection.append('circle')
         .attr('class', 'node-circle')
         .attr('r', 45)
         .style('fill', function(d){
-          if(d.imageSrc !== '') {
-            return "url(#hi)";
-          } else {
+          // if(d.imageSrc !== '') {
+          //   return "url(#hi)";
+          // } else {
             return '#D0D0D0';
-          }
+          // }
         })
         .style('stroke-width', 0);
 
