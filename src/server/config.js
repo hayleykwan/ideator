@@ -17,4 +17,5 @@ module.exports = {
   GRAPHENEDB_URL: process.env.GRAPHENEDB_BOLT_URL || 'bolt://localhost',
   GRAPHENEDB_USER: process.env.GRAPHENEDB_BOLT_USER || 'neo4j',
   GRAPHENEDB_PASS: process.env.GRAPHENEDB_BOLT_PASSWORD || 'test',
+  GETTY_IMAGES_API_KEY: 'zgwqskjdkgrs7w3sjz2vfe45'
 };

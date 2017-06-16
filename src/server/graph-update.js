@@ -20,8 +20,7 @@ function update(currentGraph, submittedWord, datamuseRe){
           var link = {
             "source": currentGraph.nodes[centreIndex].id,
             "target": currentGraph.nodes[targetIndex].id,
-            "type": datamuseRe[i].link[0],
-            "notes": ''
+            "type": datamuseRe[i].link[0]
           };
           // console.log(link);
           currentGraph.links.push(link);
@@ -32,15 +31,13 @@ function update(currentGraph, submittedWord, datamuseRe){
           "id": datamuseRe[i].wordId,
           "isPinned": false,
           "submitted": false,
-          "imageSrc": '',
-          "notes": ''
+          "imageSrc": datamuseRe[i].imageSrc
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": currentGraph.nodes[centreIndex].id,
           "target": node.id,
-          "type": datamuseRe[i].link[0],
-          "notes": ''
+          "type": datamuseRe[i].link[0]
         };
         currentGraph.links.push(link);
       }
@@ -51,8 +48,7 @@ function update(currentGraph, submittedWord, datamuseRe){
       "id": submittedWord,
       "submitted": true,
       "isPinned": false,
-      "imageSrc": '',
-      "notes": ''
+      "imageSrc": ''
     };
     currentGraph.nodes.push(centre);
 
@@ -66,8 +62,7 @@ function update(currentGraph, submittedWord, datamuseRe){
         var link = {
           "source": centre.id,
           "target": currentGraph.nodes[targetIndex].id,
-          "type": datamuseRe[i].link[0],
-          "notes": ''
+          "type": datamuseRe[i].link[0]
         };
         currentGraph.links.push(link);
       } else {
@@ -76,15 +71,13 @@ function update(currentGraph, submittedWord, datamuseRe){
           "id": datamuseRe[i].wordId,
           "isPinned": false,
           "submitted": false,
-          "imageSrc": '',
-          "notes": ''
+          "imageSrc": datamuseRe[i].imageSrc
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
           "source": centre.id,
           "target": node.id,
-          "type": datamuseRe[i].link[0],
-          "notes": ''
+          "type": datamuseRe[i].link[0]
         };
         currentGraph.links.push(link);
       }
