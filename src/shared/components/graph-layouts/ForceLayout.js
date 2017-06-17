@@ -1,5 +1,4 @@
 //React for structure - D3 for data calculation - D3 for rendering
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
@@ -27,9 +26,7 @@ class ForceLayout extends React.Component{
     this.linkMouseout = this.linkMouseout.bind(this);
   }
 
-  componentDidMount(){ //only find the ref graph after rendering
-    const nodes = this.props.data.nodes;
-    const links = this.props.data.links;
+  componentDidMount(){
     const width = this.props.width;
     const height = this.props.height;
 
@@ -39,7 +36,7 @@ class ForceLayout extends React.Component{
     svg.attr('viewBox', '0 0 '+ width + ' ' + height)
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
-    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    var graph = d3.select('.everything');
 
     svg.call(d3.zoom()
       .on('zoom', () => {graph.attr('transform', d3.event.transform)})
@@ -50,17 +47,12 @@ class ForceLayout extends React.Component{
     });
   }
 
-  shouldComponentUpdate(nextProps){ //essentially redraw whole thing
-    console.log('shouldComponentUpdate triggered');
-
-    //only allow d3 to re-render if the nodes and links props are different
+  shouldComponentUpdate(nextProps){ 
     if(nextProps.data.nodes !== this.props.data.nodes ||
        nextProps.data.links !== this.props.data.links){
       this.nodes = nextProps.data.nodes.slice();
       this.links = nextProps.data.links.slice();
-
       this.redraw(this.nodes, this.links);
-
       return false;
     }
     return false;
@@ -68,14 +60,14 @@ class ForceLayout extends React.Component{
 
   render(){
     return(
-      <svg>
-        <g ref='graph' className='everything' />
+      <svg ref="svg">
+        <g className='everything' />
       </svg>
     );
   }
 
   redraw(newNodes, newLinks) {
-    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    var graph = d3.select('.everything');
 
     var links = graph.selectAll('.link-line')
       .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
@@ -172,7 +164,7 @@ class ForceLayout extends React.Component{
   }
 
   nodeMouseover(d){
-    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    var graph = d3.select('.everything');
     graph.selectAll('.link-line')
       .transition().duration(150)
       .style('stroke-opacity', (o) => {
@@ -206,7 +198,7 @@ class ForceLayout extends React.Component{
   }
 
   nodeMouseout(d){
-    var graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
+    var graph = d3.select('.everything');
     graph.selectAll('.link-line')
       .transition().duration(150).style('stroke-opacity', 0.5);
     graph.selectAll('.link-label')
@@ -256,7 +248,7 @@ class ForceLayout extends React.Component{
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     remove.append('circle')
-        .attr('r', 15)
+        .attr('r', 12)
         .attr('cx', 23)
         .attr('cy', -38)
         .style('fill', '#f44336');
@@ -274,7 +266,7 @@ class ForceLayout extends React.Component{
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     reload.append('circle')
-        .attr('r', 15)
+        .attr('r', 12)
         .attr('cx', 45)
         .attr('cy', -15)
         .style('fill', '#8BC34A');
