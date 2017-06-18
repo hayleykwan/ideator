@@ -38,6 +38,12 @@ app.get('/', (req, res) => { //using HTTP API here, instead of all web sockets
   res.sendFile(PATH_PUBLIC + '/index.html');
 });
 
+app.get('/:id', (req, res) => { //using HTTP API here, instead of all web sockets
+  debug('custom url: ' + req.params.id);
+  res.send('<h1>Hi!</h1>');
+});
+
+
 
 // isomorphic javascript
 

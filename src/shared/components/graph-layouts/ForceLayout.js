@@ -47,7 +47,7 @@ class ForceLayout extends React.Component{
     });
   }
 
-  shouldComponentUpdate(nextProps){ 
+  shouldComponentUpdate(nextProps){
     if(nextProps.data.nodes !== this.props.data.nodes ||
        nextProps.data.links !== this.props.data.links){
       this.nodes = nextProps.data.nodes.slice();
@@ -248,7 +248,7 @@ class ForceLayout extends React.Component{
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     remove.append('circle')
-        .attr('r', 12)
+        .attr('r', 14)
         .attr('cx', 23)
         .attr('cy', -38)
         .style('fill', '#f44336');
@@ -266,7 +266,7 @@ class ForceLayout extends React.Component{
       })
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     reload.append('circle')
-        .attr('r', 12)
+        .attr('r', 14)
         .attr('cx', 45)
         .attr('cy', -15)
         .style('fill', '#8BC34A');
