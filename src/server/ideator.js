@@ -26,7 +26,6 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
       var selected = allSelected.slice(0,num);
       var backUp = allSelected.slice(num, allSelected.length);
       var newGraph = graphUpdate(currentGraph, word, selected);
-      // debug('Updated graph before emiting: '+ JSON.stringify(newGraph, null, 3));
       var result = {
         newGraphJSON: newGraph,
         backUpResults: backUp
@@ -36,6 +35,13 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
 
   })
   .catch(error => { debug(error); });
+}
+
+Ideator.prototype.findLinkBetween = function(word1, word2){
+
+}
+
+Ideator.prototype.removedOrReloaded = function(word){
 
 }
 

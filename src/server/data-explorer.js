@@ -1,6 +1,7 @@
 var debug = require('debug')('ideator:server:data-explorer');
 const datamuseUtils = require('./datamuse-utils');
 const graphenedb = require('./graphenedb');
+const spider = require('./spider-utils');
 
 function DataExplorer() {
 
@@ -13,8 +14,11 @@ DataExplorer.prototype.explore = function(word){
       writeResults(word, datamuseResults);
       return datamuseResults;
     } else {
-      debug('no results from datamuse');
-      //datamuse has no results, resort to web crawling
+      debug('no results from datamuse, query Wikipedia');
+
+      spider.wikiQuery(word).then(result => {
+        // debug(result);
+      });
       return 0;
       // var webResults = spider.crawl(word);
       // var query = draftWebCrawlResultsQuery(word, webResults);

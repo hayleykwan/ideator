@@ -32,7 +32,6 @@ var updateDatabase = function(array){
   graphenedb.write(query);
 
   var length = array.length;
-  debug(array[0]);
   array.forEach(a => {
     a.link.forEach(l => {
       var ifZero = deg/(length + 1);
@@ -45,7 +44,6 @@ var updateDatabase = function(array){
       query += 'CASE WHEN l.deg = 0 THEN '+ ifZero +'\n';
       query += 'ELSE ((l.deg*'+length+')+'+deg+')/'+denom+' END AS result \n';
       query += 'SET l.deg = result \n';
-      // debug(query);
       graphenedb.write(query);
     })
   })
@@ -60,13 +58,10 @@ var sortAll = function(array){
   var mostLinks = sortByMostLinks(degreeDone);
   var mostLinksDone = mostLinks.slice(0, Math.round(mostLinks.length*0.8));
 
-  // var freq = sortByFreq(mostLinksDone);
-  // var freqDone = freq.slice(0, Math.round(freq.length*0.8));
+  var freq = sortByFreq(mostLinksDone);
+  var freqDone = freq.slice(0, Math.round(freq.length*0.8));
 
-  // var degree = sortByDegreeCloseness(freqDone);
-  // var degreeDone = degree.slice(0, Math.round(degree.length*0.8));
-
-  var popularWord = sortByWordPopularity(mostLinksDone);
+  var popularWord = sortByWordPopularity(freqDone);
   var wordDone = popularWord.slice(0, Math.round(popularWord.length*0.8));
 
   var popularLink = sortByLinkPopularity(wordDone);
