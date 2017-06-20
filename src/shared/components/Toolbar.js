@@ -4,11 +4,8 @@ import {orange500, blue500} from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
 import Slider from 'material-ui/Slider';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-
-const sliderNames = {
-  deg: 'Degree of Connection',
-  num: 'Number of Suggestions'
-};
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 
 class CustomSlider extends React.Component {
   constructor(props){
@@ -21,21 +18,15 @@ class CustomSlider extends React.Component {
   }
 
   render() {
-    const name = this.props.name;
     return (
       <div>
-        <label style={styles.sliderlabel}>
-          <span>{sliderNames[name]}</span>
-          <span>{': '}</span>
-          <span>{this.props.value}</span>
-        </label>
+        <tspan>lol</tspan>
         <Slider
           min={this.props.min} max={this.props.max}
           step={this.props.step}
           value={this.props.value}
           onChange={this.handleChange}
-          style={{width: 150}}
-          id={name}
+          style={{width: 125}}
         />
       </div>
     );
@@ -65,6 +56,7 @@ class InputText extends React.Component {
           hintText="Input text here"
           hintStyle={styles.floatingLabelStyle}
           onKeyPress={this.handleKeyPress}
+          style={{width:180}}
         />
     );
   }
@@ -73,6 +65,11 @@ class InputText extends React.Component {
 export default class IdeaToolBar extends React.Component {
   constructor(props) {
     super(props);
+    this.handleNumberChange = this.handleNumberChange.bind(this);
+  }
+
+  handleNumberChange(event, index, value){
+    this.props.onNumberChange(value);
   }
 
   render() {
@@ -84,30 +81,39 @@ export default class IdeaToolBar extends React.Component {
             onTextChange={this.props.onTextChange}
             onKeyPress={this.props.onKeyDown}/>
           <RaisedButton label="Search" primary={true} onClick={this.props.onSubmit}/>
+          <ToolbarSeparator/>
         </ToolbarGroup>
         <ToolbarGroup style={styles.toolbargroup}>
+          <label>Lateral&nbsp;&nbsp;</label>
           <CustomSlider
-            name="deg"
             min={0} max={1}
             step={0.10}
             value={this.props.request.degConnection}
             onSliderChange={this.props.onDegreeChange}
           />
+          <label>&nbsp;&nbsp;Literal</label>
+          <ToolbarSeparator/>
         </ToolbarGroup>
         <ToolbarGroup style={styles.toolbargroup}>
-          <CustomSlider
-            name="num"
-            min={1} max={8}
-            step={1}
+          <ToolbarTitle text="#Suggestions" style={{fontSize:15}}/>
+          <DropDownMenu
             value={this.props.request.numSuggestion}
-            onSliderChange={this.props.onNumberChange}
-          />
+            onChange={this.handleNumberChange}
+            style={{width: 50}}
+            autoWidth={false}
+            >
+              {numbers}
+            </DropDownMenu>
         </ToolbarGroup>
       </Toolbar>
     );
   }
 }
 
+const numbers = [];
+for(var i = 1 ; i < 9 ; i++){
+  numbers.push(<MenuItem value={i} key={i} primaryText={i}/>)
+}
 
 const styles = {
 
@@ -126,7 +132,4 @@ const styles = {
   toolbargroup: {
     margin: 15,
   },
-  sliderlabel: {
-    fontSize: '0.8em'
-  }
 };

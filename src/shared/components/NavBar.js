@@ -25,7 +25,7 @@ class NavBar extends React.Component{
         title={<span style={styles.title}>The Ideator</span>}
         onTitleTouchTap={this.handleTouchTap}
         iconElementLeft={<FontIcon className="fa fa-lightbulb-o"></FontIcon>}
-        iconElementRight={<FlatButton label="Sign In" />}/>
+        iconElementRight={<FlatButton label="About" />}/>
     )
   }
 }

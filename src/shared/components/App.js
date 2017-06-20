@@ -18,13 +18,13 @@ export default class App extends Component {
       history: [],
       request: {
         numSuggestion: 6,
-        degConnection: 1,
+        degConnection: 0.5,
         text: ''}
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleDegreeSlideChange = this.handleDegreeSlideChange.bind(this);
-    this.handleNumberSlideChange = this.handleNumberSlideChange.bind(this);
+    this.handleNumberChange = this.handleNumberChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateData = this.updateData.bind(this);
@@ -52,7 +52,7 @@ export default class App extends Component {
     this.setState({request:request});
   }
 
-  handleNumberSlideChange(value) {
+  handleNumberChange(value) {
     var request = this.state.request;
     request.numSuggestion = value;
     this.setState({request:request});
@@ -145,7 +145,7 @@ export default class App extends Component {
               request={this.state.request}
               onTextChange={this.handleTextChange}
               onDegreeChange={this.handleDegreeSlideChange}
-              onNumberChange={this.handleNumberSlideChange}
+              onNumberChange={this.handleNumberChange}
               onSubmit={this.handleSubmit}
               onKeyDown={this.handleKeyPress}/>
         </div>
@@ -170,8 +170,8 @@ const styles = {
     width: '98%',
   },
   toolbar: {
-    paddingTop: 30,
-    height: 80,
+    // paddingTop: 30,
+    // height: 80,
     marginBottom: 15,
     overflow: 'hidden',
   },

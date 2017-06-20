@@ -32,6 +32,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   console.log('Client Connection: %s', socket.id);
 
   socket.on('search', function(submitted, currentGraphJSON){
+    debug(submitted);
     ideator.search(submitted, currentGraphJSON).then(result => {
       socket.emit('response', result);
     });
