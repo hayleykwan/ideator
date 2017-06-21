@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {cyan500} from 'material-ui/styles/colors';
+import Paper from 'material-ui/Paper';
 import IdeaToolBar from './Toolbar';
 import NavBar from './NavBar';
 import Graph from './Graph';
@@ -128,8 +129,8 @@ export default class App extends Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
           <NavBar/>
-          <div className="columns" style={styles.column}>
-          <div className="svg-container" style={styles.displayArea}>
+          <Paper className="columns" style={styles.column} zDepth={1}>
+          <Paper className="svg-container" style={styles.displayArea} zDepth={1}>
             <Graph
               graphType="force"
               data={this.state.data}
@@ -141,8 +142,8 @@ export default class App extends Component {
               removeNode={this.removeNode}
               reloadNode={this.reloadNode}
             />
-          </div>
-          <div className="sidebar" style={styles.sidebar}>
+          </Paper>
+          <Paper className="sidebar" style={styles.sidebar} zDepth={1}>
             <Graph
               graphType="force"
               data={this.state.data}
@@ -154,8 +155,8 @@ export default class App extends Component {
               removeNode={this.removeNode}
               reloadNode={this.reloadNode}
             />
-          </div>
-          </div>
+          </Paper>
+        </Paper>
           <IdeaToolBar style={styles.toolbar}
               request={this.state.request}
               onTextChange={this.handleTextChange}
@@ -177,17 +178,21 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
   },
+  relative: {
+    position: 'relative'
+  },
   column:{
     flex: 1,
     display: 'flex',
     flexDirection: 'row',
-    width: '99%',
+    width: '100%',
     alignItems:  'stretch',
     marginBottom: 15,
+    // position: 'absolute'
   },
   displayArea: {
     order: 1,
-    border:'1px solid #9edbff',
+    // border:'1px solid #9edbff',
     width: '90%',
     flex: 1,
     height: '100%',
@@ -197,13 +202,12 @@ const styles = {
     width: '8%',
     height: '100%',
     alignSelf: 'center',
-    border:'1px solid #9edbff',
+    // border:'1px solid #9edbff',
   },
   toolbar: {
-    // paddingTop: 30,
-    // height: 80,
     marginBottom: 15,
     overflow: 'hidden',
+    // position: 'fixed'
   },
 };
 
