@@ -128,6 +128,7 @@ export default class App extends Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
           <NavBar/>
+          <div className="columns" style={styles.column}>
           <div className="svg-container" style={styles.displayArea}>
             <Graph
               graphType="force"
@@ -140,6 +141,20 @@ export default class App extends Component {
               removeNode={this.removeNode}
               reloadNode={this.reloadNode}
             />
+          </div>
+          <div className="sidebar" style={styles.sidebar}>
+            <Graph
+              graphType="force"
+              data={this.state.data}
+              backUpData={this.state.backUpData}
+              history={this.state.history}
+              width="1000" //should be screen size
+              height="420"
+              nodeDoubleClick={this.nodeDoubleClick}
+              removeNode={this.removeNode}
+              reloadNode={this.reloadNode}
+            />
+          </div>
           </div>
           <IdeaToolBar style={styles.toolbar}
               request={this.state.request}
@@ -162,12 +177,27 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
   },
-  displayArea: {
+  column:{
     flex: 1,
-    border:'1px solid #9edbff',
-    marginTop: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    width: '99%',
+    alignItems:  'stretch',
     marginBottom: 15,
-    width: '98%',
+  },
+  displayArea: {
+    order: 1,
+    border:'1px solid #9edbff',
+    width: '90%',
+    flex: 1,
+    height: '100%',
+  },
+  sidebar: {
+    order: 2,
+    width: '8%',
+    height: '100%',
+    alignSelf: 'center',
+    border:'1px solid #9edbff',
   },
   toolbar: {
     // paddingTop: 30,

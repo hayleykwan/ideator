@@ -16,7 +16,7 @@ module.exports = {
     './src/client/main.js',
       //entry point of the app
 
-    'react-hot-loader/patch',
+    // 'react-hot-loader/patch',
       // activate HMR for React
     //
     // 'webpack-dev-server/client?http://localhost:8080',
@@ -35,7 +35,7 @@ module.exports = {
   },
 
   devtool: 'inline-source-map',
-  
+
   // devServer: {
   //   hot: true,
   //   // enable HMR on the server

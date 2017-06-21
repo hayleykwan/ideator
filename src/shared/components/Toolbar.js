@@ -20,7 +20,7 @@ class CustomSlider extends React.Component {
   render() {
     return (
       <div>
-        <tspan>lol</tspan>
+        <tspan>&nbsp;&nbsp;</tspan>
         <Slider
           min={this.props.min} max={this.props.max}
           step={this.props.step}
@@ -74,6 +74,7 @@ export default class IdeaToolBar extends React.Component {
 
   render() {
     return (
+      <div style={styles.container}>
       <Toolbar style={this.props.style}>
         <ToolbarGroup style={styles.toolbargroup}>
           <InputText
@@ -83,6 +84,8 @@ export default class IdeaToolBar extends React.Component {
           <RaisedButton label="Search" primary={true} onClick={this.props.onSubmit}/>
           <ToolbarSeparator/>
         </ToolbarGroup>
+      </Toolbar>
+      <Toolbar>
         <ToolbarGroup style={styles.toolbargroup}>
           <label>Lateral&nbsp;&nbsp;</label>
           <CustomSlider
@@ -94,18 +97,20 @@ export default class IdeaToolBar extends React.Component {
           <label>&nbsp;&nbsp;Literal</label>
           <ToolbarSeparator/>
         </ToolbarGroup>
+      </Toolbar>
+      <Toolbar>
         <ToolbarGroup style={styles.toolbargroup}>
           <ToolbarTitle text="#Suggestions" style={{fontSize:15}}/>
           <DropDownMenu
             value={this.props.request.numSuggestion}
             onChange={this.handleNumberChange}
             style={{width: 50}}
-            autoWidth={false}
-            >
+            autoWidth={false}>
               {numbers}
             </DropDownMenu>
         </ToolbarGroup>
       </Toolbar>
+      </div>
     );
   }
 }
@@ -116,6 +121,11 @@ for(var i = 1 ; i < 9 ; i++){
 }
 
 const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
 
   errorStyle: {
     color: orange500,
@@ -129,7 +139,7 @@ const styles = {
   floatingLabelFocusStyle: {
     color: blue500,
   },
-  toolbargroup: {
-    margin: 15,
-  },
+  // toolbargroup: {
+  //   margin: 10,
+  // },
 };
