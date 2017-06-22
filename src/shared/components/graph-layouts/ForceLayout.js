@@ -1,6 +1,8 @@
 //React for structure - D3 for data calculation - D3 for rendering
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import * as d3 from 'd3';
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -24,6 +26,10 @@ class ForceLayout extends React.Component{
     this.reloadNode = this.reloadNode.bind(this);
     this.linkMouseover = this.linkMouseover.bind(this);
     this.linkMouseout = this.linkMouseout.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.state = {
+      dialogOpen: false,
+    }
   }
 
   componentDidMount(){
@@ -58,11 +64,43 @@ class ForceLayout extends React.Component{
     return false;
   }
 
+  handleClose() {
+    this.setState({dialogOpen: false});
+  };
+
   render(){
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />,
+      <FlatButton
+        label="Remove"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />,
+      <FlatButton
+        label="Update"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />,
+    ];
+
     return(
-      <svg ref="svg">
-        <g className='everything' />
-      </svg>
+      <div>
+        <svg ref="svg">
+          <g className='everything' />
+        </svg>
+        {/* <Dialog
+          title="Update Relationship"
+          actions={actions}
+          modal={true}
+          open={this.state.dialogOpen}
+        >
+          Relationship between
+        </Dialog> */}
+      </div>
     );
   }
 
@@ -77,7 +115,7 @@ class ForceLayout extends React.Component{
       .attr('class', 'link-line')
       .call(enterLinkLine)
       .merge(links)
-      // .on('click', this.linkMouseover)
+      // .on('mouseover', this.linkMouseover)
       // .on('mouseout', this.linkMouseout);
 
     var linkLabels = graph.selectAll('.link-label')
@@ -538,6 +576,11 @@ function enterLinkLine(selection) {
     .style('stroke-width', 7)
     .style('stroke-linecap', 'round')
     .style('stroke-opacity', 0.5);
+  selection
+    .append('circle')
+    .attr('class', 'link-circle')
+    .attr('r', 5)
+    .attr('visibility', 'hidden');
 };
 
 function enterLinkLabel(selection) {

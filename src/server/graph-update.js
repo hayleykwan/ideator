@@ -30,8 +30,9 @@ function update(currentGraph, submittedWord, datamuseRe){
         var node = {     //create new node
           "id": datamuseRe[i].wordId,
           "isPinned": false,
+          "isHidden": false,
           "submitted": false,
-          "imageSrc": datamuseRe[i].imageSrc
+          // "imageSrc": datamuseRe[i].imageSrc
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link
@@ -48,7 +49,8 @@ function update(currentGraph, submittedWord, datamuseRe){
       "id": submittedWord,
       "submitted": true,
       "isPinned": false,
-      "imageSrc": ''
+      "isHidden": false,
+      // "imageSrc": ''
     };
     currentGraph.nodes.push(centre);
 
@@ -69,9 +71,10 @@ function update(currentGraph, submittedWord, datamuseRe){
         //it does not exist in currentGraph
         var node = {
           "id": datamuseRe[i].wordId,
-          "isPinned": false,
           "submitted": false,
-          "imageSrc": datamuseRe[i].imageSrc
+          "isPinned": false,
+          "isHidden": false,
+          // "imageSrc": datamuseRe[i].imageSrc
         };
         currentGraph.nodes.push(node);
         var link = {     //create new link

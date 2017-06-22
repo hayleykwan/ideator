@@ -1,11 +1,20 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import {orange500, blue500} from 'material-ui/styles/colors';
-import RaisedButton from 'material-ui/RaisedButton';
-import Slider from 'material-ui/Slider';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import TextField from 'material-ui/TextField';
+import Slider from 'material-ui/Slider';
 import DropDownMenu from 'material-ui/DropDownMenu';
+import IconMenu from 'material-ui/IconMenu';
+import Divider from 'material-ui/Divider';
 import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import {orange500, blue500} from 'material-ui/styles/colors';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import Export from 'material-ui/svg-icons/file/file-download';
+import Clear from 'material-ui/svg-icons/action/delete';
+import Add from 'material-ui/svg-icons/content/add-circle';
+import Image from 'material-ui/svg-icons/image/image';
+import History from 'material-ui/svg-icons/action/history'
 
 class CustomSlider extends React.Component {
   constructor(props){
@@ -26,8 +35,7 @@ class CustomSlider extends React.Component {
           step={this.props.step}
           value={this.props.value}
           onChange={this.handleChange}
-          style={{width: 125}}
-        />
+          style={{width: 125}} />
       </div>
     );
   }
@@ -56,8 +64,7 @@ class InputText extends React.Component {
           hintText="Input text here"
           hintStyle={styles.floatingLabelStyle}
           onKeyPress={this.handleKeyPress}
-          style={{width:180}}
-        />
+          style={{width:180}} />
     );
   }
 }
@@ -66,17 +73,38 @@ export default class IdeaToolBar extends React.Component {
   constructor(props) {
     super(props);
     this.handleNumberChange = this.handleNumberChange.bind(this);
+    this.handleDownload = this.handleDownload.bind(this);
+    this.handleClearGraph = this.handleClearGraph.bind(this);
+    this.handleAddNode = this.handleAddNode.bind(this);
+    this.handleImageToggle = this.handleImageToggle.bind(this);
+    this.handleShowHistory = this.handleShowHistory.bind(this);
   }
 
   handleNumberChange(event, index, value){
     this.props.onNumberChange(value);
   }
 
+  handleDownload(event){
+    this.props.onDownload(event);
+  }
+  handleClearGraph(event){
+    this.props.onClearGraph(event);
+  }
+  handleAddNode(event){
+    this.props.onAddNode(event);
+  }
+  handleImageToggle(event){
+    this.props.onImgToggle(event);
+  }
+  handleShowHistory(event){
+    this.props.onShowHistory(event);
+  }
+
   render() {
     return (
       <div style={styles.container}>
       <Toolbar style={this.props.style}>
-        <ToolbarGroup style={styles.toolbargroup}>
+        <ToolbarGroup>
           <InputText
             text={this.props.request.text}
             onTextChange={this.props.onTextChange}
@@ -86,7 +114,7 @@ export default class IdeaToolBar extends React.Component {
         </ToolbarGroup>
       </Toolbar>
       <Toolbar>
-        <ToolbarGroup style={styles.toolbargroup}>
+        <ToolbarGroup>
           <label>Lateral&nbsp;&nbsp;</label>
           <CustomSlider
             min={0} max={1}
@@ -99,7 +127,7 @@ export default class IdeaToolBar extends React.Component {
         </ToolbarGroup>
       </Toolbar>
       <Toolbar>
-        <ToolbarGroup style={styles.toolbargroup}>
+        <ToolbarGroup>
           <ToolbarTitle text="#Suggestions" style={{fontSize:15}}/>
           <DropDownMenu
             value={this.props.request.numSuggestion}
@@ -108,6 +136,30 @@ export default class IdeaToolBar extends React.Component {
             autoWidth={false}>
               {numbers}
             </DropDownMenu>
+            <ToolbarSeparator/>
+        </ToolbarGroup>
+      </Toolbar>
+      <Toolbar>
+        <ToolbarGroup>
+          <ToolbarTitle text="More" style={{fontSize:15}}/>
+          <IconMenu
+            iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+            touchTapCloseDelay={1000}>
+            <MenuItem primaryText="Download" rightIcon={<Export/>}
+              onTouchTap={this.handleDownload}/>
+            <MenuItem primaryText="History" rightIcon={<History/>}
+              onTouchTap={this.handleShowHistory}/>
+            <Divider/>
+            <MenuItem primaryText="Clear Graph" rightIcon={<Clear/>}
+              onTouchTap={this.handleClearGraph}/>
+            <MenuItem primaryText="Add Idea" rightIcon={<Add/>}
+              onTouchTap={this.handleAddNode}/>
+            <Divider/>
+            <MenuItem  checked={this.props.imageReq} primaryText="Image" rightIcon={<Image/>}
+              onTouchTap={this.handleImageToggle}/>
+          </IconMenu>
         </ToolbarGroup>
       </Toolbar>
       </div>
