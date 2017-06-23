@@ -5,6 +5,9 @@ import Paper from 'material-ui/Paper';
 import Snackbar from 'material-ui/Snackbar';
 import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
+import Subheader from 'material-ui/Subheader';
+import {List, ListItem} from 'material-ui/List';
+import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import NavBar from './NavBar';
@@ -166,7 +169,7 @@ export default class App extends Component {
     };
 
     var history = this.state.history;
-    history.push(submitted);
+    history.unshift(submitted);
     this.setState({history: history});
 
     var req = this.state.request;
@@ -228,6 +231,10 @@ export default class App extends Component {
       />,
     ];
 
+    const history = this.state.history.map(function (item, index) {
+      return <ListItem key={index} primaryText={item.word} secondaryText={item.degConnection}/>
+    });
+
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div id="app" style={styles.container}>
@@ -273,8 +280,11 @@ export default class App extends Component {
             width={200}
             open={this.state.drawer}
             openSecondary={true}
-            onRequestChange={(open) => this.setState({open})}>
-              {this.props.history}
+            onRequestChange={(drawer) => this.setState({drawer})}>
+            <List>
+              <Subheader inset={true}>Recent Searches</Subheader>
+              {history}
+            </List>
           </Drawer>
         </div>
         </MuiThemeProvider>
