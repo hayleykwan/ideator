@@ -20,7 +20,8 @@ export default class Graph extends React.Component{
             height={this.props.height}
             nodeDoubleClick={this.props.nodeDoubleClick}
             removeNode={this.props.removeNode}
-            reloadNode={this.props.reloadNode}/>
+            reloadNode={this.props.reloadNode}
+            imageReq={this.props.imageReq}/>
       );
     }
   }

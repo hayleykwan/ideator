@@ -3,13 +3,10 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Paper from 'material-ui/Paper';
 import Snackbar from 'material-ui/Snackbar';
-import Dialog from 'material-ui/Dialog';
 import Drawer from 'material-ui/Drawer';
 import Subheader from 'material-ui/Subheader';
 import {List, ListItem} from 'material-ui/List';
-import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
 import NavBar from './NavBar';
 import IdeaToolBar from './Toolbar';
 import Graph from './Graph';
@@ -131,7 +128,14 @@ export default class App extends Component {
   }
 
   handleDownload(event){
+    // var blob = new Blob(, type:)
+    // saveAs(url);
     console.log(event);
+  }
+
+  handleImgToggle(event){
+    var boolean = this.state.imageReq;
+    this.setState({imageReq: !boolean});
   }
 
   handleClearGraph(event){
@@ -139,11 +143,6 @@ export default class App extends Component {
     this.setState({data: data});
     var snackbar = {open: true, message: 'Cleared Graph.'}
     this.setState({snackbar: snackbar});
-  }
-
-  handleImgToggle(event){
-    var boolean = this.state.imageReq;
-    this.setState({imageReq: !boolean});
   }
 
   handleAddNode(event){
@@ -180,8 +179,8 @@ export default class App extends Component {
     this.socket.on('response', function(res){
       var result = JSON.parse(res);
       if(result !== 0){
-        // self.updateData(result.newGraphJSON);
-        self.setState({data: result.newGraphJSON})
+        console.log(result.newGraphJSON);
+        self.setState({data: result.newGraphJSON});
         var backUpData = result.backUpResults;
         if(backUpData.length > 0){
           var backUp = self.state.backUpData;
@@ -246,10 +245,11 @@ export default class App extends Component {
               backUpData={this.state.backUpData}
               history={this.state.history}
               width="1000" //should be screen size
-              height="420"
+              height="450"
               nodeDoubleClick={this.nodeDoubleClick}
               removeNode={this.removeNode}
-              reloadNode={this.reloadNode} />
+              reloadNode={this.reloadNode}
+              imageReq={this.state.imageReq} />
           </Paper>
           <IdeaToolBar
             style={styles.toolbar}
@@ -264,7 +264,7 @@ export default class App extends Component {
             onClearGraph={this.handleClearGraph}
             onAddNode={this.handleAddNode}
             onImgToggle={this.handleImgToggle}
-            onShowHistory={this.handleShowHistory} />
+            onShowHistory={this.handleShowHistory}/>
           <Snackbar
             open={this.state.snackbar.open}
             message={this.state.snackbar.message}

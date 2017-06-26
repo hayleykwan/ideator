@@ -1,8 +1,9 @@
 //React for structure - D3 for data calculation - D3 for rendering
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Dialog from 'material-ui/Dialog';
+import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 import * as d3 from 'd3';
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -18,18 +19,23 @@ class ForceLayout extends React.Component{
   constructor(props){
     super(props);
     this.redraw = this.redraw.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleLinkUpdate = this.handleLinkUpdate.bind(this);
+    this.handleLinkRemove = this.handleLinkRemove.bind(this);
+    this.handleDialogText = this.handleDialogText.bind(this);
+    this.enterLinkLine = this.enterLinkLine.bind(this);
+    this.enterLinkLabel = this.enterLinkLabel.bind(this);
+    this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
     this.nodeMouseover = this.nodeMouseover.bind(this);
     this.nodeMouseout = this.nodeMouseout.bind(this);
-    this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
     this.enterNode = this.enterNode.bind(this);
     this.removeNode = this.removeNode.bind(this);
     this.reloadNode = this.reloadNode.bind(this);
-    this.linkMouseover = this.linkMouseover.bind(this);
-    this.linkMouseout = this.linkMouseout.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+
     this.state = {
       dialogOpen: false,
-    }
+      selectedLink: {}
+    };
   }
 
   componentDidMount(){
@@ -54,19 +60,54 @@ class ForceLayout extends React.Component{
   }
 
   shouldComponentUpdate(nextProps){
+    if(nextProps.imageReq){
+      // addImages();
+    } else {
+      // removeImages();
+    }
     if(nextProps.data.nodes !== this.props.data.nodes ||
        nextProps.data.links !== this.props.data.links){
       this.nodes = nextProps.data.nodes.slice();
       this.links = nextProps.data.links.slice();
       this.redraw(this.nodes, this.links);
-      return false;
+      return true;
     }
-    return false;
+    return true;
   }
 
   handleClose() {
-    this.setState({dialogOpen: false});
+    this.setState({dialogOpen: false})
   };
+
+  handleLinkUpdate(){
+    var index = this.state.selectedLink.object.index
+    var obj = this.links[index] ;
+    console.log(obj);
+    console.log(obj.type);
+    this.redraw(this.nodes, this.links);
+    this.props.removeNode(this.nodes, this.links);
+    this.setState({dialogOpen: false, selectedLink: {}});
+  }
+
+  handleLinkRemove(){
+    var i = 0;
+    while(i < this.links.length){
+      if(this.links[i] === this.state.selectedLink.object){
+        this.links.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+    this.redraw(this.nodes, this.links);
+    this.props.removeNode(this.nodes, this.links);
+    this.setState({dialogOpen: false, selectedLink: {}});
+  }
+
+  handleDialogText(event){
+    var selectedLink = this.state.selectedLink;
+    selectedLink.type = event.target.value;
+    this.setState({selectedLink: selectedLink});
+  }
 
   render(){
     const actions = [
@@ -76,47 +117,68 @@ class ForceLayout extends React.Component{
         onTouchTap={this.handleClose}
       />,
       <FlatButton
-        label="Remove"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
         label="Update"
         primary={true}
-        onTouchTap={this.handleClose}
+        onTouchTap={this.handleLinkUpdate}
       />,
+      <FlatButton
+        label="Remove"
+        secondary={true}
+        onTouchTap={this.handleLinkRemove}
+      />
     ];
 
     return(
       <div>
-        <svg ref="svg">
-          <g className='everything' />
-        </svg>
-        {/* <Dialog
+        <Dialog
           title="Update Relationship"
           actions={actions}
           modal={true}
           open={this.state.dialogOpen}
-        >
-          Relationship between
-        </Dialog> */}
+          contentStyle={{width: '40%'}}>
+          <Paper zDepth={0}>
+            <div >
+            <strong>{this.state.selectedLink.source}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+            <TextField
+              hintText="Try to be as short and concise as possible"
+              value={this.state.selectedLink.type}
+              onChange={this.handleDialogText}
+              style={{width: '40%'}}
+            />
+            <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selectedLink.target}</strong>
+            </div>
+          </Paper>
+        </Dialog>
+        <svg ref="svg">
+          <g className='everything' />
+        </svg>
       </div>
     );
   }
 
   redraw(newNodes, newLinks) {
+    var self = this;
+
     var graph = d3.select('.everything');
 
-    var links = graph.selectAll('.link-line')
+    var links = graph.selectAll('.link')
       .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
     links.exit().remove();
     links.enter()
-      .insert('line', '.node')
-      .attr('class', 'link-line')
-      .call(enterLinkLine)
+      .insert('g', '.node')
+      .attr('class', 'link')
+      .call(this.enterLinkLine)
       .merge(links)
-      // .on('mouseover', this.linkMouseover)
-      // .on('mouseout', this.linkMouseout);
+      .on('mouseover', function(d){
+        d3.select(this).select('.link-line').style('stroke-opacity', 1);
+      })
+      .on('mouseout', function(d){
+        d3.select(this).select('.link-line').style('stroke-opacity', 0.5);
+      })
+      .on('click', function(d){
+        var selectedLink = {source: d.source.id, target: d.target.id, type: d.type, object: d};
+        self.setState({dialogOpen: true, selectedLink: selectedLink});
+      })
 
     var linkLabels = graph.selectAll('.link-label')
       .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
@@ -124,13 +186,12 @@ class ForceLayout extends React.Component{
     linkLabels.enter()
       .append('text')
       .attr('class', 'link-label')
-      .call(enterLinkLabel);
+      .call(this.enterLinkLabel);
 
     newLinks.forEach(function(d) {
       linkedByIndex[d.source+ "," + d.target] = 1;
     });
 
-    var self = this;
     var nodes = graph.selectAll('.node')
       .data(newNodes, function(d) {return d.id});
     nodes.exit()
@@ -149,7 +210,7 @@ class ForceLayout extends React.Component{
         d3.select(this)
           .select('.node-option-remove')
           .style("visibility", "visible");
-        if(!d.submitted){
+        if(!d.submitted && !d.user){
           d3.select(this)
             .select('.node-option-reload')
             .style("visibility", "visible");
@@ -189,16 +250,28 @@ class ForceLayout extends React.Component{
 
   }
 
+  enterLinkLine(selection) {
+    selection
+      .append('line')
+      .attr('class', 'link-line')
+      .style('stroke', (d) => color(d.type))
+      .style('stroke-width', 13)
+      .style('stroke-linecap', 'round')
+      .style('stroke-opacity', 0.5);
+  }
+
+  enterLinkLabel(selection) {
+    selection
+      .attr('fill', 'Black')
+      .style('font-size', '11px')
+      .attr('dy', '.35em')
+      .attr('text-anchor', 'middle')
+      .text((d) => d.type)
+      .style('fill-opacity', 0);
+  }
+
   nodeDoubleClick(d){
     this.props.nodeDoubleClick(d.id);
-  }
-
-  linkMouseover(d){
-    console.log(d.type);
-  }
-
-  linkMouseout(d){
-    console.log('hi');
   }
 
   nodeMouseover(d){
@@ -388,9 +461,9 @@ class ForceLayout extends React.Component{
       var node = {
         "id": newNodeData.wordId,
         "isPinned": false,
+        "isHidden": false,
         "submitted": false,
         "imageSrc": newNodeData.imageSrc,
-        "notes": ''
       }
       this.nodes.splice(indexOfWord(this.nodes, d.id), 1);
       this.nodes.push(node);
@@ -440,7 +513,6 @@ class ForceLayout extends React.Component{
       });
 
       //var nodeToChange = this.nodes[indexOfWord(this.nodes, d.id)];
-
       relevantBackUp.forEach(function(item){
         // removing new backup for updating graph
         var backUpArray = backUpData[item.word];
@@ -474,9 +546,9 @@ class ForceLayout extends React.Component{
       var node = {
         "id": newNodeData[0].backup[0].wordId,
         "isPinned": false,
+        "isHidden": false,
         "submitted": false,
         "imageSrc": newNodeData[0].backup[0].imageSrc,
-        "notes": ''
       }
       this.nodes.splice(indexOfWord(this.nodes, d.id), 1);
       this.nodes.push(node);
@@ -489,9 +561,7 @@ class ForceLayout extends React.Component{
           i++;
         }
       }
-
     }
-
     this.redraw(this.nodes, this.links);
     this.props.reloadNode(this.nodes, this.links, backUpData);
   }
@@ -570,32 +640,9 @@ function wrap(text, width) {
   });
 }
 
-function enterLinkLine(selection) {
-  selection
-    .style('stroke', (d) => color(d.type))
-    .style('stroke-width', 7)
-    .style('stroke-linecap', 'round')
-    .style('stroke-opacity', 0.5);
-  selection
-    .append('circle')
-    .attr('class', 'link-circle')
-    .attr('r', 5)
-    .attr('visibility', 'hidden');
-};
-
-function enterLinkLabel(selection) {
-  selection
-    .attr('fill', 'Black')
-    .style('font-size', '11px')
-    .attr('dy', '.35em')
-    .attr('text-anchor', 'middle')
-    .text((d) => d.type)
-    .style('fill-opacity', 0);
-}
-
 function updateNode(selection) {
   selection.attr('transform', (d) => "translate(" + d.x + "," + d.y + ")");
-};
+}
 
 function updateLink(selection) {
   selection
@@ -603,7 +650,7 @@ function updateLink(selection) {
     .attr('y1', (d) => d.source.y)
     .attr('x2', (d) => d.target.x)
     .attr('y2', (d) => d.target.y);
-};
+}
 
 function updateLinkLabel(selection) {
   selection
@@ -612,18 +659,15 @@ function updateLinkLabel(selection) {
 }
 
 function updateGraph(selection) {
-  selection.selectAll('.node')
-    .call(updateNode);
-  selection.selectAll('.link-line')
-    .call(updateLink);
-  selection.selectAll('.link-label')
-    .call(updateLinkLabel);
+  selection.selectAll('.node').call(updateNode);
+  selection.selectAll('.link-line').call(updateLink);
+  selection.selectAll('.link-label').call(updateLinkLabel);
 };
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+  d.fx = d.x;
+  d.fy = d.y;
 }
 
 function dragged(d) {
@@ -633,8 +677,8 @@ function dragged(d) {
 
 function dragended(d) {
   if (!d3.event.active) simulation.alphaTarget(0);
-   d.fx = null;
-   d.fy = null;
+  //  d.fx = null;
+  //  d.fy = null;
 }
 
 function isConnected(a, b) {
