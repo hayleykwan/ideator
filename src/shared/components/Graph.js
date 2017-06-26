@@ -21,7 +21,12 @@ export default class Graph extends React.Component{
             nodeDoubleClick={this.props.nodeDoubleClick}
             removeNode={this.props.removeNode}
             reloadNode={this.props.reloadNode}
-            imageReq={this.props.imageReq}/>
+            imageReq={this.props.imageReq}
+            snackbarMsg={this.props.snackbarMsg}
+            download={this.props.download}
+            toggleDownload={this.props.toggleDownload}
+            // svgRef={this.props.svgRef}
+          />
       );
     }
   }

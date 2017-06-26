@@ -5,6 +5,7 @@ import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import * as d3 from 'd3';
+var saveAs = require('../save-as')
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -19,6 +20,7 @@ class ForceLayout extends React.Component{
   constructor(props){
     super(props);
     this.redraw = this.redraw.bind(this);
+    this.handleDownload = this.handleDownload.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleLinkUpdate = this.handleLinkUpdate.bind(this);
     this.handleLinkRemove = this.handleLinkRemove.bind(this);
@@ -29,12 +31,17 @@ class ForceLayout extends React.Component{
     this.nodeMouseover = this.nodeMouseover.bind(this);
     this.nodeMouseout = this.nodeMouseout.bind(this);
     this.enterNode = this.enterNode.bind(this);
+    this.linkNode = this.linkNode.bind(this);
     this.removeNode = this.removeNode.bind(this);
     this.reloadNode = this.reloadNode.bind(this);
 
     this.state = {
       dialogOpen: false,
-      selectedLink: {}
+      selectedLink: {},
+      nodeToLink: {
+        waiting: false,
+        node: ''
+      }
     };
   }
 
@@ -48,6 +55,13 @@ class ForceLayout extends React.Component{
     svg.attr('viewBox', '0 0 '+ width + ' ' + height)
       .attr('preserveAspectRatio', 'xMidYMid meet');
 
+    var self = this;
+    d3.select('svg').on('click', function(){
+      var nodeToLink = {waiting: false, node: ''}
+      self.setState({nodeToLink: nodeToLink});
+      self.props.snackbarMsg('Not in link-node mode.')
+    })
+
     var graph = d3.select('.everything');
 
     svg.call(d3.zoom()
@@ -60,11 +74,16 @@ class ForceLayout extends React.Component{
   }
 
   shouldComponentUpdate(nextProps){
-    if(nextProps.imageReq){
-      // addImages();
-    } else {
-      // removeImages();
+    if(nextProps.download){
+      this.handleDownload();
+      // this.props.toggleDownload();
+      return false;
     }
+    // if(nextProps.imageReq){
+    //   // addImages();
+    // } else {
+    //   // removeImages();
+    // }
     if(nextProps.data.nodes !== this.props.data.nodes ||
        nextProps.data.links !== this.props.data.links){
       this.nodes = nextProps.data.nodes.slice();
@@ -73,6 +92,15 @@ class ForceLayout extends React.Component{
       return true;
     }
     return true;
+  }
+
+  handleDownload(){
+    var html = d3.select('svg').attr("version", 1.1)
+      .attr("xmlns", "http://www.w3.org/2000/svg")
+      .node().parentNode.innerHTML;
+
+    saveAs(html);
+    // this.props.toggleDownload();
   }
 
   handleClose() {
@@ -95,13 +123,6 @@ class ForceLayout extends React.Component{
       type: this.state.selectedLink.type
     }
     this.links.push(link);
-    // var index = this.state.selectedLink.object.index
-    // var nodes = this.nodes.slice();
-    // var links = this.links.slice();
-    // var obj = links[index];
-    // obj.type = this.state.selectedLink.type;
-    // this.links = links;
-    // this.nodes = nodes;
     this.redraw(this.nodes, this.links);
     this.props.removeNode(this.nodes, this.links);
     this.setState({dialogOpen: false, selectedLink: {}});
@@ -158,18 +179,25 @@ class ForceLayout extends React.Component{
             <div >
             <strong>{this.state.selectedLink.source}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
             <TextField
-              hintText="Try to be as short and concise as possible"
+              hintText="How are they related?"
               value={this.state.selectedLink.type}
               onChange={this.handleDialogText}
-              style={{width: '40%'}}
+              style={{width: '60%'}}
             />
             <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selectedLink.target}</strong>
             </div>
           </Paper>
         </Dialog>
-        <svg ref="svg">
-          <g className='everything' />
-        </svg>
+        <div id='svg'>
+          <svg
+            // ref={this.props.svgRef}
+          >
+            <g className='everything' />
+          </svg>
+        </div>
+        {/* <div id="svgdataurl"></div> */}
+        {/* <div id="pngdataurl"></div> */}
+        <canvas width={960} height={500} style={{display:'none'}}></canvas>
       </div>
     );
   }
@@ -188,7 +216,6 @@ class ForceLayout extends React.Component{
       .call(this.enterLinkLine)
       .merge(links)
       .on('mouseover', function(d){
-        console.log(d);
         d3.select(this).select('.link-line').style('stroke-opacity', 1);
       })
       .on('mouseout', function(d){
@@ -229,6 +256,9 @@ class ForceLayout extends React.Component{
         d3.select(this)
           .select('.node-option-remove')
           .style("visibility", "visible");
+        d3.select(this)
+          .select('.node-option-link')
+          .style("visibility", "visible");
         if(!d.submitted && !d.user){
           d3.select(this)
             .select('.node-option-reload')
@@ -239,6 +269,9 @@ class ForceLayout extends React.Component{
       .on('mouseout', function(d) {
         d3.select(this)
           .select('.node-option-remove')
+          .style("visibility", "hidden");
+        d3.select(this)
+          .select('.node-option-link')
           .style("visibility", "hidden");
         d3.select(this)
           .select('.node-option-reload')
@@ -405,6 +438,52 @@ class ForceLayout extends React.Component{
         .attr("x", 33)
         .attr("y", -27);
 
+    var linkN = selection.append('g')
+      .attr('class', 'node-option-link')
+      .style("visibility", "hidden")
+      .on('click', function (d) {
+        d3.event.stopPropagation();
+          self.linkNode(d);
+      })
+      .on('dblclick', function (d) {d3.event.stopPropagation() });
+    linkN.append('circle')
+      .attr('r', 14)
+      .attr('cx', 35)
+      .attr('cy', 28)
+      .style('fill', '#AB47BC');
+    linkN.append("image")
+      .attr("xlink:href", "../../../static/images/settings_ethernet_24px.svg")
+      .attr("x", 25)
+      .attr("y", 20);
+
+  }
+
+  linkNode(d){
+    if (this.state.nodeToLink.waiting) {
+      for(var i = 0 ; i < this.links.length ; i++){
+        if((this.links[i].source.id === d.id && this.links[i].target.id === this.state.nodeToLink.node) ||
+          (this.links[i].source.id === this.state.nodeToLink.node && this.links[i].target.id === d.id)){
+          this.props.snackbarMsg('There is a link there already.')
+          var nodeToLink = {waiting: false, node: {}}
+          this.setState({nodeToLink: nodeToLink});
+          return;
+        }
+      }
+      var link = {
+        source: this.state.nodeToLink.node,
+        target: d.id,
+        type: ''
+      }
+      this.links.push(link);
+      this.redraw(this.nodes, this.links);
+      var nodeToLink = {waiting: false, node: {}}
+      this.setState({nodeToLink: nodeToLink});
+      this.props.removeNode(this.nodes, this.links);
+    } else{
+      var nodeToLink = {waiting: true, node: d.id}
+      this.setState({nodeToLink: nodeToLink});
+      this.props.snackbarMsg('Click another link button to add a link.')
+    }
   }
 
   removeNode(d) {

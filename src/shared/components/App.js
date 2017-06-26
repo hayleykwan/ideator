@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Paper from 'material-ui/Paper';
@@ -36,6 +37,7 @@ export default class App extends Component {
       },
       drawer: false,
       imageReq: false,
+      download: false,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -43,10 +45,12 @@ export default class App extends Component {
     this.handleNumberChange = this.handleNumberChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+    this.handleSnackBarMsg = this.handleSnackBarMsg.bind(this);
     this.handleDialogText = this.handleDialogText.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
     this.handleDownload = this.handleDownload.bind(this);
+    this.toggleDownload = this.toggleDownload.bind(this);
     this.handleClearGraph = this.handleClearGraph.bind(this);
     this.handleAddNode = this.handleAddNode.bind(this);
     this.handleImgToggle = this.handleImgToggle.bind(this);
@@ -97,6 +101,11 @@ export default class App extends Component {
     this.setState({snackbar: snackbar});
   }
 
+  handleSnackBarMsg(msg){
+    var snackbar = {open: true, message: msg}
+    this.setState({snackbar: snackbar})
+  }
+
   handleDialogText(event){
     var dialog = this.state.dialog;
     dialog.idea = event.target.value;
@@ -128,9 +137,11 @@ export default class App extends Component {
   }
 
   handleDownload(event){
-    // var blob = new Blob(, type:)
-    // saveAs(url);
-    console.log(event);
+    this.setState({download: true});
+  }
+
+  toggleDownload(){
+    this.setState({download: !this.state.download})
   }
 
   handleImgToggle(event){
@@ -254,7 +265,12 @@ export default class App extends Component {
               nodeDoubleClick={this.nodeDoubleClick}
               removeNode={this.removeNode}
               reloadNode={this.reloadNode}
-              imageReq={this.state.imageReq} />
+              imageReq={this.state.imageReq}
+              snackbarMsg={this.handleSnackBarMsg}
+              download={this.state.download}
+              toggleDownload={this.toggleDownload}
+              // svgRef={ el => this.svg = el}
+            />
           </Paper>
           <IdeaToolBar
             style={styles.toolbar}
@@ -327,7 +343,7 @@ const styles = {
 
 const muiTheme = getMuiTheme({
   fontFamily: 'Roboto, sans-serif',
-  appBar: {
-    height: 50,
-  },
+  // appBar: {
+  //   height: 50,
+  // },
 });

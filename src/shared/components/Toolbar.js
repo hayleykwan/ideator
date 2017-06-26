@@ -156,6 +156,8 @@ export default class IdeaToolBar extends React.Component {
               onTouchTap={this.handleClearGraph}/>
             <MenuItem primaryText="Add Idea" rightIcon={<Add/>}
               onTouchTap={this.handleAddNode}/>
+            {/* <MenuItem primaryText="Add Link" rightIcon={<Add/>}
+              onTouchTap={this.handleAddNode}/> */}
             <Divider/>
             <MenuItem  checked={this.props.imageReq} primaryText="Image" rightIcon={<Image/>}
               onTouchTap={this.handleImageToggle}/>
