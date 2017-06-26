@@ -178,7 +178,7 @@ export default class App extends Component {
     var self = this;
     this.socket.on('response', function(res){
       var result = JSON.parse(res);
-      if(result !== 0){
+      if(result !== 0 && result !== null){
         console.log(result.newGraphJSON);
         self.setState({data: result.newGraphJSON});
         var backUpData = result.backUpResults;
@@ -187,10 +187,15 @@ export default class App extends Component {
           backUp[submitted.word] = backUpData;
           self.setState({backUpData: backUp});
         }
-      } else {
+      } else if (result === 0){
         var snackbar = {
           open: true,
           message: "No Ideas Found. Search something else!"};
+        self.setState({snackbar: snackbar})
+      } else if (result === null){
+        var snackbar = {
+          open: true,
+          message: "Database is not connected."};
         self.setState({snackbar: snackbar})
       }
     });

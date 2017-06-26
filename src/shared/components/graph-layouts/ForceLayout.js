@@ -80,10 +80,28 @@ class ForceLayout extends React.Component{
   };
 
   handleLinkUpdate(){
-    var index = this.state.selectedLink.object.index
-    var obj = this.links[index] ;
-    console.log(obj);
-    console.log(obj.type);
+    var i = 0;
+    var d = this.state.selectedLink;
+    while(i < this.links.length){
+      if(this.links[i].source.id === d.source && this.links[i].target.id === d.target){
+        this.links.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+    var link = {
+      source: this.state.selectedLink.source,
+      target: this.state.selectedLink.target,
+      type: this.state.selectedLink.type
+    }
+    this.links.push(link);
+    // var index = this.state.selectedLink.object.index
+    // var nodes = this.nodes.slice();
+    // var links = this.links.slice();
+    // var obj = links[index];
+    // obj.type = this.state.selectedLink.type;
+    // this.links = links;
+    // this.nodes = nodes;
     this.redraw(this.nodes, this.links);
     this.props.removeNode(this.nodes, this.links);
     this.setState({dialogOpen: false, selectedLink: {}});
@@ -170,6 +188,7 @@ class ForceLayout extends React.Component{
       .call(this.enterLinkLine)
       .merge(links)
       .on('mouseover', function(d){
+        console.log(d);
         d3.select(this).select('.link-line').style('stroke-opacity', 1);
       })
       .on('mouseout', function(d){
@@ -181,7 +200,7 @@ class ForceLayout extends React.Component{
       })
 
     var linkLabels = graph.selectAll('.link-label')
-      .data(newLinks, function(d){return d.source.id + "-" + d.target.id;});
+      .data(newLinks, function(d){return d.source.id + "-" + d.target.id + "-" + d.type;});
     linkLabels.exit().remove();
     linkLabels.enter()
       .append('text')
