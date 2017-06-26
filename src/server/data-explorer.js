@@ -14,16 +14,17 @@ DataExplorer.prototype.explore = function(word){
       writeResults(word, datamuseResults);
       return datamuseResults;
     } else {
-      debug('no results from datamuse, query Wikipedia');
+      debug('no results from datamuse, query DuckDuckGo');
 
-      spider.wikiQuery(word).then(result => {
-        // debug(result);
+      return spider.ddg(word).then(ddgResults => {
+        if(ddgResults.length <= 0){
+          debug('query Wikipedia')
+          return spider.wikiQuery(word)
+        } else {
+          writeResults(word, ddgResults)
+          return ddgResults
+        }
       });
-      return 0;
-      // var webResults = spider.crawl(word);
-      // var query = draftWebCrawlResultsQuery(word, webResults);
-      // graphenedb.write(query);
-      // return webResults;
     }
   });
 }
@@ -47,7 +48,7 @@ function draftDatamuseResults(word, array){
     var wordId = result.wordId,
        display = result.display,
           freq = result.freq,
-          type = result.type,
+          // type = result.type,
           arrayParams = result.link,
           deg  = result.deg;
 
@@ -60,7 +61,7 @@ function draftDatamuseResults(word, array){
     //   query += display + '.defHeadWord="' + result.defHeadWord + '", ';
     // }
     query += display + '.freq=' + freq + ', ' +
-             display + '.type=[' + type + '], ' +
+            //  display + '.type=[' + type + '], ' +
              display + '.queryCount=0 \n ';
 
     // query += 'ON MATCH SET ' ;

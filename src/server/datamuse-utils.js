@@ -58,7 +58,7 @@ var query = function(word, param, meaning){
   let query = {};
   query[param] = word;
   query['max'] = 60;
-  query['md'] = 'fp';
+  query['md'] = 'f';
   // query['md'] = 'fpd';
   return datamuse.words(query).then( data => {
     var i = 0;
@@ -91,14 +91,15 @@ var query = function(word, param, meaning){
         // }
 
         d['freq'] = parseFloat(d.tags.pop().replace('f:', ''));
-        if(d.tags.length > 0) {
-          var tags = [];
-          d.tags.forEach(tag => {tags.push('"' + tag + '"')});
-          d['type'] = tags;
-        }else {
-          d['type'] = [""];
-        }
+        // if(d.tags.length > 0) {
+        //   var tags = [];
+        //   d.tags.forEach(tag => {tags.push('"' + tag + '"')});
+        //   d['type'] = tags;
+        // }else {
+        //   d['type'] = [""];
+        // }
         delete d.tags;
+        debug(d);
         i++;
       }
     }
