@@ -37,6 +37,12 @@ DataLoader.prototype.search = function(word){
   .catch(e => {console.log(e)});
 }
 
+DataLoader.prototype.findLink = function(link){
+  return graphenedb.findLink(link).then(res => {
+    return res
+  })
+}
+
 DataLoader.prototype.exit = function(){
   graphenedb.close();
 }

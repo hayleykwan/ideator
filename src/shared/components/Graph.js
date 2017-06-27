@@ -21,6 +21,7 @@ export default class Graph extends React.Component{
             nodeDoubleClick={this.props.nodeDoubleClick}
             removeNode={this.props.removeNode}
             reloadNode={this.props.reloadNode}
+            linkNodes={this.props.linkNodes}
             imageReq={this.props.imageReq}
             snackbarMsg={this.props.snackbarMsg}
             download={this.props.download}

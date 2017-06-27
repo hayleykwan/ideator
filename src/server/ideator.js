@@ -37,7 +37,12 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
   .catch(error => { debug(error); });
 }
 
-Ideator.prototype.findLinkBetween = function(word1, word2){
+Ideator.prototype.findLink = function(link){
+
+  return dataLoader.findLink(link).then(result => {
+    debug(result);
+    return result
+  })
 
 }
 

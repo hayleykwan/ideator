@@ -61,6 +61,7 @@ export default class App extends Component {
     this.nodeDoubleClick = this.nodeDoubleClick.bind(this);
     this.removeNode = this.removeNode.bind(this);
     this.reloadNode = this.reloadNode.bind(this);
+    this.linkNodes = this.linkNodes.bind(this);
 
   }
 
@@ -91,7 +92,6 @@ export default class App extends Component {
 
   handleKeyPress(event){
     if (event.key === 'Enter') {
-      console.log('Clicked Enter!');
       this.handleSubmit(event);
     }
   }
@@ -190,7 +190,6 @@ export default class App extends Component {
     this.socket.on('response', function(res){
       var result = JSON.parse(res);
       if(result !== 0 && result !== null){
-        console.log(result.newGraphJSON);
         self.setState({data: result.newGraphJSON});
         var backUpData = result.backUpResults;
         if(backUpData.length > 0){
@@ -223,13 +222,27 @@ export default class App extends Component {
   removeNode(newNodes, newLinks){
     var data = {nodes: newNodes, links: newLinks};
     this.setState({data: data});
-    // console.log(this.state.data);
   }
 
   reloadNode(newNodes, newLinks, backUpData){
     var data = {nodes: newNodes, links: newLinks};
     this.setState({data: data});
     this.setState({backUpData: backUpData});
+  }
+
+  linkNodes(newNodes, newLinks, link){
+    this.socket.emit('linkNodes', link);
+    var self = this;
+    this.socket.on('linkNodesDone', function (type){
+      console.log(type)
+      if(type === 0){
+        var snackbar = {open: true, message: 'No relationship found. Click the link to add one.'}
+        self.setState({snackbar: snackbar});
+      } else {
+        console.log(type)
+        // this.setState()
+      }
+    })
   }
 
   render() {
@@ -265,6 +278,7 @@ export default class App extends Component {
               nodeDoubleClick={this.nodeDoubleClick}
               removeNode={this.removeNode}
               reloadNode={this.reloadNode}
+              linkNodes={this.linkNodes}
               imageReq={this.state.imageReq}
               snackbarMsg={this.handleSnackBarMsg}
               download={this.state.download}

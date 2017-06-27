@@ -99,13 +99,29 @@ class ForceLayout extends React.Component{
       .attr("xmlns", "http://www.w3.org/2000/svg")
       .node().parentNode.innerHTML;
 
-    saveAs(html);
+    // saveAs(html);
+    var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+
+    var canvas = document.querySelector("canvas"),
+    context = canvas.getContext("2d");
+
+    var image = new Image;
+    image.src = imgsrc;
+    image.onload = function() {
+      context.drawImage(image, 0, 0);
+      var a = document.createElement("a");
+      document.body.appendChild(a);
+      a.download = "sample.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+      document.body.removeChild(a);
+    }
     // this.props.toggleDownload();
   }
 
   handleClose() {
     this.setState({dialogOpen: false})
-  };
+  }
 
   handleLinkUpdate(){
     var i = 0;
@@ -234,6 +250,7 @@ class ForceLayout extends React.Component{
       .attr('class', 'link-label')
       .call(this.enterLinkLabel);
 
+    linkedByIndex = {}
     newLinks.forEach(function(d) {
       linkedByIndex[d.source+ "," + d.target] = 1;
     });
@@ -448,13 +465,13 @@ class ForceLayout extends React.Component{
       .on('dblclick', function (d) {d3.event.stopPropagation() });
     linkN.append('circle')
       .attr('r', 14)
-      .attr('cx', 35)
-      .attr('cy', 28)
+      .attr('cx', 44)
+      .attr('cy', 18)
       .style('fill', '#AB47BC');
     linkN.append("image")
       .attr("xlink:href", "../../../static/images/settings_ethernet_24px.svg")
-      .attr("x", 25)
-      .attr("y", 20);
+      .attr("x", 33)
+      .attr("y", 7);
 
   }
 
@@ -478,7 +495,7 @@ class ForceLayout extends React.Component{
       this.redraw(this.nodes, this.links);
       var nodeToLink = {waiting: false, node: {}}
       this.setState({nodeToLink: nodeToLink});
-      this.props.removeNode(this.nodes, this.links);
+      this.props.linkNodes(this.nodes, this.links, link);
     } else{
       var nodeToLink = {waiting: true, node: d.id}
       this.setState({nodeToLink: nodeToLink});

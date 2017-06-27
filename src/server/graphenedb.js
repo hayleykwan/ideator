@@ -13,6 +13,28 @@ function GrapheneDB(){
 
 }
 
+GrapheneDB.prototype.findLink = function(link){
+  var word1 = link.source.id;
+  var word2 = link.target.id;
+  const session = this.driver.session();
+  var query = 'MATCH  (from:Word {wordId:"'+word1+'"}) \n';
+  query += 'MATCH  (to:Word {wordId:"'+word2+'"}) \n';
+  query += 'MATCH  (from)-[l:Link]-(to) \n';
+  query += 'RETURN l.type \n';
+  return session.run(query)
+  .then(result => {
+    session.close();
+    // debug(result);
+    if(result.records.length > 0 ){
+      debug(result.records[0]._fields[0]);
+      return result.records[0]._fields[0]
+    } else {
+      return 0;
+    }
+  })
+  .catch((error) => { console.log(error); })
+}
+
 GrapheneDB.prototype.write = function(query){
   const session = this.driver.session();
   session.run(query)
