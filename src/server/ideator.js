@@ -39,9 +39,13 @@ Ideator.prototype.search = function(submitted, currentGraphJSON) {
 
 Ideator.prototype.findLink = function(link){
 
-  return dataLoader.findLink(link).then(result => {
+  return dataLoader.findLink(link).then(res => {
     debug(result);
-    return result
+    var result = {
+      type: res,
+      link: link
+    }
+    return JSON.stringify(result);
   })
 
 }

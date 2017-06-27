@@ -233,14 +233,32 @@ export default class App extends Component {
   linkNodes(newNodes, newLinks, link){
     this.socket.emit('linkNodes', link);
     var self = this;
-    this.socket.on('linkNodesDone', function (type){
-      console.log(type)
+    this.socket.on('linkNodesDone', function (result){
+      var type = JSON.parse(result).type;
       if(type === 0){
         var snackbar = {open: true, message: 'No relationship found. Click the link to add one.'}
         self.setState({snackbar: snackbar});
+        var data = {nodes: newNodes, links: newLinks};
+        self.setState({data: data});
       } else {
-        console.log(type)
-        // this.setState()
+        var i = 0;
+        var link = JSON.parse(result).link;
+        while(i < newLinks.length){
+          if((newLinks[i].source.id === link.source.id && newLinks[i].target.id === link.target.id) ||
+            (newLinks[i].source.id === link.target.id && newLinks[i].target.id === link.source.id) ){
+            newLinks.splice(i, 1);
+          } else {
+            i++;
+          }
+        }
+        var link = {
+          source: link.source.id,
+          target: link.target.id,
+          type: type
+        }
+        newLinks.push(link);
+        var data = {nodes: newNodes, links: newLinks};
+        self.setState({data: data});
       }
     })
   }

@@ -39,9 +39,7 @@ io.on('connection', function(socket) { //listen on the connection event for inco
   });
 
   socket.on('linkNodes', function(link){
-    debug(link);
     ideator.findLink(link).then(result => {
-      debug(result);
       socket.emit('linkNodesDone', result);
     })
   })
