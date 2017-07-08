@@ -8,7 +8,7 @@ var blacklist = [
   'yes', 'no',
   'is', 'am', 'are', 'was', 'were', 'been', 'be',
   'has', 'have', 'had',
-  'of', 'for', 'in', 'at', 'on', 'by', 'de', 'from', 'to',
+  'of', 'for', 'in', 'at', 'on', 'by', 'de', 'from', 'to', 'with',
   'but','and', 'or', 'as', 'so',
   'which', 'what', 'when', 'how', 'there', 'where', 'whom',
   'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o',
